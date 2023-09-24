@@ -89,7 +89,6 @@ export interface IThemeOptions extends ThemeOptions {
 
 const theme = extendTheme({
   // We're no longer using a custom prefix, so it's --mui-xxx
-  // cssVarPrefix: "accesso", // https://mui.com/material-ui/experimental-api/css-theme-variables/customization/#changing-variable-prefixes
   typography: {
     fontFamily: [
       "MPLUSRounded1c-Regular",
