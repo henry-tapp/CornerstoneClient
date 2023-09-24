@@ -1,0 +1,23 @@
+{
+  "get_ready": {
+    "welcome": "Welcome to RockD",
+  },
+  "menu": {
+    "header": "Let's get you ready",
+    "logged_in": "Logged in as {{email}}",
+    "logout": "Logout"
+  },
+  "signin": {
+    "password": "Sign in",
+    "google": "Sign in with Google"
+  },
+  "error": {
+    "something_wrong": "Something went wrong",
+    "unknown": "Unknown error"
+  },
+  "back": "Back",
+  "action_default": "Submit",
+  "an_error_occurred": "An error occurred.",
+  "show": "Show",
+  "hide": "Hide"
+}

@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`only renders a single hr if no text provided 1`] = `
+<DocumentFragment>
+  <div
+    class="text-divider "
+    data-testid="text-divider-wrapper"
+  >
+    <hr
+      data-testid="text-divider-left"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`renders without crashing 1`] = `
+<DocumentFragment>
+  <div
+    class="text-divider "
+    data-testid="text-divider-wrapper"
+  >
+    <hr
+      data-testid="text-divider-left"
+    />
+    <span>
+      OR
+    </span>
+    <hr
+      data-testid="text-divider-right"
+    />
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,163 @@
+/* Our custom Runtime icon handling, see the `customIcons` folder in the project root for more details. */
+@import "./runtimeIcons.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* This was CRA specific so no longer required */
+/* @import-normalize; bring in normalize.css styles */
+
+/* 
+    This file defined the root theme by way of CSS Variables and
+    is the follow on from the original JSON method of defining a
+    root theme.
+
+    To create a new park or event specific theme then you can override
+    any variable available in this file, as well as defining specific 
+    targetted CSS within your theme file.
+
+    See the themeing document / wiki page for more details on creating 
+    and maintaining themes with the Qsmart web components.
+ */
+
+@font-face {
+  font-family: "MPLUSRounded1c-Regular";
+  src: local("MPLUSRounded1c-Regular"),
+    url("@/fonts/M_PLUS_Rounded_1c/mplusrounded1c-regular-webfont.woff")
+      format("woff"),
+    url("@/fonts/M_PLUS_Rounded_1c/mplusrounded1c-regular-webfont.woff2")
+      format("woff2");
+  /* url("/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Regular.ttf") format("truetype"); */
+}
+
+/* See if we can avoid loading a second large font (like 3-4Mb each) and just rely on the regular. */
+/* @font-face {
+  font-family: "MPLUSRounded1c-Bold";
+  src: local("MPLUSRounded1c-Bold"),
+    url("/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Bold.ttf") format("truetype");
+  font-weight: bold;
+} */
+
+:root,
+:root, [data-mui-color-scheme="light"] {  
+
+  --qng-home-page-height: 10rem;
+
+  /* Skeletons */
+  /* --skeleton-base-color: rgba(0, 0, 0, 0.0);
+  --skeleton-highlight-color: rgba(0, 0, 0, 0.2); */
+  /* --skeleton-base-color: #39478a; */
+  /* --skeleton-highlight-color: #5565b6; */
+  --skeleton-base-color: var(--mui-palette-primary-main);
+  --skeleton-highlight-color: var(--mui-palette-primary-light);
+
+  /* Loading */
+  /* TODO: Remove this eventualyl */
+  --loading-spinner-color: var(--mui-palette-primary-main);
+
+  --font-size-xsm: clamp(0.6rem, 0.10vw + 0.56rem, 0.72rem);
+  --font-size-sm: clamp(0.8rem, 0.17vw + 0.76rem, 0.89rem);
+  --font-size-ssm: clamp(0.9,  0.25vw + 0.83rem, 0.98rem)
+  --font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+  --font-size-md: clamp(1.25rem, 0.61vw + 1.1rem, 1.58rem);
+  --font-size-lg: clamp(1.56rem, 1vw + 1.31rem, 2.11rem);
+  --font-size-xl: clamp(1.95rem, 1.56vw + 1.56rem, 2.81rem);
+  --font-size-xxl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
+  --font-size-xxxl: clamp(3.05rem, 3.54vw + 2.17rem, 5rem);
+}
+
+body {
+  margin: 0;
+  /* font-family: "MPLUSRounded1c-Regular", "Roboto", "Helvetica Neue"; */
+  /* font-family: var(--main-font-family); */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 100%;
+  background: transparent;
+}
+
+/* h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "MPLUSRounded1c-Bold", "Roboto", "Helvetica Neue";
+} */
+
+/* 
+ * CE - I REALLY don't like the amount of weird classes or global hardcoding
+ *      going on below this point! This all needs a step back and rethink.
+ */
+
+/*
+  Consider moving this to the components/Button/button.css
+  This applies to ALL <button> elements, not just our <Button> component
+ */
+/* button {
+  font-family: var(--main-font-family);
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
+
+/*
+  Consider moving this to components/TextInput/textInput.css
+  This applies to ALL <input> elements, not just our <TextInput> component
+*/
+/* input {
+  font-family: var(--main-font-family);
+} */
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/* A (hacky) fix for the Framer motion page transition overflow issue */
+html,
+body {
+  /* overflow-x: hidden; */
+  scroll-behavior: smooth;
+}
+body {
+  position: relative;
+}
+/* End of Framer Motion page transition fix */
+
+/* p,
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: var(--secondary-text);
+} */
+/* 
+.mui__button { 
+  border-radius: 1rem;
+}
+
+.mui__button_filled {
+  background-color: var(--button-filled-background-color);
+  color: var(--button-filled-foreground-color)
+}
+
+.mui__button_filled:hover {
+  background-color: var(--button-filled-hover-color);
+}
+
+.mui__button_borderless {
+  color: var(--button-borderless-foreground-color);
+}
+
+.mui__button_hollow {
+  border: 1px solid var(--button-hollow-background-color);
+  color: var(--button-hollow-foreground-color);
+}
+
+.mui__button_hollow:hover {
+  background-color: var(--button-hollow-hover-color);
+  border: 1px solid var(--button-hollow-foreground-color);
+} */

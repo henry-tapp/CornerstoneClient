@@ -1,0 +1,7 @@
+.nav-bar-item {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  gap: 1rem;
+  /* margin-inline: 1rem; */
+  padding-block: 1rem;
+}

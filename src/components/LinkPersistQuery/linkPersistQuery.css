@@ -1,0 +1,6 @@
+.link-persist-query {
+  /* Hide underscore of link */
+  text-decoration: none;
+
+  /* TODO: Prevent default link colourations (of active/visited etc) */
+}

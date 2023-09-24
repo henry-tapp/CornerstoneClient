@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`maintains the query string in the link 1`] = `
+<DocumentFragment>
+  <a
+    class="link-persist-query active "
+    href="/somePath?authToken=123&theme=party"
+  >
+    A Link
+  </a>
+</DocumentFragment>
+`;
