@@ -7,7 +7,6 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const SubpageWrapper = styled("div")(
   ({ theme }) => `
-  padding-top: 3rem;
   position: relative;
 `
 );

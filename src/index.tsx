@@ -29,8 +29,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <App disableResponsiveComp>
-      <Logo><img style={{ height: "2rem" }} src={LogoImg} alt="failed"></img></Logo>
-      <Header variant="h3">RockD</Header>
+      {/* <Logo><img style={{ height: "2rem" }} src={LogoImg} alt="failed"></img></Logo>
+      <Header variant="h3">RockD</Header> */}
       <MainRouter />
       <NavigationBar />
     </App>

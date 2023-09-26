@@ -6,8 +6,8 @@ import { useLocation, Routes, Route, Outlet } from "react-router-dom";
 
 const Diary = lazy(() => import("pages/Diary"));
 const Manage = lazy(() => import("pages/Manage"));
-const Schedule = lazy(
-  () => import("pages/Schedule")
+const Plan = lazy(
+  () => import("pages/Plan")
 );
 const ItemDetails = lazy(() => import("pages/Manage/ItemDetails"));
 
@@ -24,7 +24,7 @@ export function MainRouter() {
           <Route path="home" element={<Outlet />}>
             <Route index element={<Index />} />
             <Route path="manage" element={<Manage />} />
-            <Route path="schedule" element={<Schedule />} />
+            <Route path="plan" element={<Plan />} />
             <Route path="diary" element={<Diary />} />
           </Route>
           <Route path="item/:itemid" element={<ItemDetails />} />

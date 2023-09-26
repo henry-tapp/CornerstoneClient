@@ -5,8 +5,6 @@ import { useCallback } from "react";
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 import { Item } from "./WeekView";
 
-
-
 const ItemCardWrapper = styled("div")`
     position:relative;
 `;
@@ -57,27 +55,6 @@ const LogButtonArea = styled("div")`
     align-items: center;
 `
 
-
-export type WorkoutType = "Strength & Power" | "Conditioning" | "Fingerboard" | "Aerobic Base" | "Power Endurance";
-
-export type WorkoutTypeColor = "#653E63" | "#D0CD94" | "#3C787E" | "#C7EF00" | "#D56F3E";
-
-export interface WorkoutVariation {
-    Name: WorkoutType;
-    Color: WorkoutTypeColor;
-}
-
-export const workoutVariations = [
-    { Name: "Strength & Power", Color: "#653E63" },
-    { Name: "Conditioning", Color: "#D0CD94" },
-    { Name: "Fingerboard", Color: "#3C787E" },
-    { Name: "Aerobic Base", Color: "#C7EF00" },
-    { Name: "Power Endurance", Color: "#D56F3E" }
-]
-
-export function GetVariation(type: WorkoutType) {
-    return workoutVariations.find(x => x.Name === type);
-}
 
 interface ItemCardProps extends Item {
     imageSrc?: string;
