@@ -3,7 +3,8 @@ import { CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { styled } from "@mui/material/styles";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
+import { IconButton } from "@mui/material";
 
 const SubpageWrapper = styled("div")(
   ({ theme }) => `
@@ -11,11 +12,12 @@ const SubpageWrapper = styled("div")(
 `
 );
 
-const BackIconWrapper = styled("div")(
+const BackIconWrapper = styled(IconButton)(
   ({ theme }) => `
   position: absolute;
-  left: 0.5rem;
-  top: 1.25rem;
+  left: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(186, 186, 186, 0.75);
 `
 );
 
@@ -33,6 +35,7 @@ interface SubPageProps {
    */
   hideBackButton?: boolean;
   style?: CSSProperties;
+  buttonStyle?: CSSProperties;
   className?: string;
 }
 
@@ -41,6 +44,7 @@ export function SubPage({
   backLast,
   children,
   style,
+  buttonStyle,
   hideBackButton,
 }: React.PropsWithChildren<SubPageProps>) {
   const navigate = useNavigate();
@@ -58,7 +62,7 @@ export function SubPage({
               }
           }
         >
-          <BackIconWrapper><ArrowBackIosNewIcon /></BackIconWrapper>
+          <BackIconWrapper style={{ top: buttonStyle?.top ?? "1rem" }}><KeyboardBackspaceOutlinedIcon /></BackIconWrapper>
         </LinkPersistQuery>
       )}
       {children}
