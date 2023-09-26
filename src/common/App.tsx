@@ -276,7 +276,7 @@ function App({
                         <AuthConsumer>
                           {(authData) => (
                             <QueryProvider
-                              apiUrl={appArgs.apiUrl ?? ""} 
+                              apiUrl={appArgs.apiUrl ?? "local"}
                               clientOptions={appArgs.rawQueryString}
                               clientId={
                                 appArgs?.clientId ??
