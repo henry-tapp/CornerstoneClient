@@ -15,8 +15,8 @@ const SubpageWrapper = styled("div")(
 const BackIconWrapper = styled("div")(
   ({ theme }) => `
   position: absolute;
-  left: 1rem;
-  top: 1.5rem;
+  left: 0.5rem;
+  top: 1.25rem;
 `
 );
 

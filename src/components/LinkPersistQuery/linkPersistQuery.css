@@ -1,6 +1,15 @@
 .link-persist-query {
   /* Hide underscore of link */
   text-decoration: none;
+  color: inherit;
 
   /* TODO: Prevent default link colourations (of active/visited etc) */
+}
+
+.link-persist-query:focus {
+  box-shadow: inset 0 0 0 1000px rgba(197, 196, 196, 0.2);
+}
+
+.link-persist-query:active {
+  box-shadow: inset 0 0 0 1000px rgba(197, 196, 196, 0.2);
 }

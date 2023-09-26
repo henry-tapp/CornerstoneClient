@@ -8,12 +8,19 @@ import { Bar as NavigationBar } from "pages/Navigation/Bar";
 import { styled } from "@mui/material/styles";
 import { Typography } from "@mui/material";
 
+import LogoImg from 'images/Logo.jpg'
+
 const Header = styled(Typography)`
   padding: 1rem;
   font-weight: bold;
   position: absolute;  
-  right: 0;  
-  top: 1;
+  right: 2.5rem;
+`;
+
+const Logo = styled("div")`
+  position: absolute;
+  right: 1rem;  
+  top: 1rem; 
 `;
 
 const root = ReactDOM.createRoot(
@@ -22,12 +29,10 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <App disableResponsiveComp>
-
+      <Logo><img style={{ height: "2rem" }} src={LogoImg} alt="failed"></img></Logo>
       <Header variant="h3">RockD</Header>
       <MainRouter />
       <NavigationBar />
     </App>
   </React.StrictMode>
 );
-
-// reportWebVitals(log.debug);

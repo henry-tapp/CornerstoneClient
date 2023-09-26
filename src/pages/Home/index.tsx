@@ -1,6 +1,7 @@
 
 import { styled } from "@mui/material/styles";
-import { NavigationButtons } from "./NavigationButtons";
+import { NavigationButtons } from "../Navigation/NavigationButtons";
+import WeekView from "./WeekView";
 
 const NavContainer = styled("div")`
   position: absolute;
@@ -17,6 +18,7 @@ export function Index() {
   return (
     <NavContainer>
       <NavigationButtons />
+      <WeekView />
     </NavContainer>
   );
 }

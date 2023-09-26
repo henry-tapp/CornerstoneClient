@@ -245,13 +245,6 @@ delete theme.colorSchemes.dark;
 
 Modal.setAppElement("#root");
 
-/**
- * We can keep common requirements that need to live
- * high up in the hierarchy here e.g. setup of Context providers,
- * query clients, themeing or auth etc.
- * This should be reusable by all distinct web components we create
- * so avoid putting anything specific to 1 web component in here if you can.
- */
 function App({
   children,
   disableResponsiveComp,
@@ -268,9 +261,6 @@ function App({
   return (
     <HelmetProvider>
       <HashRouter>
-        {/* <AnalyticsProvider debugPageViews> */}
-        {/* <AnalyticsHistoryTracking debugPageViews /> */}
-        {/* <ApiMocking /> */}
         <QueryParamProvider adapter={ReactRouter6Adapter}>
           <GlobalErrorBoundary>
             <AppArgumentsProvider>
@@ -281,17 +271,12 @@ function App({
                     width={appArgs.width}
                     height={appArgs.height}
                   >
-                    {/** Our ResponsiveRootLayout Must be within the AppArgumentsProvider to obey optionally passed height/widths */}
                     <GlobalErrorBoundary>
-                      {/**
-                         * This more nested Error Boundary aims to handle errors in a more visually correct way by obeying the ResponsiveRootLayout.
-                         * The higher ErrorBoundary is kind of a last ditch catch no matter how it looks.
-                         */}
                       <AuthProvider>
                         <AuthConsumer>
                           {(authData) => (
                             <QueryProvider
-                              apiUrl={appArgs.apiUrl ?? ""} // THIS IS BAD (the ?? "")
+                              apiUrl={appArgs.apiUrl ?? ""} 
                               clientOptions={appArgs.rawQueryString}
                               clientId={
                                 appArgs?.clientId ??
@@ -307,9 +292,6 @@ function App({
                                 theme={theme}
                                 defaultMode="light"
                               >
-                                {/* If we get DynamicThemeProvider working with Suspense we'll
-                                  probably want a Suspense here. */}
-                                {/* <Suspense fallback={<>LOADING THEME</>}> */}
                                 <DynamicThemeProvider
                                   theme={appArgs?.style}
                                   prefix="themes/"
@@ -319,9 +301,6 @@ function App({
                                     baseColor="var(--skeleton-base-color)"
                                     highlightColor="var(--skeleton-highlight-color)"
                                   >
-                                    {/* A last ditch Suspense in-case something
-                                      requires it and there isn't a lower
-                                      implementation */}
                                     <Suspense
                                       fallback={<FullpageLoadingIndicator />}
                                     >
@@ -331,7 +310,6 @@ function App({
                                     </Suspense>
                                   </SkeletonTheme>
                                 </DynamicThemeProvider>
-                                {/* </Suspense> */}
                               </CssVarsProvider>
                             </QueryProvider>
                           )}
@@ -344,7 +322,6 @@ function App({
             </AppArgumentsProvider>
           </GlobalErrorBoundary>
         </QueryParamProvider>
-        {/* </AnalyticsProvider> */}
       </HashRouter>
     </HelmetProvider>
   );

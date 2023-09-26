@@ -9,6 +9,7 @@ const Manage = lazy(() => import("pages/Manage"));
 const Schedule = lazy(
   () => import("pages/Schedule")
 );
+const ItemDetails = lazy(() => import("pages/Manage/ItemDetails"));
 
 export function MainRouter() {
   const location = useLocation();
@@ -20,13 +21,14 @@ export function MainRouter() {
     >
       <LayoutGroup>
         <Routes key={location.pathname} location={location}>
-          <Route path="/home" element={<Outlet />}>
+          <Route path="home" element={<Outlet />}>
             <Route index element={<Index />} />
             <Route path="manage" element={<Manage />} />
-            <Route path="schedule/*" element={<Schedule />} />
-            <Route path="diary/*" element={<Diary />} />
+            <Route path="schedule" element={<Schedule />} />
+            <Route path="diary" element={<Diary />} />
           </Route>
-          <Route path="/progress" element={<Progress />} />
+          <Route path="item/:itemid" element={<ItemDetails />} />
+          <Route path="progress" element={<Progress />} />
         </Routes>
       </LayoutGroup>
     </AnimatePresence>
