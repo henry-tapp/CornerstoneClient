@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const PageWrapper = styled("div")`
@@ -17,8 +18,8 @@ export function Progress() {
 
   return (
     <PageWrapper>
-      Progress
-    </PageWrapper >
+      <Typography variant="h2">Progress</Typography>
+    </PageWrapper>
   );
 }
 

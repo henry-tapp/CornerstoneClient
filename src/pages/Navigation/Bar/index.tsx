@@ -11,24 +11,23 @@ import { ITheme } from "common/App";
 
 const NavBarContainer = styled("div")(
     ({ theme }) => `
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  position: fixed;
-  overflow:hidden;
-  bottom: 0;
-  width: 100%;
-  background-color: ${(theme as ITheme).palette.tertiary.light}
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    position: fixed;
+    overflow:hidden;
+    bottom: 0;
+    width: 100%;
+    background-color: ${(theme as ITheme).palette.tertiary.light}
 `
 );
 
 const NavBarLinkPersistQuery = styled(LinkPersistQuery)(
     ({ theme }) => `
-
-  button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 `
 );
 

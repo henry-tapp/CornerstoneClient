@@ -268,83 +268,83 @@ function App({
   return (
     <HelmetProvider>
       <HashRouter>
-        <AnalyticsProvider debugPageViews>
-          {/* <AnalyticsHistoryTracking debugPageViews /> */}
-          {/* <ApiMocking /> */}
-          <QueryParamProvider adapter={ReactRouter6Adapter}>
-            <GlobalErrorBoundary>
-              <AppArgumentsProvider>
-                <AppArgumentsConsumer>
-                  {(appArgs) => (
-                    <ResponsiveRootLayout
-                      disabled={disableResponsiveComp}
-                      width={appArgs.width}
-                      height={appArgs.height}
-                    >
-                      {/** Our ResponsiveRootLayout Must be within the AppArgumentsProvider to obey optionally passed height/widths */}
-                      <GlobalErrorBoundary>
-                        {/**
+        {/* <AnalyticsProvider debugPageViews> */}
+        {/* <AnalyticsHistoryTracking debugPageViews /> */}
+        {/* <ApiMocking /> */}
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <GlobalErrorBoundary>
+            <AppArgumentsProvider>
+              <AppArgumentsConsumer>
+                {(appArgs) => (
+                  <ResponsiveRootLayout
+                    disabled={disableResponsiveComp}
+                    width={appArgs.width}
+                    height={appArgs.height}
+                  >
+                    {/** Our ResponsiveRootLayout Must be within the AppArgumentsProvider to obey optionally passed height/widths */}
+                    <GlobalErrorBoundary>
+                      {/**
                          * This more nested Error Boundary aims to handle errors in a more visually correct way by obeying the ResponsiveRootLayout.
                          * The higher ErrorBoundary is kind of a last ditch catch no matter how it looks.
                          */}
-                        <AuthProvider>
-                          <AuthConsumer>
-                            {(authData) => (
-                              <QueryProvider
-                                apiUrl={appArgs.apiUrl ?? ""} // THIS IS BAD (the ?? "")
-                                clientOptions={appArgs.rawQueryString}
-                                clientId={
-                                  appArgs?.clientId ??
-                                  import.meta.env.REACT_APP_CLIENT_ID ??
-                                  ""
-                                }
-                                culture={appArgs?.culture ?? "en-US"} // TODO: Don't set defaults here let the server do that!
-                                authMethod="Bearer"
-                                authToken={authData.currentToken}
+                      <AuthProvider>
+                        <AuthConsumer>
+                          {(authData) => (
+                            <QueryProvider
+                              apiUrl={appArgs.apiUrl ?? ""} // THIS IS BAD (the ?? "")
+                              clientOptions={appArgs.rawQueryString}
+                              clientId={
+                                appArgs?.clientId ??
+                                import.meta.env.REACT_APP_CLIENT_ID ??
+                                ""
+                              }
+                              culture={appArgs?.culture ?? "en-US"} // TODO: Don't set defaults here let the server do that!
+                              authMethod="Bearer"
+                              authToken={authData.currentToken}
+                            >
+                              <ReactQueryDevtools initialIsOpen={false} />
+                              <CssVarsProvider
+                                theme={theme}
+                                defaultMode="light"
                               >
-                                <ReactQueryDevtools initialIsOpen={false} />
-                                <CssVarsProvider
-                                  theme={theme}
-                                  defaultMode="light"
-                                >
-                                  {/* If we get DynamicThemeProvider working with Suspense we'll
+                                {/* If we get DynamicThemeProvider working with Suspense we'll
                                   probably want a Suspense here. */}
-                                  {/* <Suspense fallback={<>LOADING THEME</>}> */}
-                                  <DynamicThemeProvider
-                                    theme={appArgs?.style}
-                                    prefix="themes/"
-                                    darkMode={appArgs.darkMode}
+                                {/* <Suspense fallback={<>LOADING THEME</>}> */}
+                                <DynamicThemeProvider
+                                  theme={appArgs?.style}
+                                  prefix="themes/"
+                                  darkMode={appArgs.darkMode}
+                                >
+                                  <SkeletonTheme
+                                    baseColor="var(--skeleton-base-color)"
+                                    highlightColor="var(--skeleton-highlight-color)"
                                   >
-                                    <SkeletonTheme
-                                      baseColor="var(--skeleton-base-color)"
-                                      highlightColor="var(--skeleton-highlight-color)"
-                                    >
-                                      {/* A last ditch Suspense in-case something
+                                    {/* A last ditch Suspense in-case something
                                       requires it and there isn't a lower
                                       implementation */}
-                                      <Suspense
-                                        fallback={<FullpageLoadingIndicator />}
-                                      >
-                                        <div className={className}>
-                                          {children}
-                                        </div>
-                                      </Suspense>
-                                    </SkeletonTheme>
-                                  </DynamicThemeProvider>
-                                  {/* </Suspense> */}
-                                </CssVarsProvider>
-                              </QueryProvider>
-                            )}
-                          </AuthConsumer>
-                        </AuthProvider>
-                      </GlobalErrorBoundary>
-                    </ResponsiveRootLayout>
-                  )}
-                </AppArgumentsConsumer>
-              </AppArgumentsProvider>
-            </GlobalErrorBoundary>
-          </QueryParamProvider>
-        </AnalyticsProvider>
+                                    <Suspense
+                                      fallback={<FullpageLoadingIndicator />}
+                                    >
+                                      <div className={className}>
+                                        {children}
+                                      </div>
+                                    </Suspense>
+                                  </SkeletonTheme>
+                                </DynamicThemeProvider>
+                                {/* </Suspense> */}
+                              </CssVarsProvider>
+                            </QueryProvider>
+                          )}
+                        </AuthConsumer>
+                      </AuthProvider>
+                    </GlobalErrorBoundary>
+                  </ResponsiveRootLayout>
+                )}
+              </AppArgumentsConsumer>
+            </AppArgumentsProvider>
+          </GlobalErrorBoundary>
+        </QueryParamProvider>
+        {/* </AnalyticsProvider> */}
       </HashRouter>
     </HelmetProvider>
   );

@@ -1,59 +1,75 @@
-import { LinkPersistQuery } from "components/LinkPersistQuery";
+import { IconButton, Typography, styled } from "@mui/material";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import LeaderboardRoundedIcon from '@mui/icons-material/LeaderboardRounded';
+import { Dispatch, SetStateAction, useCallback } from "react";
 
-import { Button } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import img from '../../images/BannerDark.jpg'
 
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import BookIcon from '@mui/icons-material/Book';
-import { ITheme } from "common/App";
-
-const NavBarContainer = styled("div")(
-  ({ theme }) => `
+const Wrapper = styled("div")`
+  width: calc(100% - 2rem);
+  height: 3rem;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 10fr 1fr;
+  position: fixed;
+  overflow:hidden;
   padding: 1rem;
-  gap: 1rem;
-`
-);
+  grid-gap: 1rem;
+  justify-items: center;
+  align-items: center;
+  background-image: url(${img});
+  background-position: center;
+  color: white;
+`;
 
-const NavBarLinkPersistQuery = styled(LinkPersistQuery)(
-  ({ theme }) => `
-  width: 100%;
+const Left = styled("div")`
 
-  button {
-    height: 5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    border-radius: 1rem;
-    background-color: ${(theme as ITheme).palette.shades.g4}
-  }
+`;
 
-  &:last-child > button {
-    border-right: none;
-  }
+const Right = styled("div")`
 
-  &.active > button {
-    background-color: ${theme.vars.palette.secondary.main};
-    color: ${theme.vars.palette.secondary.contrastText};
-  }
-`
-);
+`;
 
-export function WeeklyNavigation() {
-  return (
-    <NavBarContainer data-testid="navbar">
-      <NavBarLinkPersistQuery pathname="manage" activeOnEmpty>
-        <Button fullWidth><AddCircleIcon /><span>Manage</span></Button>
-      </NavBarLinkPersistQuery>
-      <NavBarLinkPersistQuery pathname="schedule">
-        <Button fullWidth><CalendarMonthIcon /><span>Schedule</span></Button>
-      </NavBarLinkPersistQuery>
-      <NavBarLinkPersistQuery pathname="diary">
-        <Button fullWidth><BookIcon />Diary</Button>
-      </NavBarLinkPersistQuery>
-    </NavBarContainer>
+const Center = styled("div")`
+  margin: auto;
+  display: flex;
+  alignItems: center;
+  flexWrap: wrap;
+  gap: 0.25rem;
+`;
+
+export interface WeeklyNavigationProps {
+  weekNumber: number;
+  setWeek: Dispatch<SetStateAction<number>>
+}
+
+export function WeeklyNavigation({ weekNumber, setWeek }: WeeklyNavigationProps) {
+
+  const backbuttonHandle = useCallback(() => {
+    let newWeek = weekNumber >= 1 ? weekNumber-- : weekNumber;
+    if (newWeek !== weekNumber) {
+      setWeek(newWeek);
+    }
+  }, [setWeek, weekNumber]);
+
+  const forwardButtonHandle = useCallback(() => {
+    let newWeek = weekNumber <= 12 ? weekNumber++ : weekNumber;
+    if (newWeek !== weekNumber) {
+      setWeek(newWeek);
+    }
+  }, [setWeek, weekNumber])
+
+
+  return (<Wrapper>
+    <Left>
+      <IconButton size="large" disabled={weekNumber === 1} color="success" onClick={backbuttonHandle} ><ArrowBackIosIcon /></IconButton>
+    </Left>
+    <Center>
+      <Typography variant="h4">Week {weekNumber}</Typography><LeaderboardRoundedIcon />
+    </Center>
+    <Right>
+      <IconButton size="large" disabled={weekNumber === 12} color="success" onClick={forwardButtonHandle}><ArrowForwardIosIcon /></IconButton>
+    </Right>
+  </Wrapper>
   );
 }

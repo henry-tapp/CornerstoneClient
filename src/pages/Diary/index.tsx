@@ -1,4 +1,6 @@
+import { Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { SubPage } from "pages/Navigation/SubPage";
 
 const PageWrapper = styled("div")`
   width: 100%;
@@ -16,9 +18,11 @@ export function Diary() {
 
 
   return (
-    <PageWrapper>
-      diary
-    </PageWrapper >
+    <SubPage backLast>
+      <PageWrapper>
+        <Typography variant="h2">Diary</Typography>
+      </PageWrapper>
+    </SubPage>
   );
 }
 
