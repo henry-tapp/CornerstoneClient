@@ -11,9 +11,7 @@ const PageWrapper = styled("div")`
   margin: auto;
 `;
 
-/**
- * This is a page holding reservation components
- */
+
 export function Diary() {
 
 

@@ -4,7 +4,6 @@ import "style/baseTheme.css";
 // Setup our translations
 import "util/i18n";
 
-import { AnalyticsProvider } from "common/AnalyticsProvider";
 import { FullpageLoadingIndicator } from "components/LoadingIndicator";
 // import { useApiMocking } from "hooks/useApiMocking";
 import log from "loglevel";
@@ -40,6 +39,7 @@ import type { } from "@mui/lab/themeAugmentation";
 import type { } from "@mui/material/themeCssVarsAugmentation";
 import { QueryProvider } from "./RockdQueryProvider";
 import { ResponsiveRootLayout } from "components/ResponsiveRootLayout";
+import { useApiMocking } from "hooks/useApiMocking/useApiMocking";
 
 declare module "@mui/material/styles" {
   // Example for adding custom palette options and supporting it in TypeScript
@@ -245,6 +245,11 @@ delete theme.colorSchemes.dark;
 
 Modal.setAppElement("#root");
 
+function ApiMocking() {
+  useApiMocking();
+  return <></>;
+}
+
 function App({
   children,
   disableResponsiveComp,
@@ -276,13 +281,8 @@ function App({
                         <AuthConsumer>
                           {(authData) => (
                             <QueryProvider
-                              apiUrl={appArgs.apiUrl ?? "local"}
+                              apiUrl={appArgs.apiUrl ?? "mock"}
                               clientOptions={appArgs.rawQueryString}
-                              clientId={
-                                appArgs?.clientId ??
-                                import.meta.env.REACT_APP_CLIENT_ID ??
-                                ""
-                              }
                               culture={appArgs?.culture ?? "en-US"} // TODO: Don't set defaults here let the server do that!
                               authMethod="Bearer"
                               authToken={authData.currentToken}
@@ -295,7 +295,6 @@ function App({
                                 <DynamicThemeProvider
                                   theme={appArgs?.style}
                                   prefix="themes/"
-                                  darkMode={appArgs.darkMode}
                                 >
                                   <SkeletonTheme
                                     baseColor="var(--skeleton-base-color)"

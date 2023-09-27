@@ -55,9 +55,7 @@ function useMockData() {
     } as ItemGroup;
 }
 
-/**
- * This is a page holding reservation components
- */
+
 export function ItemDetails() {
 
     const { itemId } = useParams();

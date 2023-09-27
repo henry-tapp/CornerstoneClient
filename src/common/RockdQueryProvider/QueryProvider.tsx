@@ -2,8 +2,8 @@ import React, { useMemo } from "react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { ApiProvider, isApiBaseResponse, retryPolicy } from "../../api";
-import { QSNextGenProps } from "./QueryProvider.types";
+import { ApiProvider, retryPolicy } from "../../api";
+import { isApiBaseResponse } from "api/Api.types";
 
 const internalQueryClient = (defaultRefetchIntervalMillis?: number | null) =>
   new QueryClient({

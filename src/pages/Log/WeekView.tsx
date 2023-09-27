@@ -1,16 +1,20 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Button, Typography, styled } from "@mui/material";
 
 import { ITheme } from "common/App";
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 import { GetVariation, WorkoutVariation } from "types/Item";
-import { WeeklyNavigation } from "./WeeklyNavigation";
+import { WeeklyNavigation } from "../Navigation/WeeklyNavigation";
 import { ItemCard } from "./ItemCard";
 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import BookIcon from '@mui/icons-material/Book';
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+
+const Wrapper = styled("div")`
+`;
 
 const NavBarContainer = styled("div")(
     ({ theme }) => `
@@ -45,10 +49,6 @@ const NavBarLinkPersistQuery = styled(LinkPersistQuery)(
   }
 `
 );
-const Wrapper = styled("div")`
-    width: 100%;
-`;
-
 const NavButtonWrapper = styled("div")`
   padding-top: 5rem;
 `;
@@ -64,7 +64,7 @@ const WeekDayItemContainer = styled("div")`
 `;
 
 
-const INITIAL_WEEK = 1;
+const INITIAL_WEEK = 10;
 
 function useMockWeekData() {
 
@@ -112,21 +112,32 @@ export interface Item {
 
 export function WeekView() {
 
-    const [weekNumber, setWeek] = useState<number>(INITIAL_WEEK);
+    const { currentWeek } = useParams();
+
+    const [weekNumber, setWeek] = useState<number>(parseInt(currentWeek ?? "1"));
 
     const weeks = useMockWeekData();
 
     const currentWeekItems = useMemo(() => weeks.find(x => x.weekNumber === weekNumber)?.items, [weeks, weekNumber]);
 
+    let navigate = useNavigate();
+
+    const [searchParams] = useSearchParams();
+
+    const handleWeekSet = useCallback((newWeek: number) => {
+        navigate(`../week/${newWeek}?${searchParams}`, { replace: true });
+        setWeek(newWeek);
+    }, [setWeek, navigate, searchParams]);
+
     return (
         <Wrapper className="weekview-wrapper">
-            <WeeklyNavigation weekNumber={weekNumber} setWeek={setWeek} />
+            <WeeklyNavigation weekNumber={weekNumber} setWeek={handleWeekSet} />
             <NavButtonWrapper>
                 <NavBarContainer data-testid="navbar" className="wrapper-nav-bar">
                     <NavBarLinkPersistQuery pathname="manage" activeOnEmpty>
                         <Button fullWidth><AddCircleIcon /><span>Manage</span></Button>
                     </NavBarLinkPersistQuery>
-                    <NavBarLinkPersistQuery pathname="plan">
+                    <NavBarLinkPersistQuery pathname={`plan`}>
                         <Button fullWidth><CalendarMonthIcon /><span>Plan</span></Button>
                     </NavBarLinkPersistQuery>
                     <NavBarLinkPersistQuery pathname="diary">
@@ -134,18 +145,19 @@ export function WeekView() {
                     </NavBarLinkPersistQuery>
                 </NavBarContainer>
             </NavButtonWrapper>
-            {currentWeekItems && Object.entries(currentWeekItems).map((weekDayItems, idx) => {
-                return (
-                    <WeekDayItemContainer key={idx} className="weekday-item-container">
-                        <Typography variant="h4" style={{ fontWeight: "bold" }}> {weekDayItems[0]}</Typography>
-                        {weekDayItems[1] && weekDayItems[1].map((item, idx2) => {
-                            return (<ItemCard key={idx2} {...item}></ItemCard>)
-                        })}
-                    </WeekDayItemContainer>
-                );
-            })
+            {
+                currentWeekItems && Object.entries(currentWeekItems).map((weekDayItems, idx) => {
+                    return (
+                        <WeekDayItemContainer key={idx} className="weekday-item-container">
+                            <Typography variant="h4" style={{ fontWeight: "bold" }}> {weekDayItems[0]}</Typography>
+                            {weekDayItems[1] && weekDayItems[1].map((item, idx2) => {
+                                return (<ItemCard key={idx2} {...item}></ItemCard>)
+                            })}
+                        </WeekDayItemContainer>
+                    );
+                })
             }
-        </Wrapper>
+        </Wrapper >
     );
 }
 

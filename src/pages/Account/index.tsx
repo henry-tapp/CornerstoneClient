@@ -10,14 +10,15 @@ const PageWrapper = styled("div")`
   margin: auto;
 `;
 
-export function Progress() {
+
+export function Account() {
 
 
   return (
     <PageWrapper>
-      <Typography variant="h2">Progress</Typography>
+      <Typography variant="h2">Account</Typography>
     </PageWrapper>
   );
 }
 
-export default Progress;
+export default Account;

@@ -8,5 +8,4 @@ export {
   type ValidateStatusFunc,
 } from "./Api";
 // export { type ApiProviderProps as AxiosProviderProps } from './Api.types';
-export * from "./Api.types";
 export * from "./RequestProcessors/RequestProcessor";

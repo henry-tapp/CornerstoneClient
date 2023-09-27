@@ -32,7 +32,7 @@ const Center = styled("div")`
 
 export interface WeeklyNavigationProps {
   weekNumber: number;
-  setWeek: Dispatch<SetStateAction<number>>
+  setWeek: (newWeek: number) => void
 }
 
 export function WeeklyNavigation({ weekNumber, setWeek }: WeeklyNavigationProps) {

@@ -3,12 +3,12 @@ import loglevel from "loglevel";
 // import log from "loglevel";
 import React, { createContext, useContext, useMemo } from "react";
 
-import { ApiProviderCore, ApiProviderProps } from "./Api.types";
 import {
   AxiosRequestProcessor,
   FetchRequestProcessor,
   RequestProcessor,
 } from "./RequestProcessors";
+import { ApiProviderCore, ApiProviderProps } from "./Api.types";
 
 const ApiContext = createContext<RequestProcessor>(undefined as any);
 
@@ -30,9 +30,8 @@ const requestProcessorFactory = (
 
   const authHeaders: Record<string, string> = {};
   if (props.authToken) {
-    authHeaders["Authorization"] = `${props.authMethod ?? "Bearer"} ${
-      props.authToken
-    }`;
+    authHeaders["Authorization"] = `${props.authMethod ?? "Bearer"} ${props.authToken
+      }`;
   }
 
   switch (coreProviderName) {
@@ -41,10 +40,8 @@ const requestProcessorFactory = (
 
       return new FetchRequestProcessor(props.baseApiUrl, {
         "Content-Type": "application/json",
-        "Client-Options": props.clientOptions,
         "Client-ID": props.clientId,
         "Accept-Language": props.culture ?? "",
-        Geolocation: props.geolocation ?? "", // Would this actually be in-park ? and the APP takes care of that rather than API?
         ...authHeaders,
       });
 
@@ -53,10 +50,8 @@ const requestProcessorFactory = (
 
       return new AxiosRequestProcessor(props.baseApiUrl, {
         "Content-Type": "application/json",
-        "Client-Options": props.clientOptions,
         "Client-ID": props.clientId,
         "Accept-Language": props.culture ?? "",
-        Geolocation: props.geolocation ?? "", // Would this actually be in-park ? and the APP takes care of that rather than API?
         ...authHeaders,
       });
 

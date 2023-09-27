@@ -3,7 +3,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import img from '../../images/item-template.jpg'
 import { useCallback } from "react";
 import { LinkPersistQuery } from "components/LinkPersistQuery";
-import { Item } from "./WeekView";
+import { Item } from "../../types/Item"
 
 const ItemCardWrapper = styled("div")`
     position:relative;
@@ -71,7 +71,7 @@ export function ItemCard({ id, name, variation, exercises, estimatedCompletionMi
     }, [onClick])
 
     return (
-        <LinkPersistQuery pathname={`../item/${id}`}>
+        <LinkPersistQuery pathname={`item/${id}`}>
             <ItemCardWrapper>
                 <ItemCardGridContainer className="itemcard-container" onClick={handleClick}>
                     <TypeArea color={variation.Color ?? "#241623"}></TypeArea>

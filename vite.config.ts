@@ -1,4 +1,3 @@
-// import { polyfillNode } from "esbuild-plugin-polyfill-node";
 import { resolve } from "path";
 import { defineConfig } from "vitest/config"; // Instead of from 'vite' to allow the extra properties
 import envCompatible from "vite-plugin-env-compatible";
@@ -23,25 +22,13 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        home: resolve(__dirname, "home/index.html"),
-        schedule: resolve(__dirname, "schedule/index.html")
+        home: resolve(__dirname, "home/index.html")
       },
     },
   },
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
-    },
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      define: {
-        global: "globalThis",
-      },
-      plugins: [
-        // polyfillNode({
-        // })
-      ],
     },
   },
   plugins: [
