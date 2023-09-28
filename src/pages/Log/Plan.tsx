@@ -1,12 +1,13 @@
 import { styled } from "@mui/material/styles";
+import { ITheme } from "common/App";
 import { SubPage } from "pages/Navigation/SubPage";
 import { WeeklyNavigation } from "pages/Navigation/WeeklyNavigation";
 import { useCallback, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-const PageWrapper = styled("div")`
-  width: 100%;
-`;
+const PageWrapper = styled("div")(({ theme }) => `
+  background: ${(theme as ITheme).palette.shades.g5};
+`);
 
 const PaddingWrapper = styled("div")`
   padding-top: 5rem;
@@ -30,7 +31,7 @@ export function Plan() {
       <WeeklyNavigation weekNumber={weekNumber} setWeek={handleWeekSet} />
       <PaddingWrapper>
         <SubPage backLast>
-
+          <div style={{ height: "50rem" }}></div>
         </SubPage>
       </PaddingWrapper>
     </PageWrapper>

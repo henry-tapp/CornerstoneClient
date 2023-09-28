@@ -23,7 +23,7 @@ const ButtonBar = styled("div")(({ theme }) => `
 height: 5rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background-color: ${(theme as ITheme).palette.shades.g5};
+    background-color: ${(theme as ITheme).palette.tertiary.extraLight};
 `);
 
 const Description = styled("div")(({ theme }) => `

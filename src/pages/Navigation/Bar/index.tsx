@@ -10,7 +10,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import { ITheme } from "common/App";
 import { useSchedule } from "hooks/useSchedule/useSchedule";
-import { UseScheduleData } from "hooks/useSchedule/useSchedule.types";
 import { Schedule } from "types";
 import { useMemo } from "react";
 
@@ -22,7 +21,7 @@ const NavBarContainer = styled("div")(
     overflow:hidden;
     bottom: 0;
     width: 100%;
-    background-color: ${(theme as ITheme).palette.tertiary.light}
+    background-color: ${(theme as ITheme).palette.primary.light}
 `
 );
 

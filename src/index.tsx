@@ -4,13 +4,19 @@ import ReactDOM from "react-dom/client";
 import { disableReactDevTools } from '@fvilers/disable-react-devtools'
 
 // import reportWebVitals from "../../reportWebVitals";
-import App from "./common/App";
+import App, { ITheme } from "./common/App";
 import { MainRouter } from "MainRouter";
 import { Bar as NavigationBar } from "pages/Navigation/Bar";
+import { styled } from "@mui/material/styles";
 
 if (import.meta.env.MODE === 'production') {
   disableReactDevTools()
 }
+
+const Wrapper = styled("div")(({ theme }) => `
+    background: ${(theme as ITheme).palette.shades.g5};
+    min-height: 100vh;
+`);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -20,7 +26,14 @@ if (import.meta.env.MODE === "development") {
   import("./mocks/browser")
     .then(({ worker }) => {
       // Start the worker.
-      worker.start();
+      worker.start({
+        onUnhandledRequest: ({ method, url }) => {
+          if (!url.toString().includes("/src/") && !url.toString().includes("/node_modules/")) {
+            throw new Error(`Unhandled ${method} request to ${url}`);
+          }
+        }
+      });
+
     })
     .then(() => {
       root.render(
@@ -39,8 +52,10 @@ function Main() {
   return (
     <React.StrictMode>
       <App disableResponsiveComp>
-        <MainRouter />
-        <NavigationBar />
+        <Wrapper className="wrapper">
+          <MainRouter />
+          <NavigationBar />
+        </Wrapper>
       </App>
     </React.StrictMode>
   );

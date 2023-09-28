@@ -5,7 +5,6 @@ import "style/baseTheme.css";
 import "util/i18n";
 
 import { FullpageLoadingIndicator } from "components/LoadingIndicator";
-// import { useApiMocking } from "hooks/useApiMocking";
 import log from "loglevel";
 import React, { Suspense, useEffect } from "react";
 import { HelmetProvider } from "react-helmet-async";
@@ -39,7 +38,6 @@ import type { } from "@mui/lab/themeAugmentation";
 import type { } from "@mui/material/themeCssVarsAugmentation";
 import { QueryProvider } from "./RockdQueryProvider";
 import { ResponsiveRootLayout } from "components/ResponsiveRootLayout";
-import { useApiMocking } from "hooks/useApiMocking/useApiMocking";
 
 declare module "@mui/material/styles" {
   // Example for adding custom palette options and supporting it in TypeScript
@@ -67,6 +65,7 @@ interface IPalette extends Palette {
     main: string;
     dark: string;
     light: string;
+    extraLight?: string;
   };
   shades: {
     g0: string;
@@ -91,17 +90,10 @@ const theme = extendTheme({
   // We're no longer using a custom prefix, so it's --mui-xxx
   typography: {
     fontFamily: [
-      "MPLUSRounded1c-Regular",
-      "Roboto",
       "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      '"Helvetica Neue"',
       "Arial",
       "sans-serif",
       '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
     ].join(","),
     h1: {
       fontSize: "2.125rem",
@@ -194,30 +186,31 @@ const theme = extendTheme({
     light: {
       palette: {
         primary: {
-          main: "#311E10",
-          dark: "#27180d",
-          light: "#744726",
+          main: "#3E5641",
+          dark: "#324534",
+          light: "#779c7b",
         },
         secondary: {
-          main: "#DD6031",
-          dark: "#b9491f",
-          light: "#e4805a",
+          main: "#D56F3E",
+          dark: "#87401d",
+          light: "#dd8c65",
         },
         tertiary: {
-          main: "#EABE7C",
-          dark: "#e09f3e",
-          light: "#eecb96",
+          main: "#475B63",
+          dark: "#2b373b",
+          light: "#88a0aa",
+          extraLight: "#b8c6cc"
         },
         // Missing Accesso Tertiary
         success: {
-          main: "#D9DD92",
-          dark: "#c5cc5a",
-          light: "#e1e4a8",
+          main: "#83BCA9",
+          dark: "#437c69",
+          light: "#b5d7cb",
         },
         error: {
-          main: "#DE1B3C",
-          dark: "#851024",
-          light: "#E44863",
+          main: "#d2aac0",
+          dark: "#b26b92",
+          light: "#F3E8EE",
         },
         warning: {
           main: "#FFCD29",
@@ -245,10 +238,6 @@ delete theme.colorSchemes.dark;
 
 Modal.setAppElement("#root");
 
-function ApiMocking() {
-  useApiMocking();
-  return <></>;
-}
 
 function App({
   children,
