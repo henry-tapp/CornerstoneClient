@@ -1,26 +1,20 @@
 import { IconButton, Typography, styled } from "@mui/material";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LeaderboardRoundedIcon from '@mui/icons-material/LeaderboardRounded';
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { useCallback } from "react";
 
-import img from '../../images/BannerDark.jpg'
-
-const Wrapper = styled("div")`
+const Wrapper = styled("div")(({ theme }) => `
   width: calc(100% - 2rem);
   height: 3rem;
   display: grid;
   grid-template-columns: 1fr 10fr 1fr;
-  position: fixed;
   overflow:hidden;
   padding: 1rem;
   grid-gap: 1rem;
   justify-items: center;
   align-items: center;
-  background-image: url(${img});
   background-position: center;
-  color: white;
-`;
+`);
 
 const Center = styled("div")`
   margin: auto;
@@ -32,7 +26,7 @@ const Center = styled("div")`
 
 export interface WeeklyNavigationProps {
   weekNumber: number;
-  setWeek: (newWeek: number) => void
+  setWeek: (newWeek: number) => void;
 }
 
 export function WeeklyNavigation({ weekNumber, setWeek }: WeeklyNavigationProps) {
@@ -51,16 +45,15 @@ export function WeeklyNavigation({ weekNumber, setWeek }: WeeklyNavigationProps)
     }
   }, [setWeek, weekNumber])
 
-
   return (<Wrapper>
     <>
-      <IconButton size="large" disabled={weekNumber === 1} color="success" onClick={backbuttonHandle} ><ArrowBackIosIcon /></IconButton>
+      <IconButton size="large" disabled={weekNumber === 1} color="secondary" onClick={backbuttonHandle} ><ArrowBackIosIcon /></IconButton>
     </>
     <Center>
-      <Typography variant="h4">Week {weekNumber}</Typography><LeaderboardRoundedIcon />
+      <Typography variant="caption">Week {weekNumber}</Typography>
     </Center>
     <>
-      <IconButton size="large" disabled={weekNumber === 12} color="success" onClick={forwardButtonHandle}><ArrowForwardIosIcon /></IconButton>
+      <IconButton size="large" disabled={weekNumber === 12} color="secondary" onClick={forwardButtonHandle}><ArrowForwardIosIcon /></IconButton>
     </>
   </Wrapper>
   );

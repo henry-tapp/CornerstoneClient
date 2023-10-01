@@ -24,10 +24,8 @@
 @font-face {
   font-family: "MPLUSRounded1c-Regular";
   src: local("MPLUSRounded1c-Regular"),
-    url("@/fonts/M_PLUS_Rounded_1c/mplusrounded1c-regular-webfont.woff")
-      format("woff"),
-    url("@/fonts/M_PLUS_Rounded_1c/mplusrounded1c-regular-webfont.woff2")
-      format("woff2");
+    url("@/fonts/M_PLUS_Rounded_1c/mplusrounded1c-regular-webfont.woff") format("woff"),
+    url("@/fonts/M_PLUS_Rounded_1c/mplusrounded1c-regular-webfont.woff2") format("woff2");
   /* url("/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Regular.ttf") format("truetype"); */
 }
 
@@ -40,7 +38,8 @@
 } */
 
 :root,
-:root, [data-mui-color-scheme="light"] {  
+:root,
+[data-mui-color-scheme="light"] {
 
   --qng-home-page-height: 10rem;
 
@@ -58,8 +57,7 @@
 
   --font-size-xsm: clamp(0.6rem, 0.10vw + 0.56rem, 0.72rem);
   --font-size-sm: clamp(0.8rem, 0.17vw + 0.76rem, 0.89rem);
-  --font-size-ssm: clamp(0.9,  0.25vw + 0.83rem, 0.98rem)
-  --font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+  --font-size-ssm: clamp(0.9, 0.25vw + 0.83rem, 0.98rem) --font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
   --font-size-md: clamp(1.25rem, 0.61vw + 1.1rem, 1.58rem);
   --font-size-lg: clamp(1.56rem, 1vw + 1.31rem, 2.11rem);
   --font-size-xl: clamp(1.95rem, 1.56vw + 1.56rem, 2.81rem);
@@ -118,12 +116,15 @@ code {
 /* A (hacky) fix for the Framer motion page transition overflow issue */
 html,
 body {
-  /* overflow-x: hidden; */
+  overflow-x: hidden;
   scroll-behavior: smooth;
+  background-color: #1c1f2b;
 }
+
 body {
   position: relative;
 }
+
 /* End of Framer Motion page transition fix */
 
 /* p,

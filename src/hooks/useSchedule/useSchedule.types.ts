@@ -1,7 +1,7 @@
 
 import { ApiResponseData } from "api/Api.types";
 import { DisableHook, DisableSuspenseHook, DisableSuspenseHookData } from "types";
-import { Schedule } from "types/Schedule";
+import { Schedule, ScheduleWeek } from "types/Schedule";
 
 export type ScheduleError =
   | undefined
@@ -12,12 +12,26 @@ export type ScheduleError =
     message?: string;
   };
 
+/**
+ *  Schedule
+ */
 export interface UseScheduleProps extends DisableHook, DisableSuspenseHook {
-  ScheduleId?: string;
+
 }
 
-export interface UseScheduleData extends DisableSuspenseHookData {
+export interface UseScheduleData extends ApiResponseData, DisableSuspenseHookData {
   error?: ScheduleError;
+  data?: Schedule;
+}
 
-  data?: ApiResponseData<Schedule>;
+/**
+   *  Schedule Week
+   */
+export interface UseScheduleWeekProps extends DisableHook, DisableSuspenseHook {
+  WeekNumber: number;
+}
+
+export interface UseScheduleWeekData extends DisableSuspenseHookData {
+  error?: ScheduleError;
+  data?: ScheduleWeek;
 }

@@ -22,7 +22,7 @@ export function Plan() {
   const [searchParams] = useSearchParams();
 
   const handleWeekSet = useCallback((newWeek: number) => {
-    navigate(`../week/${newWeek}/plan?${searchParams}`, { replace: true });
+    navigate(`../week/plan?${searchParams}`, { replace: true });
     setWeek(newWeek);
   }, [setWeek, navigate, searchParams]);
 

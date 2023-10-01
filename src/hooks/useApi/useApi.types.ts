@@ -5,7 +5,7 @@ import {
     RequestProcessor,
 } from "../../api";
 import {
-    Schedule,
+    Schedule, ScheduleWeek,
 } from "../../types";
 
 export interface Api {
@@ -44,6 +44,13 @@ export interface Api {
      *
      * @returns The Schedule data if successful.
      */
-    getSchedule: () => Promise<ApiResponse<ApiResponseData<Schedule>>>;
+    getSchedule: () => Promise<ApiResponse<Schedule>>;
+
+    /**
+     * Get the schedule items for a given week.
+     *
+     * @returns The Schedule week item data if successful.
+     */
+    getScheduleWeek: (weekNumber: number) => Promise<ApiResponse<ScheduleWeek>>
 
 }

@@ -9,11 +9,6 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   server: {
-    watch: {
-      // https://vitejs.dev/config/server-options.html#server-watch
-      // This has BAD performance but is the only way to HMR with WSL2 / DevContainers
-      usePolling: true
-    },
     port: 3000,
   },
   envPrefix: "REACT_APP_",
