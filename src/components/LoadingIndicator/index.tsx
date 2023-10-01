@@ -1,14 +1,15 @@
+import { ITheme } from "common/App";
 import "./loadingIndicator.css";
 
 import { styled } from "@mui/material/styles";
 
-const CenterContentWrapper = styled("div")`
+const CenterContentWrapper = styled("div")(({ theme }) => `
   height: 100%;
-
+  background-color: ${(theme as ITheme).palette.secondary.light}
   display: grid;
   place-content: center;
   place-items: center;
-`;
+`);
 
 /**
  * A simple indeterminate loading indicator.

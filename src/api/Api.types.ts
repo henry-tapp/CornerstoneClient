@@ -14,16 +14,14 @@ export interface ApiProviderProps {
   culture?: string;
 }
 
-export interface ApiResponseData<TData> {
+export interface ApiResponseData {
   time?: string;
   expires_at?: string;
   expires_in?: number;
-  data: TData;
 }
 
-export interface ApiListResponse<TData> extends Omit<ApiResponseData<TData extends {} ? TData : never>, "data"> {
+export interface ApiListResponse extends ApiResponseData {
   count?: number | null;
-  items?: TData[];
 }
 
 export interface Annotation {

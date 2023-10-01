@@ -6,11 +6,19 @@ export interface Item {
     variation: WorkoutVariation;
     exercises: number;
     estimatedCompletionMinutes: number;
+    state: ItemState
 }
 
-export type WeekDay = typeof WeekDays[number];
+export type ItemState = "todo" | "partial" | "complete";
 
-export const WeekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+export type WeekDay = typeof days[number];
+
+
+export const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+export const daysShort = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"];
+export const WeekDays = days as WeekDay[];
+
+export const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export type WorkoutType = "Strength & Power" | "Conditioning" | "Fingerboard" | "Aerobic Base" | "Power Endurance";
 
@@ -33,6 +41,7 @@ export interface Exercise extends Omit<Item, "exericses" | "variation"> {
     setRest: number;
 }
 
+export type WeekDayItems = Record<WeekDay, Item[]>;
 
 export const workoutVariations = [
     { Name: "Strength & Power", Color: "#653E63" },

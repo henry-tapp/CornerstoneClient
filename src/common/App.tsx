@@ -38,6 +38,8 @@ import type { } from "@mui/lab/themeAugmentation";
 import type { } from "@mui/material/themeCssVarsAugmentation";
 import { QueryProvider } from "./RockdQueryProvider";
 import { ResponsiveRootLayout } from "components/ResponsiveRootLayout";
+import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
+import { IntlProvider } from "react-intl";
 
 declare module "@mui/material/styles" {
   // Example for adding custom palette options and supporting it in TypeScript
@@ -61,12 +63,13 @@ declare module "@mui/material/styles" {
  */
 
 interface IPalette extends Palette {
+
   tertiary: {
     main: string;
     dark: string;
     light: string;
-    extraLight?: string;
   };
+
   shades: {
     g0: string;
     g1: string;
@@ -89,23 +92,18 @@ export interface IThemeOptions extends ThemeOptions {
 const theme = extendTheme({
   // We're no longer using a custom prefix, so it's --mui-xxx
   typography: {
-    fontFamily: [
-      "-apple-system",
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-    ].join(","),
     h1: {
       fontSize: "2.125rem",
       fontStyle: "normal",
-      fontWeight: "300",
-      lineHeight: "4.5rem",
+      fontWeight: "800",
+      lineHeight: "2rem",
+      letterSpacing: "0.05rem",
     },
     h2: {
       fontSize: "2.125rem",
       fontStyle: "normal",
-      fontWeight: "300",
-      lineHeight: "3rem",
+      fontWeight: "500",
+      lineHeight: "2rem",
       letterSpacing: "0.015rem",
     },
     h3: {
@@ -133,7 +131,7 @@ const theme = extendTheme({
       fontStyle: "normal",
       fontWeight: "500",
       lineHeight: "1.25rem",
-      letterSpacing: "0.01rem",
+      letterSpacing: "0.02rem",
     },
     subtitle2: {
       fontSize: "0.75rem",
@@ -186,20 +184,20 @@ const theme = extendTheme({
     light: {
       palette: {
         primary: {
-          main: "#3E5641",
-          dark: "#324534",
-          light: "#779c7b",
+          main: "#262938",
+          dark: "#1c1f2b",
+          light: "#3f455e",
+          contrastText: "#D8D8D8"
         },
         secondary: {
-          main: "#D56F3E",
-          dark: "#87401d",
-          light: "#dd8c65",
+          main: "#4c3ff9",
+          dark: "#4833cc",
+          light: "#5a40ff",
         },
         tertiary: {
-          main: "#475B63",
-          dark: "#2b373b",
-          light: "#88a0aa",
-          extraLight: "#b8c6cc"
+          main: "#05eccb",
+          dark: "#04ccc9",
+          light: "#05fffc"
         },
         // Missing Accesso Tertiary
         success: {
@@ -225,10 +223,14 @@ const theme = extendTheme({
           g4: "#D8D8D8",
           g5: "#F2F2F2",
           g6: "#FFFFFF",
-        },
+        }
       },
     } as IThemeOptions,
-  }
+  },
+  transitions: {
+    // So we have `transition: none;` everywhere
+    create: () => 'none',
+  },
 });
 
 // remove the `light` color scheme to optimize the HTML size
@@ -251,6 +253,8 @@ function App({
     log.info("Version: ", import.meta.env.REACT_APP_DEPLOY_VERSION);
     log.info("Deployed: ", import.meta.env.REACT_APP_DEPLOY_TIME);
   }, []);
+
+  const [reactDevTools] = useLocalStorage("reactDevTools", false);
 
   return (
     <HelmetProvider>
@@ -276,7 +280,7 @@ function App({
                               authMethod="Bearer"
                               authToken={authData.currentToken}
                             >
-                              <ReactQueryDevtools initialIsOpen={false} />
+                              {reactDevTools && <ReactQueryDevtools initialIsOpen={false} />}
                               <CssVarsProvider
                                 theme={theme}
                                 defaultMode="light"
@@ -292,9 +296,11 @@ function App({
                                     <Suspense
                                       fallback={<FullpageLoadingIndicator />}
                                     >
-                                      <div className={className}>
-                                        {children}
-                                      </div>
+                                      <IntlProvider locale="en-Gb">
+                                        <div className={className}>
+                                          {children}
+                                        </div>
+                                      </IntlProvider>
                                     </Suspense>
                                   </SkeletonTheme>
                                 </DynamicThemeProvider>

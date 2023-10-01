@@ -14,7 +14,8 @@ if (import.meta.env.MODE === 'production') {
 }
 
 const Wrapper = styled("div")(({ theme }) => `
-    background: ${(theme as ITheme).palette.shades.g5};
+    background: ${(theme as ITheme).palette.primary.dark};
+    color: ${(theme as ITheme).palette.shades.g4};
     min-height: 100vh;
 `);
 

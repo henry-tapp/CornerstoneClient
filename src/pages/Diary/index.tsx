@@ -19,6 +19,9 @@ export function Diary() {
     <SubPage backLast>
       <PageWrapper>
         <Typography variant="h2">Diary</Typography>
+        <br />
+        <Typography variant="body1">TODO:</Typography>
+        <Typography variant="body2">Goals Section, current workout, progress etc</Typography>
       </PageWrapper>
     </SubPage>
   );

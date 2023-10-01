@@ -1,5 +1,6 @@
-import { getScheduleHandlers } from "./handlers/scheduleHandlers";
+import { getScheduleHandler, getScheduleWeekHandler } from "./handlers/scheduleHandlers";
 
 export const handlers = [
-  getScheduleHandlers(),
+  getScheduleHandler(),
+  getScheduleWeekHandler()
 ];
