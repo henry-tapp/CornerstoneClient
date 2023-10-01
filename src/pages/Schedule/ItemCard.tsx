@@ -69,9 +69,12 @@ export function ItemCard({ name, shortDescription, variation, exercises, estimat
                     <Typography variant="body1">{shortDescription}</Typography>
                 </DescriptionArea>
                 <RightArea>
-                    <Typography variant="caption">{exercises} exercise{exercises > 1 && "s"}</Typography >
-                    <Typography variant="caption"> &#8226; </Typography>
-                    <Typography variant="caption">{estimatedCompletionMinutes}m </Typography >
+                    {estimatedCompletionMinutes !== 0 && exercises && (<>
+                        <Typography variant="caption">{exercises} exercise{exercises > 1 && "s"}</Typography >
+                        <Typography variant="caption"> &#8226; </Typography>
+                        <Typography variant="caption">{estimatedCompletionMinutes}m </Typography >
+                    </>
+                    )}
                 </RightArea>
                 <LogButtonArea>
                     <IconButton><ArrowForwardIosIcon /></IconButton>
