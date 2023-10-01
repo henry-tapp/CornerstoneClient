@@ -4,8 +4,8 @@ export interface Item {
     shortDescription: string;
     description: string;
     variation: WorkoutVariation;
-    exercises: number;
-    estimatedCompletionMinutes: number;
+    exercises?: number;
+    estimatedCompletionMinutes?: number;
     state: ItemState
 }
 
@@ -20,7 +20,7 @@ export const WeekDays = days as WeekDay[];
 
 export const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-export type WorkoutType = "Strength & Power" | "Conditioning" | "Fingerboard" | "Aerobic Base" | "Power Endurance";
+export type WorkoutType = "Strength & Power" | "Conditioning" | "Fingerboard" | "Aerobic Base" | "Power Endurance" | "Fun" | "Rest";
 
 export type WorkoutTypeColor = "#3E5641" | "#F3E8EE" | "#3C787E" | "#83BCA9" | "#D56F3E" | "#A24936";
 

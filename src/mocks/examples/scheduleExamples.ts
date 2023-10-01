@@ -53,18 +53,18 @@ export function getScheduleWeek(weekNumber: number) {
       } as Item] as Item[],
       "Wednesday": [{
         id: 2,
-        name: "Pull Ups",
-        shortDescription: "Hypertrophy",
-        variation: GetVariation("Conditioning"),
+        name: "Broken 40s",
+        shortDescription: "Power Endurance protocol",
+        variation: GetVariation("Power Endurance"),
         exercises: 1,
         estimatedCompletionMinutes: 7,
         state: "complete"
       } as Item,
       {
         id: 1,
-        name: "Hamstring stretches",
-        shortDescription: "Flexibility",
-        variation: GetVariation("Conditioning"),
+        name: "ARC 30",
+        shortDescription: "Endurance building exericse",
+        variation: GetVariation("Aerobic Base"),
         exercises: 4,
         estimatedCompletionMinutes: 12,
         state: "complete"
@@ -86,59 +86,48 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 4,
         estimatedCompletionMinutes: 12,
         state: "complete"
+      } as Item,
+      {
+        id: 1,
+        name: "Kilter board",
+        shortDescription: "Strength & Power",
+        variation: GetVariation("Strength & Power"),
+        exercises: 4,
+        estimatedCompletionMinutes: 12,
+        state: "complete"
       } as Item] as Item[],
       "Friday": [{
         id: 2,
-        name: "Pull Ups",
-        shortDescription: "Hypertrophy",
-        variation: GetVariation("Conditioning"),
+        name: "Broken 40s",
+        shortDescription: "Power Endurance protocol",
+        variation: GetVariation("Power Endurance"),
         exercises: 1,
         estimatedCompletionMinutes: 7,
         state: "complete"
       } as Item,
       {
         id: 1,
-        name: "Hamstring stretches",
-        shortDescription: "Flexibility",
-        variation: GetVariation("Conditioning"),
+        name: "ARC 30",
+        shortDescription: "Endurance building exericse",
+        variation: GetVariation("Aerobic Base"),
         exercises: 4,
         estimatedCompletionMinutes: 12,
         state: "complete"
       } as Item] as Item[],
       "Saturday": [{
         id: 2,
-        name: "Pull Ups",
-        shortDescription: "Hypertrophy",
-        variation: GetVariation("Conditioning"),
-        exercises: 1,
-        estimatedCompletionMinutes: 7,
-        state: "complete"
-      } as Item,
-      {
-        id: 1,
-        name: "Hamstring stretches",
-        shortDescription: "Flexibility",
-        variation: GetVariation("Conditioning"),
-        exercises: 4,
-        estimatedCompletionMinutes: 12,
-        state: "complete"
+        name: "Rest",
+        shortDescription: "Rest is important, relax and recover!",
+        variation: GetVariation("Rest"),
+        state: "partial"
       } as Item] as Item[],
       "Sunday": [{
         id: 2,
-        name: "Pull Ups",
-        shortDescription: "Hypertrophy",
-        variation: GetVariation("Conditioning"),
+        name: "Open Climbing",
+        shortDescription: "Session for open climbing",
+        variation: GetVariation("Fun"),
         exercises: 1,
         estimatedCompletionMinutes: 7,
-        state: "complete"
-      } as Item,
-      {
-        id: 1,
-        name: "Hamstring stretches",
-        shortDescription: "Flexibility",
-        variation: GetVariation("Conditioning"),
-        exercises: 4,
-        estimatedCompletionMinutes: 12,
         state: "todo"
       } as Item] as Item[]
     } as WeekDayItems

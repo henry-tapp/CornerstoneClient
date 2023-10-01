@@ -7,15 +7,16 @@ const Wrapper = styled("div")`
   grid-gap: 0.5rem;
 `;
 
-function useDashboardItems() {
+export interface DashboardItemProps {
+  item: any;
 
 }
 
 
 
-export function DashboardItem({item} : DashboardItemProps) {
+export function DashboardItem({ item }: DashboardItemProps) {
 
-    return (
-        <Wrapper></Wrapper>
-    );
+  return (
+    <Wrapper></Wrapper>
+  );
 }

@@ -68,7 +68,11 @@ export function TodayView({ schedule }: ViewProps) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedItem, setSelectedItem] = useState<number | undefined>();
     const { data: weekData } = useScheduleWeek({ WeekNumber: selectedWeek });
-    const currentDayItems = useMemo(() => weekData?.items && findDayItems(weekData?.items, WeekDays[new Date().getDay()]), [weekData])
+    const currentDayItems = useMemo(() => {
+        let dayIndex = selectedDate.getDay();
+        return weekData?.items && findDayItems(weekData?.items, WeekDays[(dayIndex - 1 === -1) ? 6 : dayIndex - 1]);
+    }, [selectedDate, weekData]);
+
 
     const handleWeekChange = useCallback((newWeek: number) => {
         setSelectedWeek(newWeek);
