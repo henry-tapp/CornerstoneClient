@@ -51,10 +51,9 @@ const ItemWrapper = styled("div")(({ theme }) => `
 
 const RoundedLayer = styled("div")(({ theme }) => `
     background-color: ${(theme as ITheme).palette.shades.g6};
-    border-radius: 3rem;
-    height:35rem;
+    border-radius: 3rem 3rem 0 0;
+    height:100vh;
     width: 100%;
-    margin-left: 4rem;
     position:absolute;
     top: 12rem; 
 `); 
@@ -135,7 +134,7 @@ export function TodayView({ schedule }: ViewProps) {
             </Grid>
             <DayPicker weekNumber={selectedWeek} setWeek={handleWeekChange} onClick={handleClick} weekStarting={weekData?.weekStarting} weekEnding={weekData?.weekEnding} selectedDate={selectedDate} />
             <RoundedLayer/>
-            <div style={{zIndex:1, paddingTop: '2rem'}}><ItemWrapper>{currentDayItems && <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}</ItemWrapper></div>
+            <div style={{zIndex:1, padding: '0.5rem'}}><ItemWrapper>{currentDayItems && <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}</ItemWrapper></div>
             <SwipeableEdgeDrawer onClose={handleClose} ref={childRef}>
                 <div>
                     {selectedItem && (<ItemDetails itemId={selectedItem} />)}

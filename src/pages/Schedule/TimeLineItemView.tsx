@@ -15,23 +15,27 @@ export interface ItemViewProps {
 export function TimeLineView({ items, handleSelectedItem }: ItemViewProps) {
     const theme = useTheme();
 
-    return (<VerticalTimeline>
+    return (<VerticalTimeline lineColor={ `${(theme as ITheme).palette.shades.g1}`}>
         {items && items.map((item, idx2) => {
             return (
                 <VerticalTimelineElement
                     key={idx2}
                     className="vertical-timeline-element--work"
                     contentArrowStyle={{ borderRight: `0.5rem solid ${(theme as ITheme).palette.shades.g1}` }}
-                    iconStyle={{ background: (theme as ITheme).palette.tertiary.main, color: (theme as ITheme).palette.shades.g1 }}
+                    iconStyle={{ 
+                        boxShadow: `0 0 0 4px #000, inset 0 2px 0 rgba(0,0,0,.08), 0 3px 0 4px rgba(0,0,0,.05)`,
+                        background: (theme as ITheme).palette.tertiary.main, 
+                        color: (theme as ITheme).palette.shades.g1 }}
                     contentStyle={{
                         background: (theme as ITheme).palette.shades.g1,
                         color: (theme as ITheme).palette.shades.g5,
                         boxShadow: `${(theme as ITheme).palette.shades.g1} 0px 0px 20px`,
                         padding: 0,
-                        marginLeft: '5rem',
-                        marginRight: '1rem'
+                        marginLeft: '4rem',
+                        marginRight: '0.5rem'
 
                     }}
+                    
                     icon={item.state === "complete" ? <CheckBoxOutlinedIcon /> : <CheckBoxOutlineBlankRoundedIcon />}
                 >
                     <div key={idx2} onClick={() => handleSelectedItem(item.id)}>

@@ -34,8 +34,8 @@ const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     gap: '0.25rem',
-    backgroundColor: (theme as ITheme).palette.shades.g6,
-    color: (theme as ITheme).palette.secondary.dark,
+    backgroundColor: (theme as ITheme).palette.shades.g1,
+    color: (theme as ITheme).palette.tertiary.light,
 
     '&:hover, &.Mui-focusVisible': {
         backgroundColor: (theme as ITheme).palette.tertiary.light,
