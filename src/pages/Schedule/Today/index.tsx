@@ -15,7 +15,13 @@ import { addWeeksToDate } from "util/dates";
 import ItemDetails from "../ItemDetails";
 import { SwipeableDrawerType, SwipeableEdgeDrawer } from "components/Drawer";
 
-const Header = styled("div")(({ theme }) => `
+
+const Grid = styled("div")(({ theme }) => `
+    display: grid;
+    grid-template-columns: 2fr 5fr;
+`);
+
+const Column1 = styled("div")(({ theme }) => `
     grid-column: 1;
     display: flex;
     flex-wrap: wrap;
@@ -29,9 +35,30 @@ const Header = styled("div")(({ theme }) => `
     padding-bottom: 1.5rem;
 `);
 
+const Column2 = styled("div")(({ theme }) => `
+    margin: auto;
+    text-align: center;
+    grid-column: 2;
+    width: 5rem;
+    background-color: ${(theme as ITheme).palette.secondary.light};
+    border-radius:1rem;
+`);
+
 const ItemWrapper = styled("div")(({ theme }) => `
     grid-column: 2;
 `);
+
+
+const RoundedLayer = styled("div")(({ theme }) => `
+    background-color: ${(theme as ITheme).palette.shades.g6};
+    border-radius: 3rem;
+    height:35rem;
+    width: 100%;
+    margin-left: 4rem;
+    position:absolute;
+    top: 12rem; 
+`); 
+
 
 const GradientBox = styled("div")(({ theme }) => `
     position:absolute;
@@ -43,10 +70,6 @@ const GradientBox = styled("div")(({ theme }) => `
     background-image: linear-gradient(${(theme as ITheme).palette.secondary.light}, ${(theme as ITheme).palette.primary.dark});
 `);
 
-const Grid = styled("div")(({ theme }) => `
-    display: grid;
-    grid-template-columns: 2fr 5fr;
-`);
 
 
 function findDayItems(weekDayItems: WeekDayItems, weekDay: WeekDay): Item[] | undefined {
@@ -99,17 +122,20 @@ export function TodayView({ schedule }: ViewProps) {
 
     return (weekData?.weekStarting && weekData?.weekEnding && (
         <>
-            <GradientBox />
+            {/* <GradientBox /> */}
             <Grid>
-                <Header>
+                <Column1>
                     <Typography variant="subtitle1">{dayjs(selectedDate).format('DD MMMM, YYYY')}</Typography>
                     {selectedDate.getDate() === new Date().getDate() ? <Typography variant="h1">Today</Typography>
                         : (selectedDate > new Date() && (<Typography variant="h1">Schedule</Typography>))
                         || (selectedDate < new Date() && (<Typography variant="h1">Progress</Typography>))}
-                </Header>
+                        
+                </Column1>
+                <Column2><Typography variant="caption">Week {selectedWeek}</Typography></Column2>
             </Grid>
             <DayPicker weekNumber={selectedWeek} setWeek={handleWeekChange} onClick={handleClick} weekStarting={weekData?.weekStarting} weekEnding={weekData?.weekEnding} selectedDate={selectedDate} />
-            <ItemWrapper>{currentDayItems && <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}</ItemWrapper>
+            <RoundedLayer/>
+            <div style={{zIndex:1, paddingTop: '2rem'}}><ItemWrapper>{currentDayItems && <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}</ItemWrapper></div>
             <SwipeableEdgeDrawer onClose={handleClose} ref={childRef}>
                 <div>
                     {selectedItem && (<ItemDetails itemId={selectedItem} />)}

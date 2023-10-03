@@ -20,7 +20,16 @@ const Center = styled("div")`
   display: flex;
   alignItems: center;
   flexWrap: wrap;
+  text-align: center;
 `;
+
+const Column = styled('div')`
+  display: flex; 
+  justify-content: center;
+  align-items: stretch:
+  width: 100%;
+  flex-direction: column;
+`
 
 const StyledGrid = styled("div")(({ theme }) => `
     display: grid;
@@ -108,6 +117,7 @@ export function DayPicker({ weekNumber, weekStarting, weekEnding, selectedDate, 
         <IconButton size="large" disabled={weekNumber === 1} color="secondary" onClick={backbuttonHandle} ><ArrowBackIosIcon /></IconButton>
       </>
       <Center>
+        <Column>
         <StyledGrid>
           {getDaysArray(weekStarting, weekEnding).map((date, idx) => {
             return (
@@ -123,6 +133,8 @@ export function DayPicker({ weekNumber, weekStarting, weekEnding, selectedDate, 
             );
           })}
         </StyledGrid>
+        
+        </Column>
       </Center>
       <>
         <IconButton size="large" disabled={weekNumber === 12} color="secondary" onClick={forwardButtonHandle}><ArrowForwardIosIcon /></IconButton>

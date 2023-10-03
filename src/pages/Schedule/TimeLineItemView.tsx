@@ -1,9 +1,6 @@
-import { styled, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
 import { Item } from "types/Item";
-import { ItemCardSmall } from "./ItemCardSmall";
 import { ItemCard } from "./ItemCard";
-import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import { LinkPersistQuery } from "components/LinkPersistQuery";
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
 import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
@@ -15,31 +12,6 @@ export interface ItemViewProps {
     handleSelectedItem: (itemId: number) => void;
 }
 
-const ItemCardWrapper = styled("div")`
-    display: grid;
-    padding: 1rem;
-    gap: 1rem;
-`;
-
-export function ItemView({ items }: ItemViewProps) {
-
-    const [Condensed] = useLocalStorage("Condensed", true);
-
-    return (
-        <ItemCardWrapper>
-            {items && items.map((item, idx2) => {
-                return (
-                    <LinkPersistQuery key={idx2} pathname={`../schedule/item/${item.id}`}>
-                        {(Condensed
-                            ? <ItemCardSmall {...item} />
-                            : <ItemCard {...item} />)}
-                    </LinkPersistQuery>);
-            })}
-        </ItemCardWrapper>);
-}
-
-export default ItemView;
-
 export function TimeLineView({ items, handleSelectedItem }: ItemViewProps) {
     const theme = useTheme();
 
@@ -49,13 +21,16 @@ export function TimeLineView({ items, handleSelectedItem }: ItemViewProps) {
                 <VerticalTimelineElement
                     key={idx2}
                     className="vertical-timeline-element--work"
-                    contentArrowStyle={{ borderRight: `0.5rem solid ${(theme as ITheme).palette.tertiary.main}` }}
+                    contentArrowStyle={{ borderRight: `0.5rem solid ${(theme as ITheme).palette.shades.g1}` }}
                     iconStyle={{ background: (theme as ITheme).palette.tertiary.main, color: (theme as ITheme).palette.shades.g1 }}
                     contentStyle={{
-                        background: (theme as ITheme).palette.shades.g5,
-                        color: (theme as ITheme).palette.shades.g1,
-                        boxShadow: `${(theme as ITheme).palette.secondary.dark} 0px 0px 20px`,
-                        padding: 0
+                        background: (theme as ITheme).palette.shades.g1,
+                        color: (theme as ITheme).palette.shades.g5,
+                        boxShadow: `${(theme as ITheme).palette.shades.g1} 0px 0px 20px`,
+                        padding: 0,
+                        marginLeft: '5rem',
+                        marginRight: '1rem'
+
                     }}
                     icon={item.state === "complete" ? <CheckBoxOutlinedIcon /> : <CheckBoxOutlineBlankRoundedIcon />}
                 >
