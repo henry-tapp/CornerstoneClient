@@ -1,7 +1,7 @@
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 
 import { IconButton, IconButtonProps } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 
 import HomeIcon from '@mui/icons-material/Home';
 import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
@@ -14,7 +14,8 @@ const NavBarContainer = styled("div")(
     grid-template-columns: 1fr 1fr  1fr;
     position: fixed;
     overflow:hidden;
-    padding-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
     bottom: 0;
     width: 100%;
 `);
@@ -51,8 +52,10 @@ const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
 
 export function Bar() {
 
+    const theme = useTheme();
+
     return (
-        <NavBarContainer data-testid="navbar" className="wrapper-nav-bar">
+        <NavBarContainer style={{background: (theme as ITheme).palette.shades.g1}} data-testid="navbar" className="wrapper-nav-bar">
             <NavBarLinkPersistQuery pathname="/home" activeOnEmpty>
                 <IconButtonStyle><HomeIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>

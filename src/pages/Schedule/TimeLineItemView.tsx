@@ -6,6 +6,7 @@ import 'react-vertical-timeline-component/style.min.css';
 import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { ITheme } from "common/App";
+import "./timeline.css"
 
 export interface ItemViewProps {
     items?: Item[];
@@ -15,7 +16,7 @@ export interface ItemViewProps {
 export function TimeLineView({ items, handleSelectedItem }: ItemViewProps) {
     const theme = useTheme();
 
-    return (<VerticalTimeline lineColor={ `${(theme as ITheme).palette.shades.g1}`}>
+    return (<VerticalTimeline className="verticalClass">
         {items && items.map((item, idx2) => {
             return (
                 <VerticalTimelineElement

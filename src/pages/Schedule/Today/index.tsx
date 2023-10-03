@@ -39,8 +39,9 @@ const Column2 = styled("div")(({ theme }) => `
     margin: auto;
     text-align: center;
     grid-column: 2;
-    width: 5rem;
-    background-color: ${(theme as ITheme).palette.secondary.light};
+    width: 8rem;
+    background-color: ${(theme as ITheme).palette.shades.g6};
+    color: ${(theme as ITheme).palette.shades.g0};
     border-radius:1rem;
 `);
 
@@ -51,13 +52,34 @@ const ItemWrapper = styled("div")(({ theme }) => `
 
 const RoundedLayer = styled("div")(({ theme }) => `
     background-color: ${(theme as ITheme).palette.shades.g6};
-    border-radius: 3rem 3rem 0 0;
+    border-radius: 3rem 0 0 0;
     height:100vh;
     width: 100%;
     position:absolute;
     top: 12rem; 
 `); 
 
+
+const RoundedLayer2 = styled("div")(({ theme }) => `
+    background-color: ${(theme as ITheme).palette.shades.g6};
+    border-radius: 1rem 3rem 0 1rem;
+    height:50vh;
+    width:5rem;
+    position:absolute;
+    top: 3rem;
+    right: -4rem;
+`); 
+
+const Pseudo = styled("div")(({ theme }) => `
+    background-color: transparent;
+    border-radius: 0 0 3rem 0;
+    height:5rem;
+    width:5rem;
+    position:absolute;
+    top: 7rem;
+    right: 1rem;
+    box-shadow:  1rem 1rem 0  0 ${(theme as ITheme).palette.shades.g6};
+`); 
 
 const GradientBox = styled("div")(({ theme }) => `
     position:absolute;
@@ -70,6 +92,16 @@ const GradientBox = styled("div")(({ theme }) => `
 `);
 
 
+const DateWrapper = styled("div")(({ theme }) => `
+  margin: auto;
+  text-align: left;
+  padding-left:2rem;
+  padding-top:3rem;
+  width:100%;
+  color: ${(theme as ITheme).palette.shades.g1};
+  position:relative;
+  z-index:3;
+`);
 
 function findDayItems(weekDayItems: WeekDayItems, weekDay: WeekDay): Item[] | undefined {
 
@@ -121,10 +153,11 @@ export function TodayView({ schedule }: ViewProps) {
 
     return (weekData?.weekStarting && weekData?.weekEnding && (
         <>
-            {/* <GradientBox /> */}
+            <GradientBox />
             <Grid>
                 <Column1>
-                    <Typography variant="subtitle1">{dayjs(selectedDate).format('DD MMMM, YYYY')}</Typography>
+                <Typography variant="caption">{dayjs(selectedDate).format('DD MMMM, YYYY')}</Typography>
+             
                     {selectedDate.getDate() === new Date().getDate() ? <Typography variant="h1">Today</Typography>
                         : (selectedDate > new Date() && (<Typography variant="h1">Schedule</Typography>))
                         || (selectedDate < new Date() && (<Typography variant="h1">Progress</Typography>))}
@@ -133,8 +166,14 @@ export function TodayView({ schedule }: ViewProps) {
                 <Column2><Typography variant="caption">Week {selectedWeek}</Typography></Column2>
             </Grid>
             <DayPicker weekNumber={selectedWeek} setWeek={handleWeekChange} onClick={handleClick} weekStarting={weekData?.weekStarting} weekEnding={weekData?.weekEnding} selectedDate={selectedDate} />
+           
+            <DateWrapper>
+                <Typography variant="h1">{dayjs(selectedDate).format('dddd')}</Typography>
+            </DateWrapper>
             <RoundedLayer/>
-            <div style={{zIndex:1, padding: '0.5rem'}}><ItemWrapper>{currentDayItems && <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}</ItemWrapper></div>
+            <RoundedLayer2/>
+            <Pseudo />
+            <div style={{zIndex:1, paddingTop: "3rem", padding: '0.5rem'}}><ItemWrapper>{currentDayItems && <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}</ItemWrapper></div>
             <SwipeableEdgeDrawer onClose={handleClose} ref={childRef}>
                 <div>
                     {selectedItem && (<ItemDetails itemId={selectedItem} />)}
