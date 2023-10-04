@@ -15,7 +15,6 @@ import { addWeeksToDate } from "util/dates";
 import ItemDetails from "../ItemDetails";
 import { SwipeableDrawerType, SwipeableEdgeDrawer } from "components/Drawer";
 
-
 const Grid = styled("div")(({ theme }) => `
     display: grid;
     grid-template-columns: 2fr 5fr;
@@ -36,13 +35,18 @@ const Column1 = styled("div")(({ theme }) => `
 `);
 
 const Column2 = styled("div")(({ theme }) => `
-    margin: auto;
     text-align: center;
     grid-column: 2;
-    width: 8rem;
+    padding-right:3rem;
+    padding-top:0.75rem;
+`);
+
+const WeekSelector = styled("div")(({ theme }) => `
     background-color: ${(theme as ITheme).palette.shades.g6};
     color: ${(theme as ITheme).palette.shades.g0};
     border-radius:1rem;
+    width:8rem;
+    float:right;
 `);
 
 const ItemWrapper = styled("div")(({ theme }) => `
@@ -92,17 +96,6 @@ const GradientBox = styled("div")(({ theme }) => `
 `);
 
 
-const DateWrapper = styled("div")(({ theme }) => `
-  margin: auto;
-  text-align: left;
-  padding-left:2rem;
-  padding-top:3rem;
-  width:100%;
-  color: ${(theme as ITheme).palette.shades.g1};
-  position:relative;
-  z-index:3;
-`);
-
 function findDayItems(weekDayItems: WeekDayItems, weekDay: WeekDay): Item[] | undefined {
 
     return (Object.entries(weekDayItems)).find(key => key[0] === weekDay)?.[1];
@@ -143,12 +136,13 @@ export function TodayView({ schedule }: ViewProps) {
         setSelectedItem(itemId);
 
         if (!childRef.current?.isOpen) {
-            childRef.current?.toggleDrawer()
+            childRef.current?.toggleDrawer();
         }
     }, []);
 
     const handleClose = useCallback(() => {
         setSelectedItem(undefined);
+        childRef.current?.toggleDrawer();
     }, []);
 
     return (weekData?.weekStarting && weekData?.weekEnding && (
@@ -156,27 +150,22 @@ export function TodayView({ schedule }: ViewProps) {
             <GradientBox />
             <Grid>
                 <Column1>
-                <Typography variant="caption">{dayjs(selectedDate).format('DD MMMM, YYYY')}</Typography>
-             
+                <Typography variant="caption">{dayjs(selectedDate).format('MMMM, YYYY')}</Typography>
                     {selectedDate.getDate() === new Date().getDate() ? <Typography variant="h1">Today</Typography>
                         : (selectedDate > new Date() && (<Typography variant="h1">Schedule</Typography>))
                         || (selectedDate < new Date() && (<Typography variant="h1">Progress</Typography>))}
                         
                 </Column1>
-                <Column2><Typography variant="caption">Week {selectedWeek}</Typography></Column2>
+                <Column2><WeekSelector><Typography variant="caption">Week {selectedWeek}</Typography></WeekSelector></Column2>
             </Grid>
             <DayPicker weekNumber={selectedWeek} setWeek={handleWeekChange} onClick={handleClick} weekStarting={weekData?.weekStarting} weekEnding={weekData?.weekEnding} selectedDate={selectedDate} />
-           
-            <DateWrapper>
-                <Typography variant="h1">{dayjs(selectedDate).format('dddd')}</Typography>
-            </DateWrapper>
             <RoundedLayer/>
             <RoundedLayer2/>
             <Pseudo />
-            <div style={{zIndex:1, paddingTop: "3rem", padding: '0.5rem'}}><ItemWrapper>{currentDayItems && <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}</ItemWrapper></div>
+            <div style={{zIndex:1, paddingTop: "1rem", padding: '0.5rem'}}><ItemWrapper>{currentDayItems && <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}</ItemWrapper></div>
             <SwipeableEdgeDrawer onClose={handleClose} ref={childRef}>
                 <div>
-                    {selectedItem && (<ItemDetails itemId={selectedItem} />)}
+                    {selectedItem && (<ItemDetails onBack={handleClose} itemId={selectedItem} />)}
                 </div>
             </SwipeableEdgeDrawer>
         </ >));

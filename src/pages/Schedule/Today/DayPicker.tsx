@@ -7,29 +7,12 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import 'react-indiana-drag-scroll/dist/style.css';
 
 const Wrapper = styled("div")(({ theme }) => `
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
   overflow: hidden;
   justify-items: center;
   align-items: center;
   background-position: center;
+  padding-inline: 1.5rem 1.5rem;
 `);
-
-const Center = styled("div")`
-  margin: auto;
-  display: flex;
-  alignItems: center;
-  flexWrap: wrap;
-  text-align: center;
-`;
-
-const Column = styled('div')`
-  display: flex; 
-  justify-content: center;
-  align-items: stretch:
-  width: 100%;
-  flex-direction: column;
-`
 
 const StyledGrid = styled("div")(({ theme }) => `
     display: grid;
@@ -113,18 +96,13 @@ export function DayPicker({ weekNumber, weekStarting, weekEnding, selectedDate, 
 
   return (
     <Wrapper>
-      <>
-        <IconButton size="large" disabled={weekNumber === 1} color="secondary" onClick={backbuttonHandle} ><ArrowBackIosIcon /></IconButton>
-      </>
-      <Center>
-        <Column>
         <StyledGrid>
           {getDaysArray(weekStarting, weekEnding).map((date, idx) => {
             return (
               <GridItemContainer key={idx} data-datevalue={date} onClick={(e: React.MouseEvent<HTMLElement>) => onClick(new Date(e.currentTarget.dataset.datevalue ?? selectedDate))}>
                 <FlexColumn selected={selectedDate.getDay() === date.getDay()}>
                   <DateTypographies>
-                    <Typography variant="overline">{date.getDate()}</Typography>
+                    <Typography variant="caption">{date.getDate()}</Typography>
                     <Typography variant="overline">{date.toLocaleDateString(intl.locale, { weekday: 'short' })}</Typography>
                   </DateTypographies>
                   {selectedDate.getDay() === date.getDay() && (<OvalHighlight />)}
@@ -133,12 +111,6 @@ export function DayPicker({ weekNumber, weekStarting, weekEnding, selectedDate, 
             );
           })}
         </StyledGrid>
-        
-        </Column>
-      </Center>
-      <>
-        <IconButton size="large" disabled={weekNumber === 12} color="secondary" onClick={forwardButtonHandle}><ArrowForwardIosIcon /></IconButton>
-      </>
     </Wrapper>
   );
 }

@@ -9,6 +9,18 @@ import { Exercise, GetVariation, ItemGroup } from "types/Item";
 import StockExerciseImage from '../../images/StockImageThin.jpg'
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 
+
+import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
+const BackIconWrapper = styled(IconButton)(
+  ({ theme }) => `
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(186, 186, 186, 0.75);
+`
+);
+
 const PageWrapper = styled("div")(({ theme }) => `
 
     background-color: ${(theme as ITheme).palette.shades.g5};
@@ -64,15 +76,19 @@ function useMockData() {
 
 export interface ItemDetailProps {
     itemId: number;
+    onBack?:  () => void;
 }
 
 
 export function ItemDetails(props: ItemDetailProps) {
 
+    const { onBack } = props;
+    
     const itemData = useMockData();
 
     return (
         <PageWrapper>
+          {onBack && (<BackIconWrapper onClick={onBack}><KeyboardBackspaceOutlinedIcon /></BackIconWrapper>)}
             <ImageArea src={StockExerciseImage} alt=""></ImageArea>
             <ButtonBar>
                 <IconButtonStyle><TimerIcon /><Typography style={{ fontWeight: "bold" }} variant="caption">Start Workout</Typography></IconButtonStyle>

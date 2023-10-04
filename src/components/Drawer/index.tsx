@@ -15,7 +15,6 @@ interface DrawerProps {
 }
 
 const Root = styled('div')(({ theme }) => ({
-    height: '150%',
     backgroundColor: (theme as ITheme).palette.shades.g5
 }));
 
@@ -47,7 +46,7 @@ export const SwipeableEdgeDrawer = forwardRef<SwipeableDrawerType, DrawerProps>(
             <Global
                 styles={{
                     '.MuiDrawer-root > .MuiPaper-root': {
-                        height: `calc(50% - ${drawerBleeding}px)`,
+                        height: '100%',
                         overflow: 'visible',
                         backgroundColor: '#0e0f15'
                     },
@@ -66,7 +65,6 @@ export const SwipeableEdgeDrawer = forwardRef<SwipeableDrawerType, DrawerProps>(
             >
                 <StyledBox
                     sx={{
-                        marginTop: '-10rem',
                         height: '100vh',
                         overflow: 'auto',
                         borderRadius: '1rem 1rem 0 0'

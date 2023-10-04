@@ -83,22 +83,3 @@ export function ItemCard({ name, shortDescription, variation, exercises, estimat
         </ItemCardGridContainer>
     );
 }
-
-
-// const ItemImage = styled("img")(({ theme }) => `
-//     grid-column: 1;
-//     grid-row: 2 / span 3;
-//     height: 6rem;
-//     margin: 0.5rem;
-//     border: 0.1rem solid ${(theme as ITheme).palette.shades.g4};
-//     border-radius: 0.5rem;
-// `);
-
-// const TypeArea = styled("div")(
-//     ({ color }) => `
-//     margin-top: 0.5rem;
-//     margin-bottom: 0.5rem;
-//     height: 6rem;
-//     background: ${color};
-//     width: 0.2rem;
-// `);
