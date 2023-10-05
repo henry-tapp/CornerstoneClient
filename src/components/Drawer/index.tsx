@@ -65,7 +65,7 @@ export const SwipeableEdgeDrawer = forwardRef<SwipeableDrawerType, DrawerProps>(
             >
                 <StyledBox
                     sx={{
-                        height: '100vh',
+                        height: '100%',
                         overflow: 'auto',
                         borderRadius: '1rem 1rem 0 0'
                     }}

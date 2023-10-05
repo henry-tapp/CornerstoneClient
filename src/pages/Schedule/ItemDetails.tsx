@@ -1,12 +1,11 @@
 import { IconButton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { SubPage } from "pages/Navigation/SubPage";
 
 import TimerIcon from '@mui/icons-material/Timer';
 import { ITheme } from "common/App";
 import { Exercise, GetVariation, ItemGroup } from "types/Item";
 
-import StockExerciseImage from '../../images/StockImageThin.jpg'
+import StockExerciseImage from '../../images/gen/real-bw-boulderer-2.jpeg'
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 
 

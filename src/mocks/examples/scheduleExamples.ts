@@ -16,7 +16,9 @@ export function getScheduleWeek(weekNumber: number) {
 
   let schedule = getSchedule();
 
-  let weekStarting = getMonday(addWeeksToDate(schedule.weekStarting, weekNumber));
+  let weekStarting = (weekNumber === 1) 
+    ? schedule.weekStarting 
+    : getMonday(addWeeksToDate(schedule.weekStarting, weekNumber));
   let weekEnding = addDaysToDate(weekStarting, 6);
   return {
     peakWeek: true,

@@ -9,7 +9,6 @@ import 'react-indiana-drag-scroll/dist/style.css';
 const Wrapper = styled("div")(({ theme }) => `
   overflow: hidden;
   justify-items: center;
-  align-items: center;
   background-position: center;
   padding-inline: 1.5rem 1.5rem;
 `);

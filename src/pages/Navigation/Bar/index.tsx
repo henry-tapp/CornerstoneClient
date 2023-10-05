@@ -11,7 +11,7 @@ import { ITheme } from "common/App";
 const NavBarContainer = styled("div")(
     ({ theme }) => `
     display: grid;
-    grid-template-columns: 1fr 1fr  1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     position: fixed;
     overflow:hidden;
     padding-bottom: 0.5rem;
