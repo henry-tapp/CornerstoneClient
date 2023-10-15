@@ -13,15 +13,16 @@ const NavBarContainer = styled("div")(
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     position: fixed;
-    overflow:hidden;
-    padding-bottom: 0.5rem;
-    padding-top: 1rem;
+    overflow: hidden;
+    padding-bottom: 0.75rem;
+    padding-top: 0.5rem;
     bottom: 0;
     width: 100%;
     background-color: ${(theme as ITheme).palette.primary.dark};
-    border-radius: 1.5rem 1.5rem 0 0 ;
+    border-radius: 1rem 1rem 0 0 ;
     z-index:200;
 `);
+
 
 const NavBarLinkPersistQuery = styled(LinkPersistQuery)(
     ({ theme }) => `
@@ -51,10 +52,7 @@ const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
     }
 }));
 
-
 export function Bar() {
-
-    const theme = useTheme();
 
     return (
         <NavBarContainer data-testid="navbar" className="wrapper-nav-bar">

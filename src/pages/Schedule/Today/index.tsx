@@ -1,12 +1,10 @@
 import { Item, WeekDay, WeekDayItems, WeekDays } from "types/Item";
 import { useScheduleWeek } from "hooks/useSchedule/useSchedule";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Typography, styled } from "@mui/material";
+import { IconButton, Typography, styled } from "@mui/material";
 import { DayPicker } from "./DayPicker";
-import dayjs from 'dayjs';
 import { TimeLineView } from "../TimeLineItemView";
 import { ITheme } from "common/App";
-import 'react-indiana-drag-scroll/dist/style.css';
 import { useQueryClient } from "@tanstack/react-query";
 import { Queries } from "api";
 import { addWeeksToDate, getCurrentWeek } from "util/dates";
@@ -14,8 +12,12 @@ import ItemDetails from "../ItemDetails";
 import { SwipeableDrawerType, SwipeableEdgeDrawer } from "components/Drawer";
 import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import WeekSelector from "./WeekSelector";
 import { Schedule } from "types";
+import dayjs from 'dayjs';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import WeekSelector from "./WeekSelector";
+import 'react-indiana-drag-scroll/dist/style.css';
+import { LinkPersistQuery } from "components/LinkPersistQuery";
 
 const Wrapper = styled("div")(({ theme }) => `
     max-height: calc(100vh - 2rem);
@@ -39,22 +41,24 @@ const DayPickerWrapper = styled("div")(({ theme }) => `
 const Toolbar = styled("div")(({ theme }) => `
     padding-inline: 0.5rem 0.5rem;
     padding-top:1.5rem;
+    display: flex;
+    margin-left: auto;
+    justify-content: flex-end;
+    gap: 0.5rem;
+
 `);
 
-const WeekButton = styled("div")(({ theme }) => `
+const ToolbarButton = styled("div")(({ theme }) => `
     display: flex;
+    justify-content: center;
     align-items: center;
     text-align:center;
-    justify-content: center;
     height:2rem;
     background-color: ${(theme as ITheme).palette.shades.g1};
     color: ${(theme as ITheme).palette.shades.g5};
     border-radius: 1rem;
-    margin-left: auto;
-    width:8rem;
     position:relative;
     z-index:3; 
-    margin-right: 1rem;
 `);
 
 const WeekSelectorWrapper = styled("div")(({ theme }) => `
@@ -71,6 +75,7 @@ const ItemWrapper = styled("div")(({ theme }) => `
     position:relative;
     z-index: 3;
     height: 100%;
+    padding-bottom: 3rem;
     overflow-y: scroll;
 `);
 
@@ -83,7 +88,7 @@ export function TodayView(schedule: Schedule) {
 
     const queryClient = useQueryClient();
     const currentWeek = useMemo(() => (!!schedule.weekStarting) ? getCurrentWeek(new Date(schedule.weekStarting)) : 1, [schedule]);
-    
+
     const [weekSelectorOpenState, setWeekSelectorOpenState] = useState<boolean>(false);
     const [selectedWeek, setSelectedWeek] = useLocalStorage("navigatedWeek", currentWeek);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -99,11 +104,11 @@ export function TodayView(schedule: Schedule) {
     const handleWeekChange = useCallback((newWeek: number) => {
         setSelectedWeek(newWeek);
         queryClient.invalidateQueries(Queries.getScheduleWeek(newWeek));
-        setSelectedDate(new Date((newWeek === 1) 
-            ? schedule.weekStarting 
+        setSelectedDate(new Date((newWeek === 1)
+            ? schedule.weekStarting
             : addWeeksToDate(new Date(schedule.weekStarting), newWeek)));
         console.log(selectedDate);
-    }, [setSelectedWeek, setSelectedDate, schedule, queryClient]);
+    }, [setSelectedWeek, selectedDate, setSelectedDate, schedule, queryClient]);
 
     const handleClick = useCallback((newDate: Date) => {
         setSelectedDate(newDate);
@@ -131,28 +136,34 @@ export function TodayView(schedule: Schedule) {
         <Wrapper>
             <GradientBox />
             <ColumnStackFlexBox>
-            <Header>
-                <Typography variant="caption">{dayjs(selectedDate).format('D MMMM, YYYY')}</Typography>
-                {selectedDate.getDate() === new Date().getDate() 
-                    ? <Typography variant="h1">Today</Typography>
-                    : (<Typography variant="h1">{dayjs(selectedDate).format('dddd')}</Typography>)}
-            </Header>
+                <Header>
+                    <Typography variant="caption">{dayjs(selectedDate).format('D MMMM, YYYY')}</Typography>
+                    {selectedDate.getDate() === new Date().getDate()
+                        ? <Typography variant="h1">Today</Typography>
+                        : (<Typography variant="h1">{dayjs(selectedDate).format('dddd')}</Typography>)}
+                </Header>
             </ColumnStackFlexBox>
             <DayPickerWrapper><DayPicker weekNumber={selectedWeek} setWeek={handleWeekChange} onClick={handleClick} weekStarting={weekData?.weekStarting} weekEnding={weekData?.weekEnding} selectedDate={selectedDate} /></DayPickerWrapper>
-            <RoundedLayer/>
-            <RoundedLayer2/>
+            <RoundedLayer />
+            <RoundedLayer2 />
             <Pseudo />
             <Toolbar>
-                <WeekButton onClick={() => handleWeekSelectorToggle(!weekSelectorOpenState)}>
+                <ToolbarButton style={{ width: "2rem" }}>
+                    <LinkPersistQuery pathname="/manage">
+                        <IconButton><ScheduleIcon style={{ color: "white" }} /></IconButton>
+                    </LinkPersistQuery>
+                </ToolbarButton>
+                <ToolbarButton style={{ width: "7rem", marginRight: "1rem" }} onClick={() => handleWeekSelectorToggle(!weekSelectorOpenState)}>
                     <Typography variant="caption">Week {selectedWeek} </Typography>
-                </WeekButton>
-                {!!weekSelectorOpenState && (
-                    <WeekSelectorWrapper>
-                        <WeekSelector schedule={schedule} onChange={handleWeekChange} /> 
-                    </WeekSelectorWrapper>
-                )}
+                </ToolbarButton>
+
             </Toolbar>
-            <ItemWrapper>{currentDayItems && 
+            {!!weekSelectorOpenState && (
+                <WeekSelectorWrapper>
+                    <WeekSelector schedule={schedule} onChange={handleWeekChange} />
+                </WeekSelectorWrapper>
+            )}
+            <ItemWrapper>{currentDayItems &&
                 <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}
             </ItemWrapper>
             <SwipeableEdgeDrawer onClose={handleClose} ref={childRef}>

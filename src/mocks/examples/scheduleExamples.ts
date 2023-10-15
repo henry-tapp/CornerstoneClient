@@ -16,8 +16,8 @@ export function getScheduleWeek(weekNumber: number) {
 
   let schedule = getSchedule();
 
-  let weekStarting = (weekNumber === 1) 
-    ? schedule.weekStarting 
+  let weekStarting = (weekNumber === 1)
+    ? schedule.weekStarting
     : getMonday(addWeeksToDate(schedule.weekStarting, weekNumber));
   let weekEnding = addDaysToDate(weekStarting, 6);
   return {
@@ -86,6 +86,15 @@ export function getScheduleWeek(weekNumber: number) {
         shortDescription: "Flexibility",
         variation: GetVariation("Conditioning"),
         exercises: 4,
+        estimatedCompletionMinutes: 12,
+        state: "complete"
+      } as Item,
+      {
+        id: 1,
+        name: "Hangboard",
+        shortDescription: "Strength & Power",
+        variation: GetVariation("Conditioning"),
+        exercises: 2,
         estimatedCompletionMinutes: 12,
         state: "complete"
       } as Item,

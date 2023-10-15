@@ -21,7 +21,7 @@ const ItemCardGridContainer = styled("div")(
     position:relative;
 `);
 
-const TextArea = styled("div")`
+const CardGrid = styled("div")`
     display: grid;
     grid-template-columns: 3fr 1fr 3fr;
     text-align: left;
@@ -34,7 +34,7 @@ const HeaderArea = styled("div")`
 `
 
 const DescriptionArea = styled("div")`
-    grid-column: 1 / span 2;
+    grid-column: 1 / span 3;
     grid-row: 2;
 `
 
@@ -60,7 +60,7 @@ export function ItemCard({ name, shortDescription, variation, exercises, estimat
         <ItemCardGridContainer className="itemcard-container" >
             {/* <ItemImage src={imageSrc ?? img} alt={"No Image found"}></ItemImage> */}
             {/* <TypeArea color={variation.Color ?? "#241623"}></TypeArea> */}
-            <TextArea>
+            <CardGrid>
                 <HeaderArea>
                     <Typography variant="h4" style={{ fontWeight: "bold" }}>{name}</Typography>
                 </HeaderArea>
@@ -77,9 +77,9 @@ export function ItemCard({ name, shortDescription, variation, exercises, estimat
                     )}
                 </RightArea>
                 <LogButtonArea>
-                    <IconButton><ArrowForwardIosIcon /></IconButton>
+                    <IconButton style={{ color: "white" }}><ArrowForwardIosIcon /></IconButton>
                 </LogButtonArea>
-            </TextArea>
+            </CardGrid>
         </ItemCardGridContainer>
     );
 }
