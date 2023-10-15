@@ -5,7 +5,7 @@ import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
 import { useScheduleWeek } from "hooks/useSchedule/useSchedule";
 import { Typography, styled } from "@mui/material";
 import { ITheme } from "common/App";
-import { ColumnStackFlexBox } from "../styles";
+import { ColumnStackFlexBox } from "../../../style/styles";
 import BarChartIcon from '@mui/icons-material/BarChart';
 import { Schedule } from "types";
 import { getCurrentWeek } from "util/dates";

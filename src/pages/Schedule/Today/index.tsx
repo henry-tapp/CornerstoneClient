@@ -12,13 +12,13 @@ import { Queries } from "api";
 import { addWeeksToDate, getCurrentWeek } from "util/dates";
 import ItemDetails from "../ItemDetails";
 import { SwipeableDrawerType, SwipeableEdgeDrawer } from "components/Drawer";
-import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../styles";
+import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
 import WeekSelector from "./WeekSelector";
 import { Schedule } from "types";
 
 const Wrapper = styled("div")(({ theme }) => `
-    max-height: calc(100vh - 3rem);
+    max-height: calc(100vh - 2rem);
 `);
 
 const Header = styled("div")(({ theme }) => `
@@ -53,7 +53,7 @@ const WeekButton = styled("div")(({ theme }) => `
     margin-left: auto;
     width:8rem;
     position:relative;
-    z-index:1; 
+    z-index:3; 
     margin-right: 1rem;
 `);
 
@@ -61,7 +61,7 @@ const WeekSelectorWrapper = styled("div")(({ theme }) => `
     position:relative;
     border-radius: 0.25rem;
     padding-top:1rem;
-    z-index:0;
+    z-index:3;
 `);
 
 const ItemWrapper = styled("div")(({ theme }) => `
@@ -69,7 +69,7 @@ const ItemWrapper = styled("div")(({ theme }) => `
     padding:0.5rem;
     padding-top:0;
     position:relative;
-    z-index: 1;
+    z-index: 3;
     height: 100%;
     overflow-y: scroll;
 `);

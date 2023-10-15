@@ -15,9 +15,12 @@ const NavBarContainer = styled("div")(
     position: fixed;
     overflow:hidden;
     padding-bottom: 0.5rem;
-    padding-top: 0.5rem;
+    padding-top: 1rem;
     bottom: 0;
     width: 100%;
+    background-color: ${(theme as ITheme).palette.primary.dark};
+    border-radius: 1.5rem 1.5rem 0 0 ;
+    z-index:200;
 `);
 
 const NavBarLinkPersistQuery = styled(LinkPersistQuery)(
@@ -37,7 +40,6 @@ const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
     gap: '0.25rem',
     backgroundColor: (theme as ITheme).palette.shades.g1,
     color: (theme as ITheme).palette.tertiary.light,
-
     '&:hover, &.Mui-focusVisible': {
         backgroundColor: (theme as ITheme).palette.tertiary.light,
         color: (theme as ITheme).palette.primary.dark
@@ -55,7 +57,7 @@ export function Bar() {
     const theme = useTheme();
 
     return (
-        <NavBarContainer style={{background: (theme as ITheme).palette.shades.g1}} data-testid="navbar" className="wrapper-nav-bar">
+        <NavBarContainer data-testid="navbar" className="wrapper-nav-bar">
             <NavBarLinkPersistQuery pathname="/home" activeOnEmpty>
                 <IconButtonStyle><HomeIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
