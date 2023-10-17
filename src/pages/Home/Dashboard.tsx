@@ -2,7 +2,7 @@ import { alpha, styled } from "@mui/material/styles";
 import { DashboardItem, ItemViewType } from "./DashboardItem";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { ITheme } from "common/App";
-import { IconButton, IconButtonProps, TextField, Typography } from "@mui/material";
+import { IconButton, IconButtonProps, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 
@@ -18,11 +18,7 @@ const Header = styled("div")(({ theme }) => `
     grid-template-columns: 5fr 1fr;
     height: 8rem;
     padding: 1.5rem;
-    background-image: linear-gradient(
-      to bottom,
-      ${alpha((theme as ITheme).palette.shades.g4, 0.90)},
-      ${alpha((theme as ITheme).palette.shades.g4, 0.75)}
-    ),  url('${imgSrc}');
+    background-color: ${(theme as ITheme).palette.shades.g5}; 
     border-radius: 0 0 2rem 2rem ;
     color: ${(theme as ITheme).palette.primary.light}; 
 `);
@@ -39,29 +35,25 @@ const RightAlign = styled("div")`
   padding-top:1rem;
 `;
 
-const FullLine  = styled(TextField)(({ theme }) => `
-  grid-column: 1 /span 2;
-  grid-row: 2;
-  text-align: center;
-  display:flex;
-  z-index:1;
-  margin:auto;
-  width:90%;
-  background: linear-gradient(${(theme as ITheme).palette.secondary.dark}, ${(theme as ITheme).palette.primary.main});
-  border-radius:0.5rem;
-  border: 0.025rem solid ${(theme as ITheme).palette.shades.g1};
-  margin-top:1rem;
-`);
-
-const Grid = styled("div")`
+const Grid = styled("div")(({ theme }) => `
     margin:auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
     padding-inline: 1rem 1rem;
-    padding-top:3rem;
-`;
+`);
+
+
+const GridItem = styled("div")(({ theme }) => `
+  background: ${(theme as ITheme).palette.primary.main};
+  color: ${(theme as ITheme).palette.shades.g4};
+  margin: 1rem;
+  padding-top:1rem; 
+  width:100%;
+  border: 0.15rem solid ${(theme as ITheme).palette.secondary.dark};
+  border-radius:1rem;
+`);
 
 const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   backgroundColor: (theme as ITheme).palette.shades.g1,
@@ -93,7 +85,7 @@ export function Dashboard() {
   const handleAccountClick = useCallback(() => {
 
     navigate("../account");
-  }, [])
+  }, [navigate])
 
   const dashboardItems = useDashboardItems();
 
@@ -101,15 +93,14 @@ export function Dashboard() {
     <Wrapper>
       <Header>
         <LeftAlign>
-          <Typography variant="caption" fontWeight={"bold" }>Hey Henry!</Typography>
-          <Typography variant="h1" fontWeight={"bold" }>How's your training going?</Typography>
+          <Typography variant="caption" fontWeight={"bold"}>Hey Henry!</Typography>
+          <Typography variant="h1" fontWeight={"bold"}>How's your training going?</Typography>
         </LeftAlign>
         <RightAlign><IconButtonStyle onClick={handleAccountClick}><AccountCircleIcon style={{ transform: 'scale(1.8)' }} /></IconButtonStyle></RightAlign>
-        
       </Header>
 
       <Grid >
-        {dashboardItems && dashboardItems.map((item, idx) => (<DashboardItem key={idx} {...item}></DashboardItem>))}
+        {dashboardItems && dashboardItems.map((item, idx) => (<GridItem key={idx}><DashboardItem  {...item}></DashboardItem></GridItem>))}
       </Grid>
     </Wrapper>
   );

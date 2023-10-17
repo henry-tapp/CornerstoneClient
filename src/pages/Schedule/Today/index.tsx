@@ -1,4 +1,4 @@
-import { Item, WeekDay, WeekDayItems, WeekDays } from "types/Item";
+import { Item, WeekDay, WeekDayItems, WeekDays } from "types";
 import { useScheduleWeek } from "hooks/useSchedule/useSchedule";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { IconButton, Typography, styled } from "@mui/material";
@@ -18,6 +18,7 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import WeekSelector from "./WeekSelector";
 import 'react-indiana-drag-scroll/dist/style.css';
 import { LinkPersistQuery } from "components/LinkPersistQuery";
+
 
 const Wrapper = styled("div")(({ theme }) => `
     max-height: calc(100vh - 2rem);
@@ -93,7 +94,7 @@ export function TodayView(schedule: Schedule) {
     const [selectedWeek, setSelectedWeek] = useLocalStorage("navigatedWeek", currentWeek);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-    const [selectedItem, setSelectedItem] = useState<number | undefined>();
+    const [selectedItem, setSelectedItem] = useState<string | undefined>();
     const { data: weekData } = useScheduleWeek({ WeekNumber: selectedWeek });
 
     const currentDayItems = useMemo(() => {
@@ -115,7 +116,7 @@ export function TodayView(schedule: Schedule) {
     }, []);
 
     const childRef = useRef<SwipeableDrawerType>(null);
-    const handleItemClick = useCallback((itemId: number | undefined) => {
+    const handleItemClick = useCallback((itemId: string | undefined) => {
         setSelectedItem(itemId);
 
         if (!childRef.current?.isOpen) {
@@ -149,7 +150,7 @@ export function TodayView(schedule: Schedule) {
             <Pseudo />
             <Toolbar>
                 <ToolbarButton style={{ width: "2rem" }}>
-                    <LinkPersistQuery pathname="/manage">
+                    <LinkPersistQuery pathname={`/manage/${selectedWeek}`}>
                         <IconButton><ScheduleIcon style={{ color: "white" }} /></IconButton>
                     </LinkPersistQuery>
                 </ToolbarButton>

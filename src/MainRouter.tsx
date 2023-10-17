@@ -24,7 +24,7 @@ export function MainRouter() {
             <Route path="schedule/:view" element={<Schedule />} />
             <Route path="schedule/week/diary" element={<Diary />} />
             <Route path="schedule/item/:itemid/diary" element={<Diary />} />
-            <Route path="manage" element={<Manage />} />
+            <Route path="manage/:weekNumber" element={<Manage />} />
             <Route path="progress" element={<Progress />} />
             <Route path="/account/" element={<Account />} />
           </Route>

@@ -1,7 +1,6 @@
 import { IconButton, Typography, styled } from "@mui/material";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Item } from "../../types/Item"
-import { ITheme } from "common/App";
 
 
 const ItemCardGridContainer = styled("div")(

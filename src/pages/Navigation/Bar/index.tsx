@@ -2,7 +2,7 @@ import { LinkPersistQuery } from "components/LinkPersistQuery";
 
 import { IconButton, IconButtonProps } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
-
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import HomeIcon from '@mui/icons-material/Home';
 import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
@@ -60,14 +60,10 @@ export function Bar() {
                 <IconButtonStyle><HomeIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
             <NavBarLinkPersistQuery pathname={`schedule/today`}>
-                <IconButtonStyle><AddCircleRoundedIcon /></IconButtonStyle>
+                <IconButtonStyle><CalendarTodayIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
             <NavBarLinkPersistQuery pathname="/progress">
-                <IconButtonStyle sx={{
-                    ":focus": {
-                        background: "lightblue"
-                    }
-                }}><BarChartRoundedIcon /></IconButtonStyle>
+                <IconButtonStyle><BarChartRoundedIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
         </NavBarContainer >
     );
