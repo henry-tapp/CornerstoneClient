@@ -18,6 +18,7 @@ const BackIconWrapper = styled(IconButton)(
   left: 1rem;
   border-radius: 0.5rem;
   background-color: rgba(186, 186, 186, 0.75);
+  z-index: 300;
 `
 );
 

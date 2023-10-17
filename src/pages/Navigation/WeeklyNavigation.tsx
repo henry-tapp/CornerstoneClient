@@ -4,12 +4,9 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useCallback } from "react";
 
 const Wrapper = styled("div")(({ theme }) => `
-  width: calc(100% - 2rem);
-  height: 3rem;
   display: grid;
   grid-template-columns: 1fr 10fr 1fr;
   overflow:hidden;
-  padding: 1rem;
   grid-gap: 1rem;
   justify-items: center;
   align-items: center;

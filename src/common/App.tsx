@@ -93,7 +93,7 @@ const theme = extendTheme({
   // We're no longer using a custom prefix, so it's --mui-xxx
   typography: {
     h1: {
-      fontSize: "2.125rem",
+      fontSize: "1.525rem",
       fontStyle: "normal",
       fontWeight: "800",
       lineHeight: "2rem",

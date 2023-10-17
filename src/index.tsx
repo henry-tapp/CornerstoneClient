@@ -51,13 +51,11 @@ else {
 function Main() {
 
   return (
-    <React.StrictMode>
-      <App disableResponsiveComp>
-        <Wrapper className="wrapper">
-          <MainRouter />
-          <NavigationBar />
-        </Wrapper>
-      </App>
-    </React.StrictMode>
+    <App disableResponsiveComp>
+      <Wrapper className="wrapper">
+        <MainRouter />
+        <NavigationBar />
+      </Wrapper>
+    </App>
   );
 }

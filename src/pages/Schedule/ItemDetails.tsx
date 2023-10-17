@@ -1,13 +1,24 @@
 import { IconButton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { SubPage } from "pages/Navigation/SubPage";
 
 import TimerIcon from '@mui/icons-material/Timer';
 import { ITheme } from "common/App";
-import { Exercise, GetVariation, ItemGroup } from "types/Item";
+import { Exercise, GetVariation, ExerciseGroup } from "types/Item";
 
-import StockExerciseImage from '../../images/StockImageThin.jpg'
+import StockExerciseImage from '../../images/gen/synth-climber-3.jpeg'
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+
+
+import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
+const BackIconWrapper = styled(IconButton)(
+    ({ theme }) => `
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(186, 186, 186, 0.75);
+`
+);
 
 const PageWrapper = styled("div")(({ theme }) => `
 
@@ -45,34 +56,19 @@ const IconButtonStyle = styled(IconButton)(({ theme }) => `
     color: ${(theme as ITheme).palette.primary.dark};
 `);
 
-function useMockData() {
-
-    return {
-        id: 1,
-        name: "Hamstring stretches",
-        description: "Flexibility",
-        variation: GetVariation("Conditioning"),
-        exercises: 4,
-        estimatedCompletionMinutes: 12,
-        items: [{
-            id: 1,
-            name: "Good Mornings",
-            description: "Flexibility",
-        } as Exercise] as Exercise[]
-    } as ItemGroup;
-}
-
 export interface ItemDetailProps {
-    itemId: number;
+    itemId: string;
+    onBack?: () => void;
 }
 
 
 export function ItemDetails(props: ItemDetailProps) {
 
-    const itemData = useMockData();
+    const { onBack } = props;
 
     return (
         <PageWrapper>
+            {onBack && (<BackIconWrapper onClick={onBack}><KeyboardBackspaceOutlinedIcon /></BackIconWrapper>)}
             <ImageArea src={StockExerciseImage} alt=""></ImageArea>
             <ButtonBar>
                 <IconButtonStyle><TimerIcon /><Typography style={{ fontWeight: "bold" }} variant="caption">Start Workout</Typography></IconButtonStyle>

@@ -1,8 +1,8 @@
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 
 import { IconButton, IconButtonProps } from "@mui/material";
-import { styled } from "@mui/material/styles";
-
+import { styled, useTheme } from "@mui/material/styles";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import HomeIcon from '@mui/icons-material/Home';
 import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
@@ -11,13 +11,18 @@ import { ITheme } from "common/App";
 const NavBarContainer = styled("div")(
     ({ theme }) => `
     display: grid;
-    grid-template-columns: 1fr 1fr  1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     position: fixed;
-    overflow:hidden;
-    padding-bottom: 1rem;
+    overflow: hidden;
+    padding-bottom: 0.75rem;
+    padding-top: 0.5rem;
     bottom: 0;
     width: 100%;
+    background-color: ${(theme as ITheme).palette.primary.dark};
+    border-radius: 1rem 1rem 0 0 ;
+    z-index:200;
 `);
+
 
 const NavBarLinkPersistQuery = styled(LinkPersistQuery)(
     ({ theme }) => `
@@ -34,9 +39,8 @@ const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     gap: '0.25rem',
-    backgroundColor: (theme as ITheme).palette.shades.g6,
-    color: (theme as ITheme).palette.secondary.dark,
-
+    backgroundColor: (theme as ITheme).palette.shades.g1,
+    color: (theme as ITheme).palette.tertiary.light,
     '&:hover, &.Mui-focusVisible': {
         backgroundColor: (theme as ITheme).palette.tertiary.light,
         color: (theme as ITheme).palette.primary.dark
@@ -48,7 +52,6 @@ const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
     }
 }));
 
-
 export function Bar() {
 
     return (
@@ -57,14 +60,10 @@ export function Bar() {
                 <IconButtonStyle><HomeIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
             <NavBarLinkPersistQuery pathname={`schedule/today`}>
-                <IconButtonStyle><AddCircleRoundedIcon /></IconButtonStyle>
+                <IconButtonStyle><CalendarTodayIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
             <NavBarLinkPersistQuery pathname="/progress">
-                <IconButtonStyle sx={{
-                    ":focus": {
-                        background: "lightblue"
-                    }
-                }}><BarChartRoundedIcon /></IconButtonStyle>
+                <IconButtonStyle><BarChartRoundedIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
         </NavBarContainer >
     );
