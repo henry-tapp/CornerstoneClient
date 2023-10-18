@@ -70,6 +70,12 @@ interface IPalette extends Palette {
     light: string;
   };
 
+  fourth: {
+    main: string;
+    dark: string;
+    light: string;
+  }
+
   shades: {
     g0: string;
     g1: string;
@@ -198,6 +204,11 @@ const theme = extendTheme({
           main: "#05eccb",
           dark: "#04ccc9",
           light: "#05fffc"
+        },
+        fourth: {
+          main: "#FF1E86",
+          dark: "",
+          light: ""
         },
         // Missing Accesso Tertiary
         success: {

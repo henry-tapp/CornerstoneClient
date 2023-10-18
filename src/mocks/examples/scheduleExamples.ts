@@ -95,7 +95,7 @@ export function getScheduleWeek(weekNumber: number) {
         variation: GetVariation("Conditioning"),
         exercises: 1,
         estimatedCompletionMinutes: 7,
-        state: "complete"
+        state: "todo"
       } as Item,
       {
         id: ids[6],
@@ -104,7 +104,7 @@ export function getScheduleWeek(weekNumber: number) {
         variation: GetVariation("Conditioning"),
         exercises: 4,
         estimatedCompletionMinutes: 12,
-        state: "complete"
+        state: "todo"
       } as Item,
       {
         id: ids[7],

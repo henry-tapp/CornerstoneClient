@@ -7,12 +7,12 @@ const Container = styled("div")`
     width: 100%;
     display:flex;
     flex-wrap: wrap;
-    height:1.5rem;
+    height:2rem;
 `
 
 
 const Name = styled(Typography)(({ theme }) => `
-    color: ${(theme as ITheme).palette.tertiary.light};
+    color: ${(theme as ITheme).palette.shades.g5};
     display: flex;
     justify-content: center;
     align-items: center;

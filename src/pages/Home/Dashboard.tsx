@@ -1,12 +1,10 @@
-import { alpha, styled } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import { DashboardItem, ItemViewType } from "./DashboardItem";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { ITheme } from "common/App";
 import { IconButton, IconButtonProps, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-
-import imgSrc from '../../images/Untitled design.png';
 
 const Wrapper = styled("div")`
   width:100%;
@@ -16,7 +14,6 @@ const Header = styled("div")(({ theme }) => `
     margin: auto;
     display:grid;
     grid-template-columns: 5fr 1fr;
-    height: 8rem;
     padding: 1.5rem;
     background-color: ${(theme as ITheme).palette.shades.g5}; 
     border-radius: 0 0 2rem 2rem ;

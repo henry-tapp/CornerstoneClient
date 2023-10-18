@@ -1,15 +1,14 @@
-import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import { useSchedule, useScheduleWeek } from "hooks/useSchedule/useSchedule";
-import { ids } from "mocks/examples/scheduleExamples";
 import { useCallback, useMemo, useState } from "react";
-import { getCurrentWeek } from "util/dates";
 import { v4 } from "uuid";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { styled } from "@mui/material/styles";
-import DraggableTask from "./WeekDayItemsList";
+import WeekDayItemsList from "./WeekDayItemsList";
+import { WeekDays } from "types";
+import { useScheduleWeek } from "hooks/useSchedule/useSchedule";
+import { ids } from "mocks/examples/scheduleExamples";
+import { useItemTypes } from "hooks/useItems/useItems";
 
-import { WeekDays } from "types/WeekDay";
-
+export type SortType = "previous_week" | "template";
 
 const Container = styled("div")(({ theme }) => `
   display: flex;
@@ -43,7 +42,7 @@ export interface Day {
   tasks: Task[];
 }
 
-const UNSCHEDULED: string = "Unscheduled";
+export const UNSCHEDULED: string = "Unscheduled";
 
 export const PLACEHOLDER: Task = {
   id: v4(),
@@ -54,25 +53,26 @@ export const PLACEHOLDER: Task = {
   }
 };
 
+export interface ViewProps {
+  weekNumber: number;
+}
 
-export function WeekScheduleView() {
+export function WeekScheduleView({ weekNumber }: ViewProps) {
 
-  const { data: schedule } = useSchedule({});
-  const currentWeek = useMemo(() => (!!schedule?.weekStarting) ? getCurrentWeek(new Date(schedule.weekStarting)) : 1, [schedule]);
-  const [navigatedWeek] = useLocalStorage("navigatedWeek", currentWeek);
-  const { data: weekData } = useScheduleWeek({ WeekNumber: navigatedWeek });
+  const { data: weekData } = useScheduleWeek({ WeekNumber: weekNumber });
+  const { data: itemTypes } = useItemTypes({});
 
   const lists = useMemo(() => [UNSCHEDULED].concat(WeekDays), []);
 
-  const days: Day[] = lists.map((list, idx) => {
+  const initial = useMemo(() => lists.map((list, idx) => {
     return {
       id: idx.toString(),
       day: list,
-      hasPlaceholder: list !== UNSCHEDULED,
+      hasPlaceholder: list === UNSCHEDULED,
       tasks: list !== UNSCHEDULED ? [PLACEHOLDER] :
-        Object.values(weekData?.items ?? []).flat().flat().map((item, idx) => {
+        Object.values(weekData?.items ?? []).flat().flat().map((item, idx2) => {
           return {
-            id: ids[idx],
+            id: ids[idx2],
             prefix: "task",
             isPlaceholder: false,
             content: {
@@ -82,9 +82,31 @@ export function WeekScheduleView() {
           }
         })
     } as Day
-  });
+  }), [weekData?.items, lists]);
 
-  const [elements, setElements] = useState<Day[]>(days);
+  let index = 0;
+  const template = useMemo(() => lists.map((list, idx) => {
+    return {
+      id: idx.toString(),
+      day: list,
+      hasPlaceholder: list === UNSCHEDULED,
+      tasks:
+        Object.values(weekData?.items?.[list] ?? []).flat().map((item, idx2) => {
+
+          return {
+            id: ids[index++],
+            prefix: "task",
+            isPlaceholder: false,
+            content: {
+              name: item.name,
+              description: item.shortDescription
+            }
+          }
+        })
+    } as Day
+  }), [weekData?.items, lists, index]);
+
+  const [elements, setElements] = useState<Day[]>(initial);
 
   const removeFromList = (list: Task[], index: number): [Task, Task[]] => {
     const result = Array.from(list);
@@ -103,8 +125,6 @@ export function WeekScheduleView() {
       if (!result.destination) {
         return;
       }
-
-      document.documentElement.removeAttribute("style");
 
       const listCopy = JSON.parse(JSON.stringify(elements)) as typeof elements;
 
@@ -149,10 +169,45 @@ export function WeekScheduleView() {
     [elements, addToList]
   );
 
-  const onDragStart = () => {
-    document.documentElement.setAttribute("style", "scroll-behavior: auto");
+  const unscheduleByPrefix = useCallback((prefix: string) => {
+    const listCopy = JSON.parse(JSON.stringify(elements)) as typeof elements;
+    let unscheduled = listCopy.find(x => x.day === UNSCHEDULED)!;
+    let dayToUnschedule = listCopy.find(x => x.day === prefix)!;
+    if (!dayToUnschedule.hasPlaceholder) {
+      unscheduled.tasks = unscheduled?.tasks.concat(dayToUnschedule.tasks);
+    }
+    dayToUnschedule.tasks = [PLACEHOLDER];
+    dayToUnschedule.hasPlaceholder = true;
+    setElements(listCopy);
+  }, [setElements, elements]);
 
-  }
+
+  const autoSort = useCallback((type: SortType) => {
+
+    if (type === "template") {
+
+      setElements(template);
+    }
+
+  }, [setElements, template]);
+
+  const unschedule = useCallback((prefix?: string | undefined) => {
+
+    if (!prefix) {
+      setElements(initial);
+    }
+    else {
+
+      unscheduleByPrefix(prefix);
+    }
+  }, [setElements, unscheduleByPrefix, initial]);
+
+  const handleNewItem = useCallback((id: string) => {
+
+    // todo new items
+
+
+  }, []);
 
   return (
     <Container>
@@ -160,11 +215,15 @@ export function WeekScheduleView() {
         <ListGrid>
           {lists.map((list, idx) => {
             return (
-              <DraggableTask
+              <WeekDayItemsList
                 elements={elements.find(x => x.day === list)}
                 key={list}
                 prefix={list}
                 index={idx}
+                handleAutoSort={autoSort}
+                handleUnschedule={unschedule}
+                handleItemAdd={handleNewItem}
+                itemTypes={itemTypes ?? []}
               />
             )
           })}

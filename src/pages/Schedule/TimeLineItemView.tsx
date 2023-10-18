@@ -25,7 +25,7 @@ export function TimeLineView({ items, handleSelectedItem }: ItemViewProps) {
                     contentArrowStyle={{ borderRight: `0.5rem solid ${(theme as ITheme).palette.shades.g1}` }}
                     iconStyle={{
                         boxShadow: `0 0 0 4px #000, inset 0 2px 0 rgba(0,0,0,.08), 0 3px 0 4px rgba(0,0,0,.05)`,
-                        background: (theme as ITheme).palette.tertiary.main,
+                        background: item.state === "complete" ? (theme as ITheme).palette.tertiary.main : (theme as ITheme).palette.fourth.main,
                         color: (theme as ITheme).palette.shades.g1
                     }}
                     contentStyle={{
@@ -45,5 +45,5 @@ export function TimeLineView({ items, handleSelectedItem }: ItemViewProps) {
                     </div>
                 </VerticalTimelineElement>);
         })}
-    </VerticalTimeline>);
+    </VerticalTimeline >);
 }

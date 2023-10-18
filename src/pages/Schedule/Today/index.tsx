@@ -78,6 +78,7 @@ const ItemWrapper = styled("div")(({ theme }) => `
     height: 100%;
     padding-bottom: 3rem;
     overflow-y: scroll;
+    overflow: hidden;
 `);
 
 function findDayItems(weekDayItems: WeekDayItems, weekDay: WeekDay): Item[] | undefined {
@@ -157,7 +158,6 @@ export function TodayView(schedule: Schedule) {
                 <ToolbarButton style={{ width: "7rem", marginRight: "1rem" }} onClick={() => handleWeekSelectorToggle(!weekSelectorOpenState)}>
                     <Typography variant="caption">Week {selectedWeek} </Typography>
                 </ToolbarButton>
-
             </Toolbar>
             {!!weekSelectorOpenState && (
                 <WeekSelectorWrapper>

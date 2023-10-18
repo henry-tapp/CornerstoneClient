@@ -15,3 +15,8 @@ export interface Item {
 export type ItemState = "todo" | "partial" | "complete";
 
 export type WeekDayItems = Record<WeekDay, Item[]>;
+
+export interface ItemType {
+    id: string;
+    name: string;
+}
