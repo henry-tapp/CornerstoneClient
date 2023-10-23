@@ -3,7 +3,7 @@ import React from "react";
 import { QueryClient } from "@tanstack/react-query";
 
 import { ApiProviderCore } from "../api";
-import { QueryProvider } from "../common/RockdQueryProvider";
+import { QueryProvider } from "../common/QueryProvider";
 
 export const testRootApiUrl = (path?: string) =>
   `http://localhost/v2${path ?? ""}`;

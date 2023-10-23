@@ -1,17 +1,25 @@
+import { usePlan } from "hooks/usePlan/usePlan";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import TodayView from "./Today";
-import { useSchedule } from "hooks/useSchedule/useSchedule";
-import { ScheduleNotFound } from "./ScheduleNotFound";
 
 export function Schedule() {
 
-    const { data: schedule } = useSchedule({});
+    const { data: schedule, error } = usePlan({});
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+
+        if (!schedule || error) {
+
+            navigate("../wizard");
+        }
+    }, [navigate, schedule, error]);
 
     return (
         <div>
-            {!schedule
-                ? (<ScheduleNotFound />)
-                : (<TodayView {...schedule} />)}
-                
+            {schedule && (<TodayView {...schedule} />)}
         </div >
     );
 }

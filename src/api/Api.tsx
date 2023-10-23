@@ -1,14 +1,16 @@
 import Axios from "axios";
 import loglevel from "loglevel";
 // import log from "loglevel";
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
+import { useAuth0 } from "@auth0/auth0-react";
+import { User } from "types/User";
+import { ApiProviderCore, ApiProviderProps, RequestProcessorProps } from "./Api.types";
 import {
   AxiosRequestProcessor,
   FetchRequestProcessor,
   RequestProcessor,
 } from "./RequestProcessors";
-import { ApiProviderCore, ApiProviderProps } from "./Api.types";
 
 const ApiContext = createContext<RequestProcessor>(undefined as any);
 
@@ -21,17 +23,16 @@ export const ApiConsumer = ApiContext.Consumer;
 
 const requestProcessorFactory = (
   coreProviderName: ApiProviderCore,
-  props: ApiProviderProps
+  props: RequestProcessorProps
 ): RequestProcessor => {
   loglevel.info(
     `ApiProvider RequestProcessorFactory (${coreProviderName})`,
     props
   );
 
-  const authHeaders: Record<string, string> = {};
-  if (props.authToken) {
-    authHeaders["Authorization"] = `${props.authMethod ?? "Bearer"} ${props.authToken
-      }`;
+  const headers: Record<string, string> = {};
+  if (props.accessToken) {
+    headers["Authorization"] = `${props.authMethod ?? "Bearer"} ${props.accessToken}`;
   }
 
   switch (coreProviderName) {
@@ -40,9 +41,9 @@ const requestProcessorFactory = (
 
       return new FetchRequestProcessor(props.baseApiUrl, {
         "Content-Type": "application/json",
-        "Client-ID": props.clientId,
-        "Accept-Language": props.culture ?? "",
-        ...authHeaders,
+        "Accept-Language": "en-US" ?? "",
+        "Access-Control-Allow-Origin": "*",
+        ...headers,
       });
 
     case "axios":
@@ -50,9 +51,9 @@ const requestProcessorFactory = (
 
       return new AxiosRequestProcessor(props.baseApiUrl, {
         "Content-Type": "application/json",
-        "Client-ID": props.clientId,
-        "Accept-Language": props.culture ?? "",
-        ...authHeaders,
+        "Accept-Language": "en-US" ?? "",
+        "Access-Control-Allow-Origin": "*",
+        ...headers,
       });
 
     default:
@@ -75,9 +76,52 @@ export function ApiProvider(props: React.PropsWithChildren<ApiProviderProps>) {
 
   const coreProviderName = useMemo(() => core ?? "axios", [core]);
 
+  const { user, isLoading, isAuthenticated, getAccessTokenSilently, logout } = useAuth0();
+
+  const [accessToken, setAccessToken] = useState<string>("");
+
+  const [userDetails, setUserMetadata] = useState<User>();
+
+  useEffect(() => {
+    const getUserMetadata = async () => {
+
+      try {
+        const newAccessToken = await getAccessTokenSilently({
+          authorizationParams: {
+            audience: `${baseApiUrl}`,
+          },
+        });
+
+        if (user && !isLoading && isAuthenticated) {
+
+          const userDetailsByName = encodeURI(`${baseApiUrl}users/${user?.name}`);
+
+          const metadataResponse = await fetch(userDetailsByName, {
+            headers: {
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          });
+
+          if (metadataResponse.status >= 400) {
+            logout();
+          }
+
+          setUserMetadata(await metadataResponse.json() as User);
+          setAccessToken(newAccessToken);
+        }
+
+      } catch (e: any) {
+        console.log(e.message);
+      }
+    };
+
+    getUserMetadata();
+
+  }, [getAccessTokenSilently, baseApiUrl, accessToken, user, logout, isLoading, isAuthenticated]);
+
   const requestProcessor = useMemo(
-    () => requestProcessorFactory(coreProviderName, propsWithoutChildren),
-    [coreProviderName, propsWithoutChildren]
+    () => requestProcessorFactory(coreProviderName, { accessToken: accessToken, userDetails: userDetails, ...propsWithoutChildren }),
+    [coreProviderName, propsWithoutChildren, accessToken, userDetails]
   );
 
   return (
@@ -127,7 +171,7 @@ export type GenericRequestOptions = {
  */
 export const retryPolicy = (failureCount: number, error: unknown) => {
   if (Axios.isAxiosError(error)) {
-    if (error.response?.status === 404) {
+    if (error.response?.status === 404 || error.response?.status === 401) {
       return false;
     }
   }

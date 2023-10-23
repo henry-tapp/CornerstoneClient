@@ -15,6 +15,7 @@ export interface ApiResponseError {
 export interface ApiResponse<T> {
   status?: number | undefined;
   statusText?: string | undefined;
+  expires_in?: number;
   data?: T | undefined;
   headers?: ApiHeaders | undefined;
 }
@@ -51,6 +52,15 @@ export interface RequestProcessor {
    * @throws {ApiResponseErrorNew} If an error occurs with the API, this will be thrown.
    */
   post: <PayloadData, ResponseDataType>(
+    url?: string,
+    payload?: PayloadData,
+    options?: RequestProcessorOptions
+  ) => Promise<ApiResponse<ResponseDataType>>;
+  /**
+   * @throws {Error} If a generic error occurs, this will be thrown.
+   * @throws {ApiResponseErrorNew} If an error occurs with the API, this will be thrown.
+   */
+  put: <PayloadData, ResponseDataType>(
     url?: string,
     payload?: PayloadData,
     options?: RequestProcessorOptions

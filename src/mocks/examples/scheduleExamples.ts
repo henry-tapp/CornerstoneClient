@@ -1,5 +1,5 @@
 import { ApiResponse } from "api";
-import { GetVariation, Item, Schedule, ScheduleWeek, WeekDayItems } from "types";
+import { GetVariation, Item, Plan, PlanWeek, WeekDayItems } from "types";
 import { addDaysToDate, addWeeksToDate, getMonday } from "util/dates";
 
 export function getSchedule() {
@@ -8,7 +8,7 @@ export function getSchedule() {
     dateEnding: new Date("10/09/2023"),
     numberOfWeeks: 12,
     peakWeek: 11
-  } as Schedule;
+  } as Plan;
 }
 
 
@@ -159,5 +159,5 @@ export function getScheduleWeek(weekNumber: number) {
         state: "todo"
       } as Item] as Item[]
     } as WeekDayItems
-  } as ApiResponse<ScheduleWeek>;
+  } as ApiResponse<PlanWeek>;
 }

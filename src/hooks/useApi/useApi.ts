@@ -1,6 +1,6 @@
 import { useApiProvider } from "api";
-import { ApiResponseData } from "api/Api.types";
-import { Schedule, ScheduleWeek } from "types";
+import { ItemType, Plan, PlanWeek } from "types";
+import { UserMeasurements } from "types/UserMeasurements";
 import { Api } from "./useApi.types";
 
 export function useApi(): Api {
@@ -18,8 +18,16 @@ export function useApi(): Api {
             apiProvider.post(`${prefix}${path}`, data),
 
         // Api Specific methods
-        getSchedule: () => apiProvider.get<ApiResponseData<Schedule>>(`${prefix}/schedule`),
+        getPlan: () => apiProvider.get<Plan>(`${prefix}/plan`),
 
-        getScheduleWeek: (weekNumber: number) => apiProvider.get<ApiResponseData<ScheduleWeek>>(`${prefix}/schedule/week/${weekNumber}`)
+        createPlan: (data: Plan) => apiProvider.post<Plan, {}>(`${prefix}/plan`, data),
+
+        getPlanWeek: (weekNumber: number) => apiProvider.get<PlanWeek>(`${prefix}/plan/week/${weekNumber}`),
+
+        getItemTypes: () => apiProvider.get<ItemType[]>(`${prefix}/itemtype`),
+
+        getUserMeasurements: () => apiProvider.get<UserMeasurements>(`${prefix}/users/measurements`),
+        addUserMeasurements: (data: UserMeasurements) => apiProvider.post<UserMeasurements, {}>(`${prefix}/users/measurements`, data),
+        updateUserMeasurements: (data: UserMeasurements) => apiProvider.put<UserMeasurements, {}>(`${prefix}/users/measurements`, data)
     };
 }

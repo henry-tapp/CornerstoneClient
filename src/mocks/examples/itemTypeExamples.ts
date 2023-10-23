@@ -1,5 +1,5 @@
 import { ApiResponse } from "api";
-import { GetVariation, Item, ItemType, Schedule, ScheduleWeek, WeekDayItems } from "types";
+import { GetVariation, Item, Plan, PlanWeek } from "types";
 import { addDaysToDate, addWeeksToDate, getMonday } from "util/dates";
 
 export function getSchedule() {
@@ -8,7 +8,7 @@ export function getSchedule() {
     dateEnding: new Date("10/09/2023"),
     numberOfWeeks: 12,
     peakWeek: 11
-  } as Schedule;
+  } as Plan;
 }
 
 
@@ -118,39 +118,39 @@ export function getScheduleWeek(weekNumber: number) {
     estimatedCompletionMinutes: 12,
     state: "complete"
   } as Item] as Item[],
-  "Friday": [{
-    id: ids[9],
-    name: "Broken 40s",
-    shortDescription: "Power Endurance protocol",
-    variation: GetVariation("Power Endurance"),
-    exercises: 1,
-    estimatedCompletionMinutes: 7,
-    state: "complete"
-  } as Item,
-  {
-    id: ids[10],
-    name: "ARC 30",
-    shortDescription: "Endurance building exericse",
-    variation: GetVariation("Aerobic Base"),
-    exercises: 4,
-    estimatedCompletionMinutes: 12,
-    state: "complete"
-  } as Item] as Item[],
-  "Saturday": [{
-    id: ids[11],
-    name: "Rest",
-    shortDescription: "Rest is important, relax and recover!",
-    variation: GetVariation("Rest"),
-    state: "partial"
-  } as Item] as Item[],
-  "Sunday": [{
-    id: ids[12],
-    name: "Open Climbing",
-    shortDescription: "Session for open climbing",
-    variation: GetVariation("Fun"),
-    exercises: 1,
-    estimatedCompletionMinutes: 7,
-    state: "todo"
-  } as Item]
-  } as ApiResponse<ScheduleWeek>;
+    "Friday": [{
+      id: ids[9],
+      name: "Broken 40s",
+      shortDescription: "Power Endurance protocol",
+      variation: GetVariation("Power Endurance"),
+      exercises: 1,
+      estimatedCompletionMinutes: 7,
+      state: "complete"
+    } as Item,
+    {
+      id: ids[10],
+      name: "ARC 30",
+      shortDescription: "Endurance building exericse",
+      variation: GetVariation("Aerobic Base"),
+      exercises: 4,
+      estimatedCompletionMinutes: 12,
+      state: "complete"
+    } as Item] as Item[],
+    "Saturday": [{
+      id: ids[11],
+      name: "Rest",
+      shortDescription: "Rest is important, relax and recover!",
+      variation: GetVariation("Rest"),
+      state: "partial"
+    } as Item] as Item[],
+    "Sunday": [{
+      id: ids[12],
+      name: "Open Climbing",
+      shortDescription: "Session for open climbing",
+      variation: GetVariation("Fun"),
+      exercises: 1,
+      estimatedCompletionMinutes: 7,
+      state: "todo"
+    } as Item]
+  } as ApiResponse<PlanWeek>;
 }

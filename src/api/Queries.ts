@@ -1,7 +1,7 @@
 
 export const Queries = {
 
-    getSchedule: () => ["schedule"] as const,
-    getScheduleWeek: (weekNumber: number) => [["scheduleweek"], weekNumber] as const,
+    getPlan: () => ["plan"] as const,
+    getPlanWeek: (weekNumber: number) => [["planweek"], weekNumber] as const,
     getItemTypes: () => ["item_types"] as const
 };

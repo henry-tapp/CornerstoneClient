@@ -1,13 +1,17 @@
-import React from "react";
+import { Auth0Provider, CacheLocation, useAuth0 } from '@auth0/auth0-react';
 import ReactDOM from "react-dom/client";
 
-import { disableReactDevTools } from '@fvilers/disable-react-devtools'
+import { disableReactDevTools } from '@fvilers/disable-react-devtools';
 
 // import reportWebVitals from "../../reportWebVitals";
-import App, { ITheme } from "./common/App";
-import { MainRouter } from "MainRouter";
-import { Bar as NavigationBar } from "pages/Navigation/Bar";
 import { styled } from "@mui/material/styles";
+import { MainRouter } from "MainRouter";
+import { getConfig } from "config";
+import { useLocalStorage } from 'hooks/useLocalStorage/useLocalStorage';
+import Home from "pages/Home";
+import { Bar as NavigationBar } from "pages/Navigation/Bar";
+import Wizard from 'pages/Wizard';
+import App, { ITheme } from "./common/App";
 
 if (import.meta.env.MODE === 'production') {
   disableReactDevTools()
@@ -23,7 +27,8 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-if (import.meta.env.MODE === "development") {
+if (import.meta.env.MODE === "mock") {
+
   import("./mocks/browser")
     .then(({ worker }) => {
       // Start the worker.
@@ -48,14 +53,55 @@ else {
   );
 }
 
+const config = getConfig();
+
+const providerConfig = {
+  domain: config.domain,
+  clientId: config.clientId,
+  authorizationParams: {
+    redirect_uri: window.location.origin + "/#/dashboard",
+    ...(config.audience ? { audience: config.audience } : null),
+  },
+  useRefreshTokens: true,
+  cacheLocation: "localstorage" as CacheLocation
+};
+
 function Main() {
 
   return (
-    <App disableResponsiveComp>
-      <Wrapper className="wrapper">
-        <MainRouter />
-        <NavigationBar />
-      </Wrapper>
-    </App>
+    <Auth0Provider
+      {...providerConfig}
+    >
+      <App disableResponsiveComp >
+        <AuthCheck />
+      </App>
+    </Auth0Provider>
   );
+}
+
+function AuthCheck() {
+
+  const {
+    isAuthenticated
+  } = useAuth0();
+
+  return (<>
+    {isAuthenticated ? <AuthenticatedView /> : <Home />}
+  </>
+  )
+}
+
+function AuthenticatedView() {
+
+  const [hasPlan, setHasPlan] = useLocalStorage("hasPlan", false);
+
+  return (
+    <Wrapper className="wrapper">
+      {hasPlan
+        ? (<><MainRouter /><NavigationBar /></>)
+        : <Wizard />
+      }
+
+    </Wrapper>
+  )
 }

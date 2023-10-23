@@ -115,9 +115,34 @@ export class FetchRequestProcessor implements RequestProcessor {
     } catch (e) {
       console.error(e);
       return {
-        status: 500,
+        status: 500
       };
     }
+  }
+
+  public async put<PayloadData, ResponseDataType>(
+    url?: string | undefined,
+    payload?: PayloadData | undefined,
+    options?: RequestProcessorOptions | undefined
+  ): Promise<ApiResponse<ResponseDataType>> {
+    const targetUrl = this.makeTargetUrl(url ?? "");
+    const response = await fetch(targetUrl, {
+      method: "PUT",
+      headers: this.mapHeaders(options?.headers),
+      body: JSON.stringify(payload),
+    });
+
+    // TODO: Proper error handling - ApiResponseError
+
+    // Other libraries like Axios have a validateStatus option internally
+    // but fetch doesn't so we have to do it manually
+    if (options?.validateStatus) {
+      if (!options.validateStatus(response.status)) {
+        throw new Error(`Invalid status code: ${response.status}`);
+      }
+    }
+
+    return await this.makeResponse<ResponseDataType>(response);
   }
 
   public async post<PayloadData, ResponseDataType>(

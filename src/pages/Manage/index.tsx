@@ -1,12 +1,12 @@
-import { styled } from "@mui/material/styles";
-import { SubPage } from "pages/Navigation/SubPage";
-import { WeekScheduleView } from "./WeekScheduleView";
-import { ITheme } from "common/App";
 import { Typography } from "@mui/material";
-import { useMemo } from "react";
-import { useSchedule } from "hooks/useSchedule/useSchedule";
+import { styled } from "@mui/material/styles";
+import { ITheme } from "common/App";
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
+import { usePlan } from "hooks/usePlan/usePlan";
+import { SubPage } from "pages/Navigation/SubPage";
+import { useMemo } from "react";
 import { getCurrentWeek } from "util/dates";
+import { WeekScheduleView } from "./WeekScheduleView";
 
 const PageWrapper = styled("div")`
   width: 100%;
@@ -27,7 +27,7 @@ const Header = styled("div")(({ theme }) => `
 
 export function Manage() {
 
-  const { data: schedule } = useSchedule({});
+  const { data: schedule } = usePlan({});
   const currentWeek = useMemo(() => (!!schedule?.weekStarting) ? getCurrentWeek(new Date(schedule.weekStarting)) : 1, [schedule]);
   const [navigatedWeek] = useLocalStorage("navigatedWeek", currentWeek);
 

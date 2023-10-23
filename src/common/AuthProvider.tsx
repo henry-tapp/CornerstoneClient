@@ -7,30 +7,71 @@
  * without needing to update any of the rest of the site.
  */
 
-import React, { createContext, useContext, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import loglevel from "util/log";
 
-import { useAppArguments } from "./AppArgumentsProvider";
+import { useAuth0 } from "@auth0/auth0-react";
 
-interface QsmartAuthInstance {
+interface AuthInstance {
   currentToken?: string;
-  isLoggedIn: boolean;
+  isAuthenticated: boolean;
 }
 
-const AuthContext = createContext<QsmartAuthInstance>({
-  isLoggedIn: false,
+interface AuthProviderProps {
+  baseApiUrl: string;
+}
+
+const AuthContext = createContext<AuthInstance>({
+  isAuthenticated: false,
 });
 AuthContext.displayName = "AuthProvider"; // Only used by the dev tools
 
-export function AuthProvider({ children }: React.PropsWithChildren<unknown>) {
-  const { authToken } = useAppArguments();
+export function AuthProvider({ children, baseApiUrl }: React.PropsWithChildren<AuthProviderProps>) {
 
-  const authInstance = useMemo<QsmartAuthInstance>(() => {
-    return {
-      currentToken: authToken ?? undefined,
-      isLoggedIn: !!authToken,
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+
+  const [userMetadata, setUserMetadata] = useState(null);
+
+  const [accessToken, setAccessToken] = useState<string>("");
+
+  useEffect(() => {
+    const getUserMetadata = async () => {
+
+      try {
+        setAccessToken(await getAccessTokenSilently({
+          authorizationParams: {
+            audience: `${baseApiUrl}`,
+            scope: "read:current_user",
+          },
+        }));
+
+        const userDetailsByIdUrl = `${baseApiUrl}/users/${user?.sub}`;
+
+        const metadataResponse = await fetch(userDetailsByIdUrl, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const { user_metadata } = await metadataResponse.json();
+
+        setUserMetadata(user_metadata);
+      } catch (e: any) {
+        console.log(e.message);
+      }
     };
-  }, [authToken]);
+
+    getUserMetadata();
+  }, [getAccessTokenSilently, setAccessToken, accessToken, baseApiUrl, user?.sub]);
+
+
+  const authInstance = useMemo<AuthInstance>(() => {
+    return {
+      currentToken: accessToken ?? undefined,
+      userMetadata: userMetadata,
+      isAuthenticated: isAuthenticated
+    };
+  }, [accessToken, isAuthenticated, userMetadata]);
 
   useEffect(() => {
     loglevel.debug("AuthProvider Config Update", authInstance);

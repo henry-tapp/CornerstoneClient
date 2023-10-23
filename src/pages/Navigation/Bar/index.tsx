@@ -1,11 +1,10 @@
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 
-import { IconButton, IconButtonProps } from "@mui/material";
-import { styled, useTheme } from "@mui/material/styles";
+import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import HomeIcon from '@mui/icons-material/Home';
-import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import { IconButton, IconButtonProps } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { ITheme } from "common/App";
 
 const NavBarContainer = styled("div")(
@@ -56,7 +55,7 @@ export function Bar() {
 
     return (
         <NavBarContainer data-testid="navbar" className="wrapper-nav-bar">
-            <NavBarLinkPersistQuery pathname="/home" activeOnEmpty>
+            <NavBarLinkPersistQuery pathname="/dashboard" activeOnEmpty>
                 <IconButtonStyle><HomeIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
             <NavBarLinkPersistQuery pathname={`schedule/today`}>

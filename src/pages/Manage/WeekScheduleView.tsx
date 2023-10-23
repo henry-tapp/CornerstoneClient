@@ -1,12 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
-import { v4 } from "uuid";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { styled } from "@mui/material/styles";
-import WeekDayItemsList from "./WeekDayItemsList";
-import { WeekDays } from "types";
-import { useScheduleWeek } from "hooks/useSchedule/useSchedule";
-import { ids } from "mocks/examples/scheduleExamples";
 import { useItemTypes } from "hooks/useItems/useItems";
+import { usePlanWeek } from "hooks/usePlan/usePlan";
+import { ids } from "mocks/examples/scheduleExamples";
+import { useCallback, useMemo, useState } from "react";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { WeekDays } from "types";
+import { v4 } from "uuid";
+import WeekDayItemsList from "./WeekDayItemsList";
 
 export type SortType = "previous_week" | "template";
 
@@ -59,7 +59,7 @@ export interface ViewProps {
 
 export function WeekScheduleView({ weekNumber }: ViewProps) {
 
-  const { data: weekData } = useScheduleWeek({ WeekNumber: weekNumber });
+  const { data: weekData } = usePlanWeek({ WeekNumber: weekNumber });
   const { data: itemTypes } = useItemTypes({});
 
   const lists = useMemo(() => [UNSCHEDULED].concat(WeekDays), []);

@@ -1,4 +1,4 @@
-import Axios, { AxiosInstance, AxiosResponse } from "axios";
+import Axios, { AxiosInstance, AxiosRequestHeaders, AxiosResponse } from "axios";
 
 import {
   ApiHeaders,
@@ -14,7 +14,7 @@ export class AxiosRequestProcessor implements RequestProcessor {
 
     this._axiosInstance = Axios.create({
       baseURL: baseUrl,
-      headers: baseHeaders,
+      headers: baseHeaders as AxiosRequestHeaders,
     });
 
     // TODO: Confirm if we actually want this functionality! I.E. always using Local
@@ -60,7 +60,7 @@ export class AxiosRequestProcessor implements RequestProcessor {
     const response = await this._axiosInstance?.get<ResponseDataType>(
       url ?? "",
       {
-        headers: options?.headers,
+        headers: options?.headers as AxiosRequestHeaders,
         responseType: options?.responseType,
         validateStatus: options?.validateStatus ?? ((status) => true),
       }
@@ -80,7 +80,27 @@ export class AxiosRequestProcessor implements RequestProcessor {
       url ?? "",
       payload,
       {
-        headers: options?.headers,
+        headers: options?.headers as AxiosRequestHeaders,
+        responseType: options?.responseType,
+        validateStatus: options?.validateStatus ?? ((status) => true),
+      }
+    );
+
+    // TODO: Proper error handling - ApiResponseError
+
+    return this.makeResponse<ResponseDataType>(response);
+  }
+
+  public async put<PayloadData, ResponseDataType>(
+    url?: string | undefined,
+    payload?: PayloadData | undefined,
+    options?: RequestProcessorOptions | undefined
+  ): Promise<ApiResponse<ResponseDataType>> {
+    const response = await this._axiosInstance?.put<ResponseDataType>(
+      url ?? "",
+      payload,
+      {
+        headers: options?.headers as AxiosRequestHeaders,
         responseType: options?.responseType,
         validateStatus: options?.validateStatus ?? ((status) => true),
       }
@@ -100,7 +120,7 @@ export class AxiosRequestProcessor implements RequestProcessor {
       url ?? "",
       payload,
       {
-        headers: options?.headers,
+        headers: options?.headers as AxiosRequestHeaders,
         responseType: options?.responseType,
         validateStatus: options?.validateStatus ?? ((status) => true),
       }
@@ -118,7 +138,7 @@ export class AxiosRequestProcessor implements RequestProcessor {
     const response = await this._axiosInstance?.delete<ResponseDataType>(
       url ?? "",
       {
-        headers: options?.headers,
+        headers: options?.headers as AxiosRequestHeaders,
         responseType: options?.responseType,
         validateStatus: options?.validateStatus ?? ((status) => true),
       }

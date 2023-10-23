@@ -1,3 +1,5 @@
+import { User } from "types/User";
+
 export type ApiProviderCore = "axios" | "fetch";
 
 export type ApiAuthMethod = "Bearer" | string;
@@ -8,10 +10,12 @@ export type ApiAuthMethod = "Bearer" | string;
 export interface ApiProviderProps {
   core?: ApiProviderCore;
   baseApiUrl?: string;
-  authToken?: string;
   authMethod?: ApiAuthMethod;
-  clientId: string;
-  culture?: string;
+}
+
+export interface RequestProcessorProps extends ApiProviderProps {
+  accessToken?: string;
+  userDetails?: User;
 }
 
 export interface ApiResponseData {
@@ -33,7 +37,7 @@ export interface Annotation {
 /**
  * A type-guard to determine if a payload is a valid ApiBaseResponse.
  */
-export function isApiBaseResponse<TData>(payload: any): payload is ApiResponseData<TData> {
+export function isApiBaseRespons(payload: any): payload is ApiResponseData {
   return (
     payload !== null && typeof payload === "object" && "expires_in" in payload
   );

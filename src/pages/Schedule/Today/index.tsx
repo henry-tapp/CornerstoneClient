@@ -1,23 +1,22 @@
-import { Item, WeekDay, WeekDayItems, WeekDays } from "types";
-import { useScheduleWeek } from "hooks/useSchedule/useSchedule";
-import { useCallback, useMemo, useRef, useState } from "react";
+import ScheduleIcon from '@mui/icons-material/Schedule';
 import { IconButton, Typography, styled } from "@mui/material";
-import { DayPicker } from "./DayPicker";
-import { TimeLineView } from "../TimeLineItemView";
-import { ITheme } from "common/App";
 import { useQueryClient } from "@tanstack/react-query";
 import { Queries } from "api";
-import { addWeeksToDate, getCurrentWeek } from "util/dates";
-import ItemDetails from "../ItemDetails";
+import { ITheme } from "common/App";
 import { SwipeableDrawerType, SwipeableEdgeDrawer } from "components/Drawer";
-import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
-import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import { Schedule } from "types";
-import dayjs from 'dayjs';
-import ScheduleIcon from '@mui/icons-material/Schedule';
-import WeekSelector from "./WeekSelector";
-import 'react-indiana-drag-scroll/dist/style.css';
 import { LinkPersistQuery } from "components/LinkPersistQuery";
+import dayjs from 'dayjs';
+import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
+import { usePlanWeek } from "hooks/usePlan/usePlan";
+import { useCallback, useMemo, useRef, useState } from "react";
+import 'react-indiana-drag-scroll/dist/style.css';
+import { Item, Plan, WeekDay, WeekDayItems, WeekDays } from "types";
+import { addWeeksToDate, getCurrentWeek } from "util/dates";
+import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
+import ItemDetails from "../ItemDetails";
+import { TimeLineView } from "../TimeLineItemView";
+import { DayPicker } from "./DayPicker";
+import WeekSelector from "./WeekSelector";
 
 
 const Wrapper = styled("div")(({ theme }) => `
@@ -86,7 +85,7 @@ function findDayItems(weekDayItems: WeekDayItems, weekDay: WeekDay): Item[] | un
     return (Object.entries(weekDayItems)).find(key => key[0] === weekDay)?.[1];
 }
 
-export function TodayView(schedule: Schedule) {
+export function TodayView(schedule: Plan) {
 
     const queryClient = useQueryClient();
     const currentWeek = useMemo(() => (!!schedule.weekStarting) ? getCurrentWeek(new Date(schedule.weekStarting)) : 1, [schedule]);
@@ -96,7 +95,7 @@ export function TodayView(schedule: Schedule) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
     const [selectedItem, setSelectedItem] = useState<string | undefined>();
-    const { data: weekData } = useScheduleWeek({ WeekNumber: selectedWeek });
+    const { data: weekData } = usePlanWeek({ WeekNumber: selectedWeek });
 
     const currentDayItems = useMemo(() => {
         let dayIndex = selectedDate.getDay();
@@ -105,7 +104,7 @@ export function TodayView(schedule: Schedule) {
 
     const handleWeekChange = useCallback((newWeek: number) => {
         setSelectedWeek(newWeek);
-        queryClient.invalidateQueries(Queries.getScheduleWeek(newWeek));
+        queryClient.invalidateQueries(Queries.getPlanWeek(newWeek));
         setSelectedDate(new Date((newWeek === 1)
             ? schedule.weekStarting
             : addWeeksToDate(new Date(schedule.weekStarting), newWeek)));

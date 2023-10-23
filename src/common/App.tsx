@@ -1,66 +1,32 @@
-// This is needed for our use of @font-face in styles/baseTheme.css
 import "@/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Regular.ttf";
-import "style/baseTheme.css";
-// Setup our translations
-import "util/i18n";
-
-import { FullpageLoadingIndicator } from "components/LoadingIndicator";
-import log from "loglevel";
-import React, { Suspense, useEffect } from "react";
-import { HelmetProvider } from "react-helmet-async";
-import { SkeletonTheme } from "react-loading-skeleton";
-import Modal from "react-modal";
-import { HashRouter } from "react-router-dom";
-import { QueryParamProvider } from "use-query-params";
-import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
-
+import "@fontsource/bebas-neue";
+import "@fontsource/open-sans";
+import type { } from "@mui/lab/themeAugmentation";
 import {
   Experimental_CssVarsProvider as CssVarsProvider,
-  experimental_extendTheme as extendTheme,
   Palette,
   Theme,
   ThemeOptions,
+  experimental_extendTheme as extendTheme,
 } from "@mui/material/styles";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-import {
-  AppArgumentsConsumer,
-  AppArgumentsProvider,
-} from "./AppArgumentsProvider";
-import { AuthConsumer, AuthProvider } from "./AuthProvider";
-import { DynamicThemeProvider } from "./DynamicThemeProvider";
-import { GlobalErrorBoundary } from "./GlobalErrorBoundary";
-
-// Required if we're using @mui/lab - https://mui.com/material-ui/about-the-lab/
-import type { } from "@mui/lab/themeAugmentation";
-
-// https://mui.com/material-ui/experimental-api/css-theme-variables/usage/#typescript
 import type { } from "@mui/material/themeCssVarsAugmentation";
-import { QueryProvider } from "./RockdQueryProvider";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { FullpageLoadingIndicator } from "components/LoadingIndicator";
 import { ResponsiveRootLayout } from "components/ResponsiveRootLayout";
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
+import log from "loglevel";
+import React, { Suspense, useEffect } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { IntlProvider } from "react-intl";
+import Modal from "react-modal";
+import { HashRouter } from "react-router-dom";
+import "style/baseTheme.css";
+import { QueryParamProvider } from "use-query-params";
+import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
+import "util/i18n";
+import { GlobalErrorBoundary } from "./GlobalErrorBoundary";
+import { QueryProvider } from "./QueryProvider";
 
-declare module "@mui/material/styles" {
-  // Example for adding custom palette options and supporting it in TypeScript
-  // interface PaletteOptions {
-  //   gradient: string;
-  //   border: {
-  //     subtle: string;
-  //   };
-  // }
-  // interface Palette {
-  //   gradient: string;
-  //   border: {
-  //     subtle: string;
-  //   };
-  // }
-}
-
-/**
- * TODO: Move to use the new-ish feature - https://mui.com/material-ui/experimental-api/css-theme-variables/overview/
- * Which will allow us to directly use CSS variables to control MUI!
- */
 
 interface IPalette extends Palette {
 
@@ -98,49 +64,50 @@ export interface IThemeOptions extends ThemeOptions {
 const theme = extendTheme({
   // We're no longer using a custom prefix, so it's --mui-xxx
   typography: {
+    fontFamily: 'Bebas Neue',
     h1: {
-      fontSize: "1.525rem",
+      fontSize: "4rem",
       fontStyle: "normal",
       fontWeight: "800",
       lineHeight: "2rem",
-      letterSpacing: "0.05rem",
+      letterSpacing: "0.18rem",
     },
     h2: {
-      fontSize: "2.125rem",
+      fontSize: "3.5rem",
       fontStyle: "normal",
       fontWeight: "500",
       lineHeight: "2rem",
       letterSpacing: "0.015rem",
     },
     h3: {
-      fontSize: "1.5rem",
+      fontSize: "2.75rem",
       fontStyle: "normal",
       fontWeight: "400",
       lineHeight: "2rem",
     },
     h4: {
-      fontSize: "1.125rem",
+      fontSize: "2.5rem",
       fontStyle: "normal",
       fontWeight: "500",
       lineHeight: "1.75rem",
       letterSpacing: "0.01rem",
     },
     h5: {
-      fontSize: "1rem",
+      fontSize: "2rem",
       fontStyle: "normal",
       fontWeight: "700",
       lineHeight: "1.5rem",
       letterSpacing: "0.01rem",
     },
     subtitle1: {
-      fontSize: "0.875rem",
+      fontSize: "1.5rem",
       fontStyle: "normal",
       fontWeight: "500",
       lineHeight: "1.25rem",
-      letterSpacing: "0.02rem",
+      letterSpacing: "0.05rem",
     },
     subtitle2: {
-      fontSize: "0.75rem",
+      fontSize: "1.2rem",
       fontStyle: "normal",
       fontWeight: "700",
       lineHeight: "1rem",
@@ -149,16 +116,17 @@ const theme = extendTheme({
     body1: {
       fontSize: "1rem",
       fontStyle: "normal",
-      fontWeight: "400",
-      lineHeight: "1.5rem",
-      letterSpacing: "0.0275rem",
+      fontWeight: "700",
+      lineHeight: "1.25rem",
+      letterSpacing: "0.04rem",
     },
     body2: {
-      fontSize: "0.875rem",
+      fontFamily: "Open Sans",
+      fontSize: "0.8rem",
       fontStyle: "normal",
       fontWeight: "400",
-      lineHeight: "1.25rem",
-      letterSpacing: "0.015rem",
+      lineHeight: "1.2rem",
+      letterSpacing: "0.0275rem",
     },
     button: {
       fontSize: "0.875rem",
@@ -201,7 +169,7 @@ const theme = extendTheme({
           light: "#5a40ff",
         },
         tertiary: {
-          main: "#05eccb",
+          main: "#16f1b0",
           dark: "#04ccc9",
           light: "#05fffc"
         },
@@ -210,7 +178,6 @@ const theme = extendTheme({
           dark: "",
           light: ""
         },
-        // Missing Accesso Tertiary
         success: {
           main: "#83BCA9",
           dark: "#437c69",
@@ -251,7 +218,6 @@ delete theme.colorSchemes.dark;
 
 Modal.setAppElement("#root");
 
-
 function App({
   children,
   disableResponsiveComp,
@@ -267,64 +233,39 @@ function App({
 
   const [reactDevTools] = useLocalStorage("reactDevTools", false);
 
+  const apiUrl = import.meta.env.REACT_APP_API_URL;
+
   return (
     <HelmetProvider>
       <HashRouter>
         <QueryParamProvider adapter={ReactRouter6Adapter}>
           <GlobalErrorBoundary>
-            <AppArgumentsProvider>
-              <AppArgumentsConsumer>
-                {(appArgs) => (
-                  <ResponsiveRootLayout
-                    disabled={disableResponsiveComp}
-                    width={appArgs.width}
-                    height={appArgs.height}
+            <ResponsiveRootLayout
+              disabled={disableResponsiveComp}
+            >
+              <GlobalErrorBoundary>
+                <QueryProvider
+                  apiUrl={apiUrl}
+                  authMethod="Bearer"
+                >
+                  {reactDevTools && <ReactQueryDevtools initialIsOpen={false} />}
+                  <CssVarsProvider
+                    theme={theme}
+                    defaultMode="light"
                   >
-                    <GlobalErrorBoundary>
-                      <AuthProvider>
-                        <AuthConsumer>
-                          {(authData) => (
-                            <QueryProvider
-                              apiUrl={appArgs.apiUrl ?? "mock"}
-                              clientOptions={appArgs.rawQueryString}
-                              culture={appArgs?.culture ?? "en-US"} // TODO: Don't set defaults here let the server do that!
-                              authMethod="Bearer"
-                              authToken={authData.currentToken}
-                            >
-                              {reactDevTools && <ReactQueryDevtools initialIsOpen={false} />}
-                              <CssVarsProvider
-                                theme={theme}
-                                defaultMode="light"
-                              >
-                                <DynamicThemeProvider
-                                  theme={appArgs?.style}
-                                  prefix="themes/"
-                                >
-                                  <SkeletonTheme
-                                    baseColor="var(--skeleton-base-color)"
-                                    highlightColor="var(--skeleton-highlight-color)"
-                                  >
-                                    <Suspense
-                                      fallback={<FullpageLoadingIndicator />}
-                                    >
-                                      <IntlProvider locale="en-Gb">
-                                        <div className={className}>
-                                          {children}
-                                        </div>
-                                      </IntlProvider>
-                                    </Suspense>
-                                  </SkeletonTheme>
-                                </DynamicThemeProvider>
-                              </CssVarsProvider>
-                            </QueryProvider>
-                          )}
-                        </AuthConsumer>
-                      </AuthProvider>
-                    </GlobalErrorBoundary>
-                  </ResponsiveRootLayout>
-                )}
-              </AppArgumentsConsumer>
-            </AppArgumentsProvider>
+                    <Suspense
+                      fallback={<FullpageLoadingIndicator />}
+                    >
+                      <IntlProvider locale="en-Gb">
+                        <div className={className}>
+                          {children}
+                        </div>
+                      </IntlProvider>
+                    </Suspense>
+                  </CssVarsProvider>
+                </QueryProvider>
+              </GlobalErrorBoundary>
+            </ResponsiveRootLayout>
           </GlobalErrorBoundary>
         </QueryParamProvider>
       </HashRouter>

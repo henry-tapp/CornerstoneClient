@@ -34,10 +34,5 @@ export default defineConfig({
     tsconfigPaths(),
     requireTransform({}),
     svgrPlugin()
-  ],
-  test: {
-    globals: true,
-    environment: "jsdom",
-    setupFiles: "./tests/setup.js",
-  },
+  ]
 });

@@ -1,6 +1,6 @@
 window.globalrockdconfig = {
   apiMapping: {
-    local: "http://localhost:60962/",
+    local: "https://localhost:32774/",
     dev: "https://dev.rockd.com/",
     mock: "http://localhost:3000/",
   },

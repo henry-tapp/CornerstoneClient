@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import { isApiBaseRespons as isApiBaseResponse } from "api/Api.types";
+import React, { useMemo } from "react";
 import { ApiProvider, retryPolicy } from "../../api";
-import { isApiBaseResponse } from "api/Api.types";
+import { QueryProviderProps } from "./QueryProvider.types";
+
+const DefaultRefetchIntervalMillis = 15000;
 
 const internalQueryClient = (defaultRefetchIntervalMillis?: number | null) =>
   new QueryClient({
@@ -63,49 +64,26 @@ const internalQueryClient = (defaultRefetchIntervalMillis?: number | null) =>
     },
   });
 
-/**
- * A wrapper component that contains all the required setup / contexts etc for the
- * Qsmart NextGen components to function. This also sets up bits like the automated
- * query refetching based on API response expiries (or a fallback).
- *
- * This must be included in and wrap any project using this library.
- *
- * @param props QSNextGenProps
- * @returns
- */
-export function QueryProvider(props: React.PropsWithChildren<QSNextGenProps>) {
+
+export function QueryProvider(props: React.PropsWithChildren<QueryProviderProps>) {
   const {
     children,
-    queryClient: overrideQueryClient,
-    apiCoreProvider,
-    defaultRefetchIntervalMillis,
-    clientId,
     apiUrl,
-    authMethod,
-    authToken,
-    culture,
-    geolocation,
-    clientOptions,
+    authMethod
   } = props;
 
   const queryClient = useMemo(
     () =>
-      overrideQueryClient ?? internalQueryClient(defaultRefetchIntervalMillis),
-    [defaultRefetchIntervalMillis, overrideQueryClient]
+      internalQueryClient(DefaultRefetchIntervalMillis),
+    []
   );
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
         <ApiProvider
-          core={apiCoreProvider}
-          clientId={clientId}
           authMethod={authMethod}
-          authToken={authToken}
           baseApiUrl={apiUrl}
-          culture={culture}
-          geolocation={geolocation}
-          clientOptions={clientOptions}
         >
           {children}
         </ApiProvider>
@@ -113,3 +91,4 @@ export function QueryProvider(props: React.PropsWithChildren<QSNextGenProps>) {
     </>
   );
 }
+
