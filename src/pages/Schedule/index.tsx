@@ -5,21 +5,21 @@ import TodayView from "./Today";
 
 export function Schedule() {
 
-    const { data: schedule, error } = usePlan({});
+    const { data: plan, error } = usePlan({});
 
     const navigate = useNavigate();
 
     useEffect(() => {
 
-        if (!schedule || error) {
+        if (!plan || error) {
 
             navigate("../wizard");
         }
-    }, [navigate, schedule, error]);
+    }, [navigate, plan, error]);
 
     return (
         <div>
-            {schedule && (<TodayView {...schedule} />)}
+            {plan && (<TodayView {...plan} />)}
         </div >
     );
 }

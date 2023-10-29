@@ -1,6 +1,7 @@
 import { styled } from "@mui/material/styles";
-import { useItemTypes } from "hooks/useItems/useItems";
-import { usePlanWeek } from "hooks/usePlan/usePlan";
+import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
+import { useScheduleWeek } from "hooks/useSchedule/useSchedule";
+import { useMultipleWorkoutGroupsForPhase } from "hooks/useWorkouts/useWorkouts";
 import { ids } from "mocks/examples/scheduleExamples";
 import { useCallback, useMemo, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
@@ -59,8 +60,10 @@ export interface ViewProps {
 
 export function WeekScheduleView({ weekNumber }: ViewProps) {
 
-  const { data: weekData } = usePlanWeek({ WeekNumber: weekNumber });
-  const { data: itemTypes } = useItemTypes({});
+  const [planId, setPlanId] = useLocalStorage("planId", "");
+
+  const { data: weekData } = useScheduleWeek({ planId: planId, weekNumber: weekNumber });
+  const { data: itemTypes } = useMultipleWorkoutGroupsForPhase({ phase: weekData?.weekItems });
 
   const lists = useMemo(() => [UNSCHEDULED].concat(WeekDays), []);
 
@@ -70,19 +73,19 @@ export function WeekScheduleView({ weekNumber }: ViewProps) {
       day: list,
       hasPlaceholder: list === UNSCHEDULED,
       tasks: list !== UNSCHEDULED ? [PLACEHOLDER] :
-        Object.values(weekData?.items ?? []).flat().flat().map((item, idx2) => {
+        Object.values(weekData?.weekItems ?? []).flat().flat().map((item, idx2) => {
           return {
             id: ids[idx2],
             prefix: "task",
             isPlaceholder: false,
             content: {
               name: item.name,
-              description: item.shortDescription
+              description: item.description
             }
           }
         })
     } as Day
-  }), [weekData?.items, lists]);
+  }), [weekData?.weekItems, lists]);
 
   let index = 0;
   const template = useMemo(() => lists.map((list, idx) => {
@@ -91,7 +94,7 @@ export function WeekScheduleView({ weekNumber }: ViewProps) {
       day: list,
       hasPlaceholder: list === UNSCHEDULED,
       tasks:
-        Object.values(weekData?.items?.[list] ?? []).flat().map((item, idx2) => {
+        Object.values(weekData?.weekItems ?? []).flat().map((item, idx2) => {
 
           return {
             id: ids[index++],
@@ -99,12 +102,12 @@ export function WeekScheduleView({ weekNumber }: ViewProps) {
             isPlaceholder: false,
             content: {
               name: item.name,
-              description: item.shortDescription
+              description: item.description
             }
           }
         })
     } as Day
-  }), [weekData?.items, lists, index]);
+  }), [weekData?.weekItems, lists, index]);
 
   const [elements, setElements] = useState<Day[]>(initial);
 

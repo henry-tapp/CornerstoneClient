@@ -1,6 +1,7 @@
-import { IconButton, Typography, styled } from "@mui/material";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { Item } from "../../types/Item"
+import { IconButton, Typography, styled } from "@mui/material";
+import { useMemo } from 'react';
+import { WeekItemView, GetVariation as getVariation } from 'types';
 
 
 const ItemCardGridContainer = styled("div")(
@@ -49,29 +50,32 @@ const LogButtonArea = styled("div")`
     right: 0;
 `
 
-interface ItemCardProps extends Item {
-    imageSrc?: string;
+interface ItemCardProps {
+    item: WeekItemView;
 }
 
-export function ItemCard({ name, shortDescription, variation, exercises, estimatedCompletionMinutes, imageSrc }: ItemCardProps) {
+export function ItemCard({ item }: ItemCardProps) {
+
+    const variation = useMemo(() => {
+
+        return getVariation(item.focus)?.name;
+    }, [item.focus]);
 
     return (
         <ItemCardGridContainer className="itemcard-container" >
-            {/* <ItemImage src={imageSrc ?? img} alt={"No Image found"}></ItemImage> */}
-            {/* <TypeArea color={variation.Color ?? "#241623"}></TypeArea> */}
             <CardGrid>
                 <HeaderArea>
-                    <Typography variant="h4" style={{ fontWeight: "bold" }}>{name}</Typography>
+                    <Typography variant="h4" style={{ fontWeight: "bold" }}>{item.name}</Typography>
                 </HeaderArea>
 
                 <DescriptionArea>
-                    <Typography variant="body1">{shortDescription}</Typography>
+                    <Typography variant="body1">{item.description}</Typography>
                 </DescriptionArea>
                 <RightArea>
-                    {estimatedCompletionMinutes !== 0 && exercises && (<>
-                        <Typography variant="caption">{exercises} exercise{exercises > 1 && "s"}</Typography >
+                    {item.estimatedCompletionMinutes !== 0 && variation && (<>
+                        <Typography variant="caption">{variation}</Typography >
                         <Typography variant="caption"> &#8226; </Typography>
-                        <Typography variant="caption">{estimatedCompletionMinutes}m </Typography >
+                        <Typography variant="caption">{item.estimatedCompletionMinutes}m </Typography >
                     </>
                     )}
                 </RightArea>

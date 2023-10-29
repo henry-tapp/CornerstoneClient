@@ -2,9 +2,8 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import { Typography, styled } from "@mui/material";
 import { ITheme } from "common/App";
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import { usePlanWeek } from "hooks/usePlan/usePlan";
 import { useCallback, useMemo } from "react";
-import { Plan } from "types";
+import { Plan } from 'types';
 import { getCurrentWeek } from "util/dates";
 import { ColumnStackFlexBox } from "../../../style/styles";
 
@@ -40,25 +39,23 @@ export interface WeekViewProps {
     onChange: (week: number) => void;
 }
 
-export function WeekSelector({ schedule, onChange }: WeekViewProps) {
+export function WeekSelector({ schedule: plan, onChange }: WeekViewProps) {
 
-    const currentWeek = useMemo(() => (!!schedule.weekStarting) ? getCurrentWeek(new Date(schedule.weekStarting)) : 1, [schedule]);
-    const [navigatedWeek, setWeek] = useLocalStorage("navigatedWeek", currentWeek);
-
-    const { data: weekData } = usePlanWeek({ WeekNumber: navigatedWeek });
+    const currentWeek = useMemo(() => (!!plan.dateStarting) ? getCurrentWeek(new Date(plan.dateStarting)) : 1, [plan]);
+    const [_, setWeek] = useLocalStorage("navigatedWeek", currentWeek);
 
     const handleWeekSet = useCallback((newWeek: number) => {
         setWeek(newWeek);
         console.log(newWeek);
         onChange(newWeek);
 
-    }, [setWeek]);
+    }, [setWeek, onChange]);
 
     return (
         <>
             <Wrapper>
                 <StyledGrid>
-                    {Array.from(Array(schedule.numberOfWeeks)).map((week, idx) =>
+                    {Array.from(Array(plan.numberOfWeeks)).map((week, idx) =>
                         <GridItemContainer key={idx} onClick={() => handleWeekSet(idx + 1)}>
                             <ColumnStackFlexBox>
                                 <Typography variant="caption">{idx + 1}</Typography>

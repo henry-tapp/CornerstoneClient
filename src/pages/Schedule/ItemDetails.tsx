@@ -3,10 +3,9 @@ import { styled } from "@mui/material/styles";
 
 import TimerIcon from '@mui/icons-material/Timer';
 import { ITheme } from "common/App";
-import { Exercise, GetVariation, ExerciseGroup } from "types/Item";
 
-import StockExerciseImage from '../../images/gen/synth-climber-3.jpeg'
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import StockExerciseImage from '../../images/gen/synth-climber-3.jpeg';
 
 
 import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';

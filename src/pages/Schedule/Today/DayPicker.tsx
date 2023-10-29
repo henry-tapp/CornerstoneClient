@@ -1,10 +1,7 @@
-import { Typography, styled, IconButton } from "@mui/material";
+import { Typography, styled } from "@mui/material";
 import { ITheme } from "common/App";
-import { useIntl } from 'react-intl';
-import { useCallback } from "react";
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import 'react-indiana-drag-scroll/dist/style.css';
+import { useIntl } from 'react-intl';
 
 const Wrapper = styled("div")(({ theme }) => `
   overflow: hidden;
@@ -76,40 +73,26 @@ export interface DayPickerProps {
   setWeek: (newWeek: number) => void
 }
 
-export function DayPicker({ weekNumber, weekStarting, weekEnding, selectedDate, onClick, setWeek }: DayPickerProps) {
+export function DayPicker({ weekStarting, weekEnding, selectedDate, onClick }: DayPickerProps) {
   const intl = useIntl();
-
-  const backbuttonHandle = useCallback(() => {
-    let newWeek = weekNumber >= 1 ? weekNumber - 1 : weekNumber;
-    if (newWeek !== weekNumber) {
-      setWeek(newWeek);
-    }
-  }, [setWeek, weekNumber]);
-
-  const forwardButtonHandle = useCallback(() => {
-    let newWeek = weekNumber <= 12 ? weekNumber + 1 : weekNumber;
-    if (newWeek !== weekNumber) {
-      setWeek(newWeek);
-    }
-  }, [setWeek, weekNumber])
 
   return (
     <Wrapper>
-        <StyledGrid>
-          {getDaysArray(weekStarting, weekEnding).map((date, idx) => {
-            return (
-              <GridItemContainer key={idx} data-datevalue={date} onClick={(e: React.MouseEvent<HTMLElement>) => onClick(new Date(e.currentTarget.dataset.datevalue ?? selectedDate))}>
-                <FlexColumn selected={selectedDate.getDay() === date.getDay()}>
-                  <DateTypographies>
-                    <Typography variant="caption">{date.getDate()}</Typography>
-                    <Typography variant="overline">{date.toLocaleDateString(intl.locale, { weekday: 'short' })}</Typography>
-                  </DateTypographies>
-                  {selectedDate.getDay() === date.getDay() && (<OvalHighlight />)}
-                </FlexColumn>
-              </GridItemContainer>
-            );
-          })}
-        </StyledGrid>
+      <StyledGrid>
+        {getDaysArray(weekStarting, weekEnding).map((date, idx) => {
+          return (
+            <GridItemContainer key={idx} data-datevalue={date} onClick={(e: React.MouseEvent<HTMLElement>) => onClick(new Date(e.currentTarget.dataset.datevalue ?? selectedDate))}>
+              <FlexColumn selected={selectedDate.getDay() === date.getDay()}>
+                <DateTypographies>
+                  <Typography variant="caption">{date.getDate()}</Typography>
+                  <Typography variant="overline">{date.toLocaleDateString(intl.locale, { weekday: 'short' })}</Typography>
+                </DateTypographies>
+                {selectedDate.getDay() === date.getDay() && (<OvalHighlight />)}
+              </FlexColumn>
+            </GridItemContainer>
+          );
+        })}
+      </StyledGrid>
     </Wrapper>
   );
 }

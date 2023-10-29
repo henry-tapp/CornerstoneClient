@@ -1,26 +1,31 @@
-import { FormControl, MenuItem, OutlinedInput, Select, ThemeProvider, createTheme, useTheme } from "@mui/material";
+import { FormControl, FormHelperText, MenuItem, OutlinedInput, Select, SelectChangeEvent, ThemeProvider, alpha, createTheme, useTheme } from "@mui/material";
 import { ITheme } from "common/App";
-import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
 export interface CSMenuItemProps {
-    value: string;
+    value: string | number;
     text: string;
 }
 
-export interface CSSelectProps<TFormData extends FieldValues> {
-    path: Path<TFormData>;
+export interface CSSelectProps {
     label: string;
-    value?: string;
+    type?: string;
     required?: boolean;
+    helperText?: string;
+    defaultValue?: string;
     menuItems: CSMenuItemProps[];
-    register: UseFormRegister<TFormData>
+    setValue: (v: string) => void;
 }
 
-export default function CSSelect<TFormData extends FieldValues>(props: CSSelectProps<TFormData>) {
+export default function CSSelect(props: CSSelectProps) {
 
     const theme = useTheme() as ITheme;
 
-    const { path, label, menuItems, value, required, register } = props;
+    const { label, menuItems, required, helperText, defaultValue, setValue } = props;
+
+    const handleChange = (event: SelectChangeEvent) => {
+        setValue(event.target.value);
+    };
+
 
     const paperTheme = createTheme({
         components: {
@@ -44,23 +49,37 @@ export default function CSSelect<TFormData extends FieldValues>(props: CSSelectP
                 sx={{
                     '.MuiSvgIcon-root ': {
                         fill: `${(theme as ITheme).palette.tertiary.main} !important`,
-                        marginTop: "-0.2rem"
+                        marginTop: "0.4rem"
                     }
                 }}>
+                {helperText && (<FormHelperText sx={{
+                    backgroundColor: alpha(theme.palette.shades.g1, 1),
+                    color: theme.palette.tertiary.main,
+                    typography: theme.typography.body1,
+                    paddingTop: "0.25rem",
+                    paddingInline: "0.9rem 1rem",
+                    borderRadius: "0.5rem 0.5rem 0 0",
+                    marginBottom: "-1.25rem",
+                    marginLeft: "0",
+                    marginRight: "0",
+                    borderBottom: `0.1rem solid ${theme.palette.shades.g3}`,
+                    zIndex: 2
+
+                }}>{helperText}</FormHelperText>)}
+
                 <Select
-                    {...register(path, {
-                        required: required ?? false
-                    })}
                     required={required}
-                    value={value}
                     label={label}
+                    defaultValue={defaultValue}
                     inputProps={{
                         sx: {
                             backgroundColor: theme.palette.shades.g1,
                             color: theme.palette.tertiary.main,
                             typography: theme.typography.body1,
+                            paddingTop: helperText && "2rem",
                         }
                     }}
+                    onChange={handleChange}
                     input={<OutlinedInput margin='dense' />}
                 >
                     {menuItems && menuItems.map((option, idx) => (
@@ -69,6 +88,7 @@ export default function CSSelect<TFormData extends FieldValues>(props: CSSelectP
                         </MenuItem>
                     ))}
                 </Select>
+
             </FormControl>
         </ThemeProvider>
     )

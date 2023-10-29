@@ -9,3 +9,22 @@ export interface User {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface UserMeasurements {
+    bodyWeight: number;
+    height: number;
+    maxHang: number;
+    maxRepeater: number;
+    hipFlexibility: number;
+}
+
+export interface UserMeasurementsAndPreferences {
+    measurements: UserMeasurements;
+    preferences: UserPreferences;
+}
+
+export type WeightUnits = "Kilograms" | "Pounds" | "Stones";
+
+export interface UserPreferences {
+    weightUnits: WeightUnits;
+}

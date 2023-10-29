@@ -1,23 +1,42 @@
-import { WeekDayItems } from "./Item";
-import { UserMeasurements } from "./UserMeasurements";
+import { WeekItemView } from "./Item";
+import { UserMeasurements, UserPreferences } from "./User";
 
-export interface Plan {
-    weekStarting: Date;
-    dateEnding: Date;
+export interface Plan extends PlanOptions {
+    id: string;
     numberOfWeeks: number;
-    peakWeek: number;
+}
+
+export interface PlanOptions {
+    dateStarting: Date;
+    peakWeek: Date;
+    availableWeeklyOutdoorClimbDays: number;
+    planType: PlanType;
 }
 
 export interface PlanCreationData {
-    plan: Omit<Plan, "dateEnding | numberOfWeeks | peakWeek">;
+    plan: PlanOptions;
     userMeasurements: UserMeasurements;
+    userPreferences: UserPreferences;
 }
 
-export interface PlanWeek extends Omit<Plan, "numberOfWeeks" | "peakWeek"> {
+export interface Schedule {
+    plan: Plan;
+    weeks?: ScheduleWeekView[];
+}
+
+export interface ScheduleWeekView {
+
     id: string;
+    planId: string;
     weekStarting: Date;
-    weekNumber: number;
     weekEnding: Date;
-    items?: WeekDayItems;
-    peakWeek: boolean;
+    weekNumber: number;
+    isPeakWeek: boolean;
+    weekItems: WeekItemView[];
+}
+
+export enum PlanType {
+
+    "SportClimbing" = 1,
+    "Bouldering" = 2
 }

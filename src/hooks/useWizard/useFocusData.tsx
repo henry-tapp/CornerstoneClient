@@ -1,14 +1,17 @@
+import { PlanType } from "types";
 
 export const useFocusData = () => {
 
     return [{
         title: "Bouldering",
+        planType: PlanType.Bouldering,
         description: [`THe bouldering plan is your key to unlocking strength and power for bouldering success`,
             `Elevate your climbing game with workouts that target explosive power, enabling you to tackle challenging boulder problems`,
             `Develop a rock-solid core and finger strength, providing the foundation for critical bouldering moves`]
     },
     {
         title: "Sport Climbing",
+        planType: PlanType.SportClimbing,
         description: [`The sport climbing training plan is designed to take you from strength and power development to route climbing- specific endurance`,
             `Develop strength and power, providing confidence for challenging routes`,
             `Build the stamina required for longer routes, ensuring you can tackle sustained climbs`,
@@ -94,6 +97,6 @@ export const useSubmitInformation = (planType: string) => {
 
     return {
         title: `Creating your ${planType} plan!`,
-        description: `Which week would you like your plan to begin?`
+        description: `We just need to know a few dates..`
     };
 }

@@ -28,7 +28,7 @@ const Header = styled("div")(({ theme }) => `
 export function Manage() {
 
   const { data: schedule } = usePlan({});
-  const currentWeek = useMemo(() => (!!schedule?.weekStarting) ? getCurrentWeek(new Date(schedule.weekStarting)) : 1, [schedule]);
+  const currentWeek = useMemo(() => (!!schedule?.dateStarting) ? getCurrentWeek(new Date(schedule.dateStarting)) : 1, [schedule]);
   const [navigatedWeek] = useLocalStorage("navigatedWeek", currentWeek);
 
   return (

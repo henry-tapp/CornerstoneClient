@@ -1,9 +1,8 @@
 
-import { ApiResponseData } from "api/Api.types";
 import { DisableHook, DisableSuspenseHook, DisableSuspenseHookData } from "types";
-import { Plan, ScheduleWeekView } from "types/Plan";
+import { ScheduleWeekView } from "types/Plan";
 
-export type PlanError =
+export type ScheduleError =
   | undefined
   | {
     /**
@@ -12,27 +11,16 @@ export type PlanError =
     message?: string;
   };
 
-/**
- *  Plan
- */
-export interface UsePlanProps extends DisableHook, DisableSuspenseHook {
-
-}
-
-export interface UsePlanData extends ApiResponseData, DisableSuspenseHookData {
-  error?: PlanError;
-  data?: Plan;
-}
 
 /**
    *  Schedule Week
    */
 export interface UseScheduleWeekProps extends DisableHook, DisableSuspenseHook {
-  planId: number;
+  planId: string;
   weekNumber: number;
 }
 
 export interface UseScheduleWeekData extends DisableSuspenseHookData {
-  error?: PlanError;
+  error?: ScheduleError;
   data?: ScheduleWeekView;
 }

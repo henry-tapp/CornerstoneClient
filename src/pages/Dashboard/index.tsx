@@ -1,10 +1,10 @@
-import { styled } from "@mui/material/styles";
-import { DashboardItem, ItemViewType } from "./DashboardItem";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { ITheme } from "common/App";
 import { IconButton, IconButtonProps, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { styled } from "@mui/material/styles";
+import { ITheme } from "common/App";
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { DashboardItem, ItemViewType } from "./DashboardItem";
 
 const Wrapper = styled("div")`
   width:100%;
@@ -91,7 +91,7 @@ export function Dashboard() {
       <Header>
         <LeftAlign>
           <Typography variant="caption" fontWeight={"bold"}>Hey Henry!</Typography>
-          <Typography variant="h1" fontWeight={"bold"}>How's your training going?</Typography>
+          <Typography variant="h5" fontWeight={"bold"}>How's your training going?</Typography>
         </LeftAlign>
         <RightAlign><IconButtonStyle onClick={handleAccountClick}><AccountCircleIcon style={{ transform: 'scale(1.8)' }} /></IconButtonStyle></RightAlign>
       </Header>

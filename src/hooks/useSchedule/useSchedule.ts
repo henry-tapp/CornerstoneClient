@@ -2,19 +2,20 @@ import { useQuery } from "@tanstack/react-query";
 import { useApi } from "hooks/useApi/useApi";
 import { logQuerySettled } from "util/log";
 import { Queries } from "../../api";
-import { UsePlanData, UsePlanProps } from "./usePlan.types";
+import { UseScheduleWeekData, UseScheduleWeekProps } from "./useSchedule.types";
 
 /**
- * A hook to retrieve {@link Schedule} data.
+ * A hook to retrieve {@link PlanWeek} data.
  */
-export function usePlan({ disableSuspense, disabled }: UsePlanProps): UsePlanData {
+export function useScheduleWeek({ planId, weekNumber, disableSuspense, disabled }: UseScheduleWeekProps): UseScheduleWeekData {
 
   const api = useApi();
 
   const { data, isLoading, error } = useQuery(
-    Queries.getPlan(),
+    Queries.getPlanWeek(weekNumber),
     async () => {
-      const response = await api.getPlan()
+
+      const response = await api.getScheduleWeek(planId, weekNumber)
       if (response.status !== 200) {
         throw new Error(response.statusText);
       }
@@ -22,11 +23,12 @@ export function usePlan({ disableSuspense, disabled }: UsePlanProps): UsePlanDat
     },
     {
       staleTime: 5 * 1000 * 60,
-      refetchOnMount: true,
-      enabled: !disabled,
+      enabled: !disabled && !!weekNumber,
       suspense: disableSuspense ? false : true,
+      refetchOnMount: true,
+
       onSettled: (d, err) =>
-        logQuerySettled(Queries.getPlan(), d, err),
+        logQuerySettled(Queries.getPlanWeek(weekNumber), d, err),
     }
   );
 

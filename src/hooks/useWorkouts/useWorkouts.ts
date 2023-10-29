@@ -1,26 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
-import { Queries } from "../../api";
 import { useApi } from "hooks/useApi/useApi";
-import { UseItemTypesData, UseItemTypesProps } from "./useItems.types";
 import { logQuerySettled } from "util/log";
+import { Queries } from "../../api";
+import { UseMultipleWorkoutGroupData, UseMultipleWorkoutGroupForPhaseProps } from "./useWorkouts.types";
 
 /**
  * A hook to retrieve {@link ItemTypes} data.
  */
-export function useItemTypes({ disableSuspense, disabled }: UseItemTypesProps): UseItemTypesData {
+export function useMultipleWorkoutGroupsForPhase({ phase, disableSuspense, disabled }: UseMultipleWorkoutGroupForPhaseProps): UseMultipleWorkoutGroupData {
 
   const api = useApi();
 
   const { data, isLoading, error } = useQuery(
     Queries.getItemTypes(),
     async () => {
-      const response = await api.getItemTypes()
+      const response = await api.getWorkoutGroupsForPhase(phase)
       if (response.status !== 200) {
         throw new Error(response.statusText);
       }
       return response.data;
     },
     {
+      staleTime: 5 * 1000 * 60,
+      refetchOnMount: true,
       enabled: !disabled,
       suspense: disableSuspense ? false : true,
       onSettled: (d, err) =>

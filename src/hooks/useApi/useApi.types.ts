@@ -1,12 +1,14 @@
-import { UserMeasurements } from "types/UserMeasurements";
+import { UserMeasurements, UserPreferences } from "types/User";
 import {
     ApiResponse,
     GenericRequestOptions,
     RequestProcessor,
 } from "../../api";
 import {
-    ItemType,
-    Plan, PlanWeek,
+    MultipleWorkoutGroup,
+    PhaseType,
+    Plan,
+    PlanOptions, Schedule, ScheduleWeekView
 } from "../../types";
 
 export interface Api {
@@ -43,31 +45,37 @@ export interface Api {
     /**
      * Get the plan for the users auth token.
      *
-     * @returns The Plan data if successful.
+     * @returns The plan if successful.
      */
     getPlan: () => Promise<ApiResponse<Plan>>;
-
 
     /**
      * Creates a new plan
      *
      * @returns 
      */
-    createPlan: (plan: Plan) => Promise<ApiResponse<{}>>;
+    createPlan: (plan: PlanOptions) => Promise<ApiResponse<{}>>;
+
+    /**
+         * Get the full schedule  for the users auth token.
+         *
+         * @returns The the full schedule if successful.
+         */
+    getSchedule: () => Promise<ApiResponse<Schedule>>;
 
     /**
      * Get the schedule items for a given week.
      *
      * @returns The Schedule week item data if successful.
      */
-    getPlanWeek: (weekNumber: number) => Promise<ApiResponse<PlanWeek>>
+    getScheduleWeek: (planId: string, weekNumber: number) => Promise<ApiResponse<ScheduleWeekView>>
 
     /**
      * Get Item Types
      *
      * @returns The Item types if successful.
      */
-    getItemTypes: () => Promise<ApiResponse<ItemType[]>>;
+    getWorkoutGroupsForPhase: (phase: PhaseType) => Promise<ApiResponse<MultipleWorkoutGroup[]>>;
 
     /**
    * Gets users measurements
@@ -89,4 +97,11 @@ export interface Api {
      * @returns 
      */
     updateUserMeasurements: (data: UserMeasurements) => Promise<ApiResponse<{}>>;
+
+    /**
+     * Adds users preferences
+     *
+     * @returns 
+     */
+    addUserPreferences: (data: UserPreferences) => Promise<ApiResponse<{}>>;
 }

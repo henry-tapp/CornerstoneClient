@@ -1,12 +1,14 @@
 import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
 import { IconButton } from "@mui/material";
-import { alpha, styled } from "@mui/material/styles";
+import { alpha, styled, useTheme } from "@mui/material/styles";
 import { useMutation } from '@tanstack/react-query';
 import { ITheme } from 'common/App';
 import { useApi } from 'hooks/useApi/useApi';
-import { useCallback, useState } from "react";
-import { Plan, PlanCreationData } from 'types';
-import { UserMeasurements } from 'types/UserMeasurements';
+import { useCallback, useRef, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
+import { PlanCreationData, PlanOptions, PlanType } from 'types';
+import { UserMeasurements, UserPreferences } from 'types/User';
 import loglevel from 'util/log';
 import Step1 from './Step1';
 import Step2 from "./Step2";
@@ -36,13 +38,19 @@ const BackIconWrapper = styled(IconButton)(
 );
 
 export interface StepProps {
-  option?: string;
-  handleStepMove: (currentStep: number, option: string) => void;
+  option?: PlanType;
+  handleStepMove: (currentStep: number, option?: PlanType) => void;
 }
-export function Wizard() {
 
+export interface WizardProps {
+  onPlanCreated: () => void;
+}
+export function Wizard({ onPlanCreated }: WizardProps) {
+
+  const theme = useTheme() as ITheme;
+  const navigate = useNavigate();
   const [currentStep, setStepNumber] = useState<number>(1);
-  const [step3Option, setStep3Option] = useState<string>("");
+  const [step3Option, setStep3Option] = useState<PlanType>();
 
   const api = useApi();
 
@@ -52,37 +60,75 @@ export function Wizard() {
     },
   });
 
+  const userPreferencesMutation = useMutation({
+    mutationFn: (data: UserPreferences) => {
+      return api.addUserPreferences(data);
+    },
+  });
+
   const planCreationMutation = useMutation({
-    mutationFn: (data: Plan) => {
+    mutationFn: (data: PlanOptions) => {
       return api.createPlan(data);
     },
   });
 
-
-  const handleStepMove = useCallback((newStep: number, newOption?: string) => {
+  const handleStepMove = useCallback((newStep: number, newOption?: PlanType) => {
     setStepNumber(newStep);
     if (newOption && newStep === 3) {
       setStep3Option(newOption);
     }
   }, []);
 
+  const combinedMutation = useMutation(async (data: PlanCreationData) => {
+    let response = await userMeasurementsMutation.mutateAsync(data.userMeasurements);
+    if (response.status! > 400) throw new Error("Failed to save measurements");
+
+    response = await userPreferencesMutation.mutateAsync(data.userPreferences);
+    if (response.status! > 400) throw new Error("Failed to save preferences");
+
+    data.plan.dateStarting = new Date(data.plan.dateStarting);
+    data.plan.peakWeek = new Date(data.plan.peakWeek);
+    data.plan.planType = step3Option!;
+    response = await planCreationMutation.mutateAsync(data.plan);
+    if (response.status! > 400) throw new Error("Failed to save plan");
+
+    return true;
+  });
+
   const handleSubmit = async (data: PlanCreationData) => {
     try {
-      console.log("submitting");
-      console.log(data);
-      await userMeasurementsMutation.mutateAsync(data.userMeasurements);
-      await planCreationMutation.mutateAsync(data.plan);
+      let mutationResponse = combinedMutation.mutateAsync(data);
+      ref.current!.continuousStart(5);
+      var response = await mutationResponse.then(async (success: boolean) => {
+        if (success) {
+          var planResponse = await api.getSchedule();
+          if (planResponse.status === 200) {
+
+            onPlanCreated();
+            navigate('./dashboard');
+            return "";
+          }
+          else {
+            return "There was something wrong with the information provided please ensure each field is filled in and try again."
+          }
+        }
+      });
+      ref.current!.complete();
+      return response;
     }
     catch (e: unknown) {
       loglevel.error((e as Error)?.message ?? e);
     }
   };
 
+  const ref = useRef<LoadingBarRef>(null);
+
   return (
     <PageWrapper>
+      <LoadingBar color={theme.palette.tertiary.main} ref={ref} />
       {currentStep === 1 && (<Step1 handleStepMove={handleStepMove} />)}
       {currentStep === 2 && <Step2 handleStepMove={handleStepMove} />}
-      {currentStep === 3 && (<Step3 handleCreatePlan={handleSubmit} option={step3Option} />)}
+      {currentStep === 3 && (<Step3 handleCreatePlan={handleSubmit} option={step3Option!} />)}
       {currentStep > 1 && (
         <BackIconWrapper onClick={() => handleStepMove(currentStep - 1, step3Option)}>
           <KeyboardBackspaceOutlinedIcon />

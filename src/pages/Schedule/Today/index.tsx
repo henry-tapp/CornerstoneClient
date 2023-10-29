@@ -7,10 +7,10 @@ import { SwipeableDrawerType, SwipeableEdgeDrawer } from "components/Drawer";
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 import dayjs from 'dayjs';
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import { usePlanWeek } from "hooks/usePlan/usePlan";
+import { useScheduleWeek } from 'hooks/useSchedule/useSchedule';
 import { useCallback, useMemo, useRef, useState } from "react";
 import 'react-indiana-drag-scroll/dist/style.css';
-import { Item, Plan, WeekDay, WeekDayItems, WeekDays } from "types";
+import { Plan } from "types";
 import { addWeeksToDate, getCurrentWeek } from "util/dates";
 import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
 import ItemDetails from "../ItemDetails";
@@ -80,36 +80,33 @@ const ItemWrapper = styled("div")(({ theme }) => `
     overflow: hidden;
 `);
 
-function findDayItems(weekDayItems: WeekDayItems, weekDay: WeekDay): Item[] | undefined {
 
-    return (Object.entries(weekDayItems)).find(key => key[0] === weekDay)?.[1];
-}
-
-export function TodayView(schedule: Plan) {
+export function TodayView(plan: Plan) {
 
     const queryClient = useQueryClient();
-    const currentWeek = useMemo(() => (!!schedule.weekStarting) ? getCurrentWeek(new Date(schedule.weekStarting)) : 1, [schedule]);
-
     const [weekSelectorOpenState, setWeekSelectorOpenState] = useState<boolean>(false);
+
+    const currentWeek = useMemo(() => (!!plan.dateStarting) ? getCurrentWeek(new Date(plan.dateStarting)) : 1, [plan]);
+
     const [selectedWeek, setSelectedWeek] = useLocalStorage("navigatedWeek", currentWeek);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
     const [selectedItem, setSelectedItem] = useState<string | undefined>();
-    const { data: weekData } = usePlanWeek({ WeekNumber: selectedWeek });
+
+    const { data: weekData } = useScheduleWeek({ planId: plan.id, weekNumber: selectedWeek });
 
     const currentDayItems = useMemo(() => {
         let dayIndex = selectedDate.getDay();
-        return weekData?.items && findDayItems(weekData?.items, WeekDays[(dayIndex - 1 === -1) ? 6 : dayIndex - 1]);
+        return weekData?.weekItems && weekData.weekItems.filter(x => x.scheduledDayOfWeek === dayIndex);
     }, [selectedDate, weekData]);
 
     const handleWeekChange = useCallback((newWeek: number) => {
         setSelectedWeek(newWeek);
         queryClient.invalidateQueries(Queries.getPlanWeek(newWeek));
         setSelectedDate(new Date((newWeek === 1)
-            ? schedule.weekStarting
-            : addWeeksToDate(new Date(schedule.weekStarting), newWeek)));
+            ? plan.dateStarting
+            : addWeeksToDate(new Date(plan.dateStarting), newWeek)));
         console.log(selectedDate);
-    }, [setSelectedWeek, selectedDate, setSelectedDate, schedule, queryClient]);
+    }, [setSelectedWeek, selectedDate, setSelectedDate, plan, queryClient]);
 
     const handleClick = useCallback((newDate: Date) => {
         setSelectedDate(newDate);
@@ -133,7 +130,7 @@ export function TodayView(schedule: Plan) {
         setWeekSelectorOpenState(toggle);
     }, []);
 
-    return (weekData?.weekStarting && weekData?.weekEnding && (
+    return (weekData?.weekStarting && weekData?.weekStarting && (
         <Wrapper>
             <GradientBox />
             <ColumnStackFlexBox>
@@ -160,7 +157,7 @@ export function TodayView(schedule: Plan) {
             </Toolbar>
             {!!weekSelectorOpenState && (
                 <WeekSelectorWrapper>
-                    <WeekSelector schedule={schedule} onChange={handleWeekChange} />
+                    <WeekSelector schedule={plan} onChange={handleWeekChange} />
                 </WeekSelectorWrapper>
             )}
             <ItemWrapper>{currentDayItems &&

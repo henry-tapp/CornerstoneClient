@@ -1,14 +1,14 @@
 import { ApiResponse } from "api";
-import { GetVariation, Item, Plan, PlanWeek } from "types";
+import { GetVariation, Item, PlanOptions, ScheduleWeek } from "types";
 import { addDaysToDate, addWeeksToDate, getMonday } from "util/dates";
 
 export function getSchedule() {
   return {
-    weekStarting: new Date("07/17/2023"),
+    dateStarting: new Date("07/17/2023"),
     dateEnding: new Date("10/09/2023"),
     numberOfWeeks: 12,
     peakWeek: 11
-  } as Plan;
+  } as PlanOptions;
 }
 
 
@@ -34,8 +34,8 @@ export function getScheduleWeek(weekNumber: number) {
   let schedule = getSchedule();
 
   let weekStarting = (weekNumber === 1)
-    ? schedule.weekStarting
-    : getMonday(addWeeksToDate(schedule.weekStarting, weekNumber));
+    ? schedule.dateStarting
+    : getMonday(addWeeksToDate(schedule.dateStarting, weekNumber));
   let weekEnding = addDaysToDate(weekStarting, 6);
   return [{
     id: ids[0],
@@ -152,5 +152,5 @@ export function getScheduleWeek(weekNumber: number) {
       estimatedCompletionMinutes: 7,
       state: "todo"
     } as Item]
-  } as ApiResponse<PlanWeek>;
+  } as ApiResponse<ScheduleWeek>;
 }

@@ -6,6 +6,7 @@ import { StepProps } from ".";
 import image from '../../images/gen/real-bw-boulderer-1-Clipped.jpeg';
 
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { PlanType } from "types";
 
 const Wrapper = styled("div")(({ theme }) => `
     position:relative;
@@ -66,7 +67,7 @@ const Step2 = (props: StepProps) => {
                                 <Typography variant="h5" >What is your training focus?</Typography>
                             </Title>
                             {quckStartFocusSteps && quckStartFocusSteps.map((x, idx) => {
-                                return (<FocusCard key={idx} title={x.title} descriptions={x.description} handleClick={props.handleStepMove} />);
+                                return (<FocusCard key={idx} planType={x.planType} title={x.title} descriptions={x.description} handleClick={props.handleStepMove} />);
                             })}
                         </ButtonListContainer>
                     </AbsolutePositionWrapper>
@@ -129,14 +130,15 @@ const HighlightBubble = styled("div")(
 interface FocusCardProps {
     title: string;
     descriptions: string[];
-    handleClick: (el: number, opt: string) => void;
+    planType: PlanType;
+    handleClick: (el: number, opt?: number) => void;
 }
 
 
-const FocusCard = ({ title, descriptions, handleClick }: FocusCardProps) => {
+const FocusCard = ({ title, descriptions, planType, handleClick }: FocusCardProps) => {
 
     return (
-        <StyledButton type="button" onClick={() => handleClick(3, title)}>
+        <StyledButton type="button" onClick={() => handleClick(3, planType)}>
             <CardContainer>
                 <HighlightBubble>
                     <Typography variant="subtitle2" >{title}</Typography>

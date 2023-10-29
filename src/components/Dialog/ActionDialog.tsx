@@ -17,11 +17,12 @@ export interface ActionDialogProps {
     closeText?: string;
     actionText?: string;
     open: boolean;
+    disabled?: boolean;
     handleClose: () => void;
     handleSubmit: () => void;
 }
 
-export function ActionDialog({ title, description, closeText, actionText, open, handleClose, handleSubmit, children }: React.PropsWithChildren<ActionDialogProps>) {
+export function ActionDialog({ title, description, closeText, actionText, open, disabled, handleClose, handleSubmit, children }: React.PropsWithChildren<ActionDialogProps>) {
 
     return (
 
@@ -33,15 +34,17 @@ export function ActionDialog({ title, description, closeText, actionText, open, 
             aria-describedby="dialog-information-description"
         >
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent>
+            <DialogContent style={{ paddingBottom: 0 }}>
                 <DialogContentText variant="body2" id="dialog-information-slide-description" style={{ whiteSpace: "pre-wrap" }}>
                     {description}
                 </DialogContentText>
+            </DialogContent>
+            <DialogContent style={{ width: "100%", padding: 0 }}>
                 {children}
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>{closeText ?? "Close"}</Button>
-                <Button type="submit" onClick={handleSubmit}>{actionText ?? "Submit"}</Button>
+                <Button type="submit" disabled={disabled} onClick={handleSubmit}>{actionText ?? "Submit"}</Button>
             </DialogActions>
         </Dialog>
     )

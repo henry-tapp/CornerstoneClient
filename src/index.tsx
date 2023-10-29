@@ -60,6 +60,8 @@ const providerConfig = {
   clientId: config.clientId,
   authorizationParams: {
     redirect_uri: window.location.origin + "/#/dashboard",
+    scope: "openid profile email offline_access",
+    useRefreshTokensFallback: true,
     ...(config.audience ? { audience: config.audience } : null),
   },
   useRefreshTokens: true,
@@ -99,7 +101,7 @@ function AuthenticatedView() {
     <Wrapper className="wrapper">
       {hasPlan
         ? (<><MainRouter /><NavigationBar /></>)
-        : <Wizard />
+        : <Wizard onPlanCreated={() => setHasPlan(true)} />
       }
 
     </Wrapper>

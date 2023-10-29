@@ -1,6 +1,6 @@
 import { useApiProvider } from "api";
-import { ItemType, Plan, PlanWeek } from "types";
-import { UserMeasurements } from "types/UserMeasurements";
+import { MultipleWorkoutGroup, PhaseType, Plan, PlanOptions, Schedule, ScheduleWeekView } from "types";
+import { UserMeasurements, UserPreferences } from "types/User";
 import { Api } from "./useApi.types";
 
 export function useApi(): Api {
@@ -20,14 +20,20 @@ export function useApi(): Api {
         // Api Specific methods
         getPlan: () => apiProvider.get<Plan>(`${prefix}/plan`),
 
-        createPlan: (data: Plan) => apiProvider.post<Plan, {}>(`${prefix}/plan`, data),
+        createPlan: (data: PlanOptions) => apiProvider.post<PlanOptions, {}>(`${prefix}/plan`, data),
 
-        getPlanWeek: (weekNumber: number) => apiProvider.get<PlanWeek>(`${prefix}/plan/week/${weekNumber}`),
+        getSchedule: () => apiProvider.get<Schedule>(`${prefix}/plan/schedule`),
 
-        getItemTypes: () => apiProvider.get<ItemType[]>(`${prefix}/itemtype`),
+        getScheduleWeek: (planId: string, weekNumber: number) => apiProvider.get<ScheduleWeekView>(`${prefix}/schedule/${planId}/${weekNumber}`),
 
-        getUserMeasurements: () => apiProvider.get<UserMeasurements>(`${prefix}/users/measurements`),
-        addUserMeasurements: (data: UserMeasurements) => apiProvider.post<UserMeasurements, {}>(`${prefix}/users/measurements`, data),
-        updateUserMeasurements: (data: UserMeasurements) => apiProvider.put<UserMeasurements, {}>(`${prefix}/users/measurements`, data)
+        getWorkoutGroupsForPhase: (phase: PhaseType) => apiProvider.get<MultipleWorkoutGroup[]>(`${prefix}/workout/groups/phase/${phase}`),
+
+        getUserMeasurements: () => apiProvider.get<UserMeasurements>(`${prefix}/user/profile/measurements`),
+
+        addUserMeasurements: (data: UserMeasurements) => apiProvider.post<UserMeasurements, {}>(`${prefix}/user/profile/measurements`, data),
+        
+        updateUserMeasurements: (data: UserMeasurements) => apiProvider.put<UserMeasurements, {}>(`${prefix}/user/profile/measurements`, data),
+
+        addUserPreferences: (data: UserPreferences) => apiProvider.post<UserPreferences, {}>(`${prefix}/user/profile/preferences`, data)
     };
 }

@@ -1,4 +1,3 @@
-import { User } from "types/User";
 
 export type ApiProviderCore = "axios" | "fetch";
 
@@ -15,7 +14,9 @@ export interface ApiProviderProps {
 
 export interface RequestProcessorProps extends ApiProviderProps {
   accessToken?: string;
-  userDetails?: User;
+  userId: string,
+  planId: string,
+  handleRefresh: () => Promise<string>;
 }
 
 export interface ApiResponseData {

@@ -1,13 +1,25 @@
-import { Item } from "./Item";
 
-export interface Exercise extends Omit<Item, "exericses" | "variation"> {
+export interface Exercise {
+    id: string;
+    workoutId: string;
     reps: number;
     sets: number;
     repTime: number;
     repRest: number;
     setRest: number;
+    type: ExerciseType;
+    weight?: number;
+    estimatedDuration: number;
+    hasEasierVariant: boolean;
+    hasHardervariant: boolean;
 }
 
-export interface ExerciseGroup extends Omit<Item, "exericses"> {
-    items?: Exercise[];
+export enum ExerciseType {
+    Activity = 0,
+    Hypertrophy = 1,
+    Strength = 2,
+    Endurance = 3,
+    Warmup = 4,
+    Cooldown = 5,
+    Stretching = 6
 }

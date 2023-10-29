@@ -1,7 +1,7 @@
 import InfoIcon from '@mui/icons-material/Info';
 import { FormControl, IconButton, TextField, styled, useTheme } from "@mui/material";
 import { ITheme } from "common/App";
-import { HTMLInputTypeAttribute } from "react";
+import { CSSProperties, HTMLInputTypeAttribute } from "react";
 import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 
 export interface CSTextFieldProps<T extends FieldValues> {
@@ -10,6 +10,10 @@ export interface CSTextFieldProps<T extends FieldValues> {
     label?: string;
     info?: boolean;
     required?: boolean;
+    labelFont?: CSSProperties;
+    inputFont?: CSSProperties;
+    min?: number;
+    max?: number;
     register: UseFormRegister<T>;
     handleOpenInfo?: () => void;
 }
@@ -20,7 +24,7 @@ const AbsolutePositionWrapper = styled("div")(({ theme }) => `
     right: 0;
 `);
 
-export default function CSSelect<TFormData extends FieldValues>({ register, path, type, label, info, required, handleOpenInfo }: CSTextFieldProps<TFormData>) {
+export default function CSSelect<TFormData extends FieldValues>({ register, path, type, label, info, required, labelFont, inputFont, handleOpenInfo }: CSTextFieldProps<TFormData>) {
 
     const theme = useTheme() as ITheme;
 
@@ -38,7 +42,7 @@ export default function CSSelect<TFormData extends FieldValues>({ register, path
                     },
                     sx: {
                         color: theme.palette.tertiary.main,
-                        typography: theme.typography.subtitle1,
+                        typography: labelFont ?? theme.typography.subtitle1,
                     }
                 }}
                 label={label}
@@ -46,7 +50,7 @@ export default function CSSelect<TFormData extends FieldValues>({ register, path
                     sx: {
                         backgroundColor: theme.palette.shades.g1,
                         color: theme.palette.tertiary.main,
-                        typography: theme.typography.body1
+                        typography: inputFont ?? theme.typography.body1
                     }
                 }}
             />

@@ -1,15 +1,16 @@
 import Axios from "axios";
 import loglevel from "loglevel";
 // import log from "loglevel";
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
 
 import { useAuth0 } from "@auth0/auth0-react";
+import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
+import { Plan } from "types";
 import { User } from "types/User";
 import { ApiProviderCore, ApiProviderProps, RequestProcessorProps } from "./Api.types";
 import {
   AxiosRequestProcessor,
-  FetchRequestProcessor,
-  RequestProcessor,
+  RequestProcessor
 } from "./RequestProcessors";
 
 const ApiContext = createContext<RequestProcessor>(undefined as any);
@@ -35,30 +36,22 @@ const requestProcessorFactory = (
     headers["Authorization"] = `${props.authMethod ?? "Bearer"} ${props.accessToken}`;
   }
 
-  switch (coreProviderName) {
-    case "fetch":
-      loglevel.info(`ApiProvider creating fetch provider.`);
-
-      return new FetchRequestProcessor(props.baseApiUrl, {
-        "Content-Type": "application/json",
-        "Accept-Language": "en-US" ?? "",
-        "Access-Control-Allow-Origin": "*",
-        ...headers,
-      });
-
-    case "axios":
-      loglevel.info(`ApiProvider creating axios provider.`);
-
-      return new AxiosRequestProcessor(props.baseApiUrl, {
-        "Content-Type": "application/json",
-        "Accept-Language": "en-US" ?? "",
-        "Access-Control-Allow-Origin": "*",
-        ...headers,
-      });
-
-    default:
-      throw new Error("Invalid RequestProcessor requested from factory");
+  if (props.userId) {
+    headers["UserId"] = `${props.userId}`;
   }
+
+  if (props.planId) {
+    headers["PlanId"] = `${props.planId}`;
+  }
+
+  loglevel.info(`ApiProvider creating axios provider.`);
+
+  return new AxiosRequestProcessor(props.handleRefresh, props.baseApiUrl, {
+    "Content-Type": "application/json",
+    "Accept-Language": "en-US" ?? "",
+    "Access-Control-Allow-Origin": "*",
+    ...headers,
+  });
 };
 
 /**
@@ -78,9 +71,11 @@ export function ApiProvider(props: React.PropsWithChildren<ApiProviderProps>) {
 
   const { user, isLoading, isAuthenticated, getAccessTokenSilently, logout } = useAuth0();
 
-  const [accessToken, setAccessToken] = useState<string>("");
+  const [accessToken, setAccessToken] = useLocalStorage("jwt", "");
 
-  const [userDetails, setUserMetadata] = useState<User>();
+  const [planId, setPlanId] = useLocalStorage("planId", "");
+
+  const [userId, setUserId] = useLocalStorage("userId", "");
 
   useEffect(() => {
     const getUserMetadata = async () => {
@@ -92,22 +87,36 @@ export function ApiProvider(props: React.PropsWithChildren<ApiProviderProps>) {
           },
         });
 
-        if (user && !isLoading && isAuthenticated) {
+        if (user && !isLoading && isAuthenticated && newAccessToken) {
 
-          const userDetailsByName = encodeURI(`${baseApiUrl}users/${user?.name}`);
+          setAccessToken(newAccessToken);
 
-          const metadataResponse = await fetch(userDetailsByName, {
+          const metadataResponse = await fetch(encodeURI(`${baseApiUrl}user/${user?.name}`), {
             headers: {
               Authorization: `Bearer ${newAccessToken}`,
             },
           });
 
+          if (metadataResponse.status === 200) {
+            var userDetails = await metadataResponse.json() as User;
+            setUserId(userDetails.id);
+          }
+
           if (metadataResponse.status >= 400) {
             logout();
           }
 
-          setUserMetadata(await metadataResponse.json() as User);
-          setAccessToken(newAccessToken);
+          const planResponse = await fetch(encodeURI(`${baseApiUrl}plan`), {
+            headers: {
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          });
+
+          if (planResponse.status === 200) {
+
+            var plan = await planResponse.json() as Plan;
+            setPlanId(plan.id);
+          }
         }
 
       } catch (e: any) {
@@ -117,11 +126,11 @@ export function ApiProvider(props: React.PropsWithChildren<ApiProviderProps>) {
 
     getUserMetadata();
 
-  }, [getAccessTokenSilently, baseApiUrl, accessToken, user, logout, isLoading, isAuthenticated]);
+  }, [getAccessTokenSilently, baseApiUrl, accessToken, user, logout, isLoading, isAuthenticated, setPlanId, setUserId, setAccessToken]);
 
   const requestProcessor = useMemo(
-    () => requestProcessorFactory(coreProviderName, { accessToken: accessToken, userDetails: userDetails, ...propsWithoutChildren }),
-    [coreProviderName, propsWithoutChildren, accessToken, userDetails]
+    () => requestProcessorFactory(coreProviderName, { accessToken: accessToken, userId, planId, ...propsWithoutChildren, handleRefresh: getAccessTokenSilently }),
+    [coreProviderName, propsWithoutChildren, accessToken, getAccessTokenSilently, userId, planId]
   );
 
   return (

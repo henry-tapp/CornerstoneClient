@@ -8,7 +8,8 @@ import { useHipFlexibilityInformation, useMaxHangInformation, useRepeaterInforma
 import { useCallback, useState } from "react";
 import { Fade } from "react-awesome-reveal";
 import { useForm } from 'react-hook-form';
-import { PlanCreationData } from "types";
+import { PlanOptions, PlanType } from "types";
+import { UserMeasurementsAndPreferences, WeightUnits } from "types/User";
 import { StepProps } from ".";
 import image from '../../images/gen/real-bw-boulderer-2.jpeg';
 
@@ -57,11 +58,6 @@ const FormContainer = styled("div")`
     padding-top:1rem;
 `
 
-const Grid = styled("div")`
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 0.2rem;
-`
 const CreatePlanButton = styled(Button)(({ theme }) => `
     position: absolute;
     bottom: 1rem;
@@ -74,12 +70,23 @@ const CreatePlanButton = styled(Button)(({ theme }) => `
     line-height: 2rem;
 `);
 
-const units = [{ value: "Kilograms", text: "Kilograms" }, { value: "Pounds", text: "Pounds" }, { value: "Stones", text: "Stones" }];
+const weightUnits = [{ value: "Kilograms", text: "Kilograms" }, { value: "Pounds", text: "Pounds" }, { value: "Stones", text: "Stones" }];
 const initialDialogStates = [
     { id: 0, state: false },
     { id: 1, state: false },
     { id: 2, state: false },
     { id: 3, state: false }
+];
+
+const daysInWeek = [
+    { value: 0, text: "0" },
+    { value: 1, text: "1" },
+    { value: 2, text: "2" },
+    { value: 3, text: "3" },
+    { value: 4, text: "4" },
+    { value: 5, text: "5" },
+    { value: 6, text: "6" },
+    { value: 7, text: "7" },
 ];
 
 function getWeekStartingDates() {
@@ -94,27 +101,64 @@ function getWeekStartingDates() {
     });
 }
 
+function getPeakWeekDates() {
+    var nextMonday = new Date();
+    nextMonday.setDate(nextMonday.getDate() + (1 + 7 - nextMonday.getDay()) % 7);
+
+    return [7, 8, 9, 10, 11].map(i => {
+        let date = new Date(nextMonday.setDate(nextMonday.getDate() + (7 * i)));
+        return {
+            value: date.toDateString(), text: date.toDateString()
+        };
+    });
+}
+
 export interface FinalStepProps extends Omit<StepProps, "handleStepMove"> {
-    handleCreatePlan: (data: any) => void;
+    handleCreatePlan: (data: any) => Promise<string | undefined>;
 }
 
 const Step3 = (props: FinalStepProps) => {
+
     const theme = useTheme();
 
+    const [errors, setErrors] = useState<string>("");
+
+    const [measurementsAndPreferences, setMeasurements] = useState<UserMeasurementsAndPreferences>();
     const [openStates, setOpen] = useState(initialDialogStates);
 
     const repeaterInformation = useRepeaterInformation();
     const maxHangInformation = useMaxHangInformation();
     const flexibilityInformation = useHipFlexibilityInformation();
-    const submitInformation = useSubmitInformation(props.option!);
+    const submitInformation = useSubmitInformation(PlanType[props.option!]);
     const weekStartingValues = getWeekStartingDates();
+    const peakWeekValues = getPeakWeekDates();
 
     const {
-        register,
-        handleSubmit,
-        formState: { isValid }
-    } = useForm<PlanCreationData>({
-        mode: "onChange"
+        register: registerFormMeasurements,
+        handleSubmit: handleSubmitMeasurements,
+        setValue: setMeasurementValue,
+        formState: { isValid: isValidMeasurements }
+    } = useForm<UserMeasurementsAndPreferences>({
+        mode: "onChange",
+        defaultValues: {
+            preferences: {
+                weightUnits: "Kilograms"
+            }
+        }
+    });
+
+    const {
+        handleSubmit: handleSubmitPlan,
+        formState: { isValid: isValidPlan },
+        setValue
+    } = useForm<PlanOptions>({
+        mode: "onChange",
+        defaultValues: {
+            planType: props.option,
+            dateStarting: new Date(weekStartingValues[0].value),
+            peakWeek: new Date(peakWeekValues[0].value),
+            availableWeeklyOutdoorClimbDays: 0
+        }
     });
 
     const handleToggleDialogForId = useCallback((id: number, newState: boolean) => {
@@ -125,21 +169,33 @@ const Step3 = (props: FinalStepProps) => {
         setOpen(statesCopy);
     }, [setOpen, openStates]);
 
-    const handleClick = useCallback(async () => {
+    const handleClickMeasurementsFinish = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
 
-        if (isValid)
-            handleToggleDialogForId(3, true)
+        e.preventDefault();
+        if (isValidMeasurements) {
+            handleSubmitMeasurements((measurements: UserMeasurementsAndPreferences) => {
+                setMeasurements(measurements);
+                handleToggleDialogForId(3, true)
+            })();
+        }
 
-    }, [isValid, handleToggleDialogForId]);
+    }, [isValidMeasurements, handleToggleDialogForId, handleSubmitMeasurements, setMeasurements]);
 
     const coordinateSubmit = useCallback(async () => {
-        handleSubmit((data: any) => props.handleCreatePlan(data))();
-    }, [handleSubmit, props]);
+        handleSubmitPlan(async (plan: PlanOptions) => {
+            setErrors(await props.handleCreatePlan({
+                plan: plan,
+                userMeasurements: measurementsAndPreferences?.measurements,
+                userPreferences: measurementsAndPreferences?.preferences
+            }) ?? "");
+
+        })();
+    }, [handleSubmitPlan, props, measurementsAndPreferences]);
 
     return (
-        <form>
-            <Fade duration={2000}>
-                <Wrapper>
+        <Fade duration={2000}>
+            <Wrapper>
+                <form>
                     <FlexBox>
                         <StyledImg src={image} alt="" />
                         <AbsolutePositionWrapper>
@@ -147,18 +203,12 @@ const Step3 = (props: FinalStepProps) => {
                                 <Title>
                                     <Typography variant="h5" >Taking Measurements...</Typography>
                                 </Title>
-                                <Grid>
-                                    <CSTextField register={register} path="userMeasurements.bodyWeight" required label="Body Weight" type="number" />
-                                    <CSSelect path="userMeasurements.bodyWeightUnits" register={register} menuItems={units} label={"Units"} value={units[0].value} />
-                                </Grid>
-                                <CSTextField register={register} path="userMeasurements.height" required label="Height (cm)" type="number" />
-                                <CSTextField register={register} path="userMeasurements.wingspan" required label="Wingspan (cm)" type="number" />
-                                <Grid>
-                                    <CSTextField register={register} path="userMeasurements.maxHang" required label="Max Weighted Hang (7 second)" type="number" info handleOpenInfo={() => handleToggleDialogForId(0, true)} />
-                                    <CSSelect path="userMeasurements.maxHangUnits" register={register} menuItems={units} label={"Units"} value={units[0].value} />
-                                </Grid>
-                                <CSTextField register={register} path="userMeasurements.maxRepeater" required label="Max 60% Bodyweight Repeater" type="number" info handleOpenInfo={() => handleToggleDialogForId(1, true)} />
-                                <CSTextField register={register} path="userMeasurements.hipFlexibility" required label="Hip Flexibility (Side Split) Cm" type="number" info handleOpenInfo={() => handleToggleDialogForId(2, true)} />
+                                <CSSelect setValue={(v: string) => setMeasurementValue("preferences.weightUnits", v as WeightUnits, { shouldValidate: true })} menuItems={weightUnits} helperText="Prefered Weight Unit" label={"WeightUnits"} defaultValue={weightUnits[0].value} />
+                                <CSTextField register={registerFormMeasurements} path="measurements.bodyWeight" required label="Body Weight" type="number" />
+                                <CSTextField register={registerFormMeasurements} path="measurements.height" required label="Height (cm)" type="number" />
+                                <CSTextField register={registerFormMeasurements} path="measurements.maxHang" required label="Max Weighted Hang (7 second)" type="number" info handleOpenInfo={() => handleToggleDialogForId(0, true)} />
+                                <CSTextField register={registerFormMeasurements} path="measurements.maxRepeater" required label="Max 60% Bodyweight Repeater" type="number" info handleOpenInfo={() => handleToggleDialogForId(1, true)} />
+                                <CSTextField register={registerFormMeasurements} path="measurements.hipFlexibility" required label="Hip Flexibility (Side Split) Cm" type="number" info handleOpenInfo={() => handleToggleDialogForId(2, true)} />
                             </FormContainer>
                         </AbsolutePositionWrapper>
                     </FlexBox>
@@ -170,35 +220,55 @@ const Step3 = (props: FinalStepProps) => {
                             }
                         }}
                         style={{ color: (theme as ITheme).palette.shades.g1 }}
-                        disabled={!isValid}
-                        onClick={() => handleClick()}
+                        disabled={!isValidMeasurements}
+                        onClick={handleClickMeasurementsFinish}
+                        type="submit"
                     >
                         <Typography variant="subtitle1">Finish</Typography>
                     </CreatePlanButton>
-                </Wrapper>
-                <InfoDialog title={maxHangInformation.title} description={maxHangInformation.description} handleClose={() => handleToggleDialogForId(0, false)} open={openStates[0].state} />
-                <InfoDialog title={repeaterInformation.title} description={repeaterInformation.description} handleClose={() => handleToggleDialogForId(1, false)} open={openStates[1].state} />
-                <InfoDialog title={flexibilityInformation.title} description={flexibilityInformation.description} handleClose={() => handleToggleDialogForId(2, false)} open={openStates[2].state} />
-                <ActionDialog
-                    title={submitInformation.title}
-                    description={submitInformation.description}
-                    actionText="Create Plan"
-                    open={openStates[3].state}
-                    handleClose={() => handleToggleDialogForId(3, false)}
-                    handleSubmit={coordinateSubmit}
-                >
-                    <FormContainer>
-                        <CSSelect
-                            path="plan.weekStarting"
-                            register={register}
-                            menuItems={weekStartingValues}
-                            label={"WeekStarting"}
-                            value={weekStartingValues[0].value}
-                        />
-                    </FormContainer>
-                </ActionDialog>
-            </Fade >
-        </form >
+                </form>
+            </Wrapper>
+            <InfoDialog title={maxHangInformation.title} description={maxHangInformation.description} handleClose={() => handleToggleDialogForId(0, false)} open={openStates[0].state} />
+            <InfoDialog title={repeaterInformation.title} description={repeaterInformation.description} handleClose={() => handleToggleDialogForId(1, false)} open={openStates[1].state} />
+            <InfoDialog title={flexibilityInformation.title} description={flexibilityInformation.description} handleClose={() => handleToggleDialogForId(2, false)} open={openStates[2].state} />
+            <ActionDialog
+                title={submitInformation.title}
+                description={submitInformation.description}
+                actionText="Create Plan"
+                open={openStates[3].state}
+                handleClose={() => handleToggleDialogForId(3, false)}
+                handleSubmit={coordinateSubmit}
+                disabled={!isValidPlan}
+            >
+                <FormContainer>
+                    <CSSelect
+                        type="Date"
+                        menuItems={weekStartingValues}
+                        label={"WeekStarting"}
+                        helperText="When do you want to start your plan?"
+                        defaultValue={weekStartingValues[0].value}
+                        setValue={(v: string) => setValue("dateStarting", new Date(v), { shouldValidate: true })}
+                    />
+                    <CSSelect
+                        type="Date"
+                        menuItems={peakWeekValues}
+                        label={"PeakWeek"}
+                        helperText="When do you want your plan to peak?"
+                        defaultValue={peakWeekValues[0].value}
+                        setValue={(v: string) => setValue("peakWeek", new Date(v), { shouldValidate: true })}
+                    />
+                    <CSSelect
+                        type="number"
+                        menuItems={daysInWeek}
+                        label="Weekly outdoor sessions?"
+                        helperText="How many outdoor climbing sessions do you want scheduled a week?"
+                        defaultValue={daysInWeek[0].value.toString()}
+                        setValue={(v: string) => setValue("availableWeeklyOutdoorClimbDays", parseInt(v), { shouldValidate: true })}
+                    />
+                    <Typography variant="overline">{errors}</Typography>
+                </FormContainer>
+            </ActionDialog>
+        </Fade >
     )
 }
 

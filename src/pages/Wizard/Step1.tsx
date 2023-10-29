@@ -71,7 +71,7 @@ const Step1 = (props: StepProps) => {
                 <TextContainer>
                     <Slide direction="up">
                         <Container>
-                            <StyledButton type="button" onClick={() => props.handleStepMove(2, "")}>
+                            <StyledButton type="button" onClick={() => props.handleStepMove(2)}>
                                 <Typography variant="subtitle1" >Begin</Typography>
                             </StyledButton>
                         </Container>

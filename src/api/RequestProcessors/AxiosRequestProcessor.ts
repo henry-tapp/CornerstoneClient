@@ -1,46 +1,24 @@
 import Axios, { AxiosInstance, AxiosRequestHeaders, AxiosResponse } from "axios";
 
+import { RequestProcessorBase } from "./RequesProcessorBase";
 import {
   ApiHeaders,
   ApiResponse,
-  RequestProcessor,
-  RequestProcessorOptions,
+  RequestProcessorOptions
 } from "./RequestProcessor";
 
-export class AxiosRequestProcessor implements RequestProcessor {
-  public constructor(baseUrl?: string, baseHeaders?: ApiHeaders) {
-    this._baseUrl = baseUrl;
-    this._baseHeaders = baseHeaders;
+export class AxiosRequestProcessor extends RequestProcessorBase {
+  public constructor(handleRefresh: () => Promise<string>, baseUrl?: string, baseHeaders?: ApiHeaders) {
+
+    super(handleRefresh, baseUrl, baseHeaders);
 
     this._axiosInstance = Axios.create({
       baseURL: baseUrl,
       headers: baseHeaders as AxiosRequestHeaders,
     });
-
-    // TODO: Confirm if we actually want this functionality! I.E. always using Local
-    //       Storage access token for requests, irrespective of what was passed into props!
-    this._axiosInstance.interceptors.request.use((config) => {
-      // TODO: Warning! This isn't cross platform safe!
-      const token = localStorage.getItem("token");
-      if (token && config?.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    });
   }
-
-  private _baseUrl?: string;
-  private _baseHeaders?: ApiHeaders;
 
   private _axiosInstance?: AxiosInstance;
-
-  public get baseUrl(): string | undefined {
-    return this._baseUrl;
-  }
-
-  public get baseHeaders(): ApiHeaders | undefined {
-    return this._baseHeaders;
-  }
 
   private makeResponse<T>(
     response: AxiosResponse<T, any> | undefined | null
@@ -67,7 +45,10 @@ export class AxiosRequestProcessor implements RequestProcessor {
     );
 
     // TODO: Proper error handling - ApiResponseError
+    if (response?.status === 401) {
 
+      super.handleRefresh();
+    }
     return this.makeResponse<ResponseDataType>(response);
   }
 
@@ -88,6 +69,11 @@ export class AxiosRequestProcessor implements RequestProcessor {
 
     // TODO: Proper error handling - ApiResponseError
 
+    if (response?.status === 401) {
+
+      super.handleRefresh();
+    }
+
     return this.makeResponse<ResponseDataType>(response);
   }
 
@@ -107,7 +93,10 @@ export class AxiosRequestProcessor implements RequestProcessor {
     );
 
     // TODO: Proper error handling - ApiResponseError
+    if (response?.status === 401) {
 
+      super.handleRefresh();
+    }
     return this.makeResponse<ResponseDataType>(response);
   }
 
@@ -127,7 +116,10 @@ export class AxiosRequestProcessor implements RequestProcessor {
     );
 
     // TODO: Proper error handling - ApiResponseError
+    if (response?.status === 401) {
 
+      super.handleRefresh();
+    }
     return this.makeResponse<ResponseDataType>(response);
   }
 
@@ -145,7 +137,10 @@ export class AxiosRequestProcessor implements RequestProcessor {
     );
 
     // TODO: Proper error handling - ApiResponseError
+    if (response?.status === 401) {
 
+      super.handleRefresh();
+    }
     return this.makeResponse<ResponseDataType>(response);
   }
 }
