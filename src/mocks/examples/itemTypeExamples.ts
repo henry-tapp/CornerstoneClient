@@ -7,7 +7,7 @@ export function getSchedule() {
     dateStarting: new Date("07/17/2023"),
     dateEnding: new Date("10/09/2023"),
     numberOfWeeks: 12,
-    peakWeek: 11
+    PeakWeekDateStarting: 11
   } as PlanOptions;
 }
 

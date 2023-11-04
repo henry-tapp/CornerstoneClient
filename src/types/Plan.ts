@@ -1,4 +1,4 @@
-import { WeekItemView } from "./Item";
+import { PhaseType, WeekItemView } from "./Item";
 import { UserMeasurements, UserPreferences } from "./User";
 
 export interface Plan extends PlanOptions {
@@ -8,7 +8,7 @@ export interface Plan extends PlanOptions {
 
 export interface PlanOptions {
     dateStarting: Date;
-    peakWeek: Date;
+    peakWeekDateStarting: Date;
     availableWeeklyOutdoorClimbDays: number;
     planType: PlanType;
 }
@@ -32,6 +32,7 @@ export interface ScheduleWeekView {
     weekEnding: Date;
     weekNumber: number;
     isPeakWeek: boolean;
+    phase: PhaseType;
     weekItems: WeekItemView[];
 }
 

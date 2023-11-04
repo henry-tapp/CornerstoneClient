@@ -156,7 +156,7 @@ const Step3 = (props: FinalStepProps) => {
         defaultValues: {
             planType: props.option,
             dateStarting: new Date(weekStartingValues[0].value),
-            peakWeek: new Date(peakWeekValues[0].value),
+            peakWeekDateStarting: new Date(peakWeekValues[0].value),
             availableWeeklyOutdoorClimbDays: 0
         }
     });
@@ -255,7 +255,7 @@ const Step3 = (props: FinalStepProps) => {
                         label={"PeakWeek"}
                         helperText="When do you want your plan to peak?"
                         defaultValue={peakWeekValues[0].value}
-                        setValue={(v: string) => setValue("peakWeek", new Date(v), { shouldValidate: true })}
+                        setValue={(v: string) => setValue("peakWeekDateStarting", new Date(v), { shouldValidate: true })}
                     />
                     <CSSelect
                         type="number"

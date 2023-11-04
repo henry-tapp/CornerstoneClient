@@ -5,7 +5,6 @@ import React, { createContext, useContext, useEffect, useMemo } from "react";
 
 import { useAuth0 } from "@auth0/auth0-react";
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import { Plan } from "types";
 import { User } from "types/User";
 import { ApiProviderCore, ApiProviderProps, RequestProcessorProps } from "./Api.types";
 import {
@@ -91,31 +90,22 @@ export function ApiProvider(props: React.PropsWithChildren<ApiProviderProps>) {
 
           setAccessToken(newAccessToken);
 
-          const metadataResponse = await fetch(encodeURI(`${baseApiUrl}user/${user?.name}`), {
-            headers: {
-              Authorization: `Bearer ${newAccessToken}`,
-            },
-          });
+          if (userId === "") {
 
-          if (metadataResponse.status === 200) {
-            var userDetails = await metadataResponse.json() as User;
-            setUserId(userDetails.id);
-          }
+            const metadataResponse = await fetch(encodeURI(`${baseApiUrl}user/${user?.name}`), {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            });
 
-          if (metadataResponse.status >= 400) {
-            logout();
-          }
+            if (metadataResponse.status === 200) {
+              var userDetails = await metadataResponse.json() as User;
+              setUserId(userDetails.id);
+            }
 
-          const planResponse = await fetch(encodeURI(`${baseApiUrl}plan`), {
-            headers: {
-              Authorization: `Bearer ${newAccessToken}`,
-            },
-          });
-
-          if (planResponse.status === 200) {
-
-            var plan = await planResponse.json() as Plan;
-            setPlanId(plan.id);
+            if (metadataResponse.status >= 400) {
+              logout();
+            }
           }
         }
 
@@ -126,7 +116,7 @@ export function ApiProvider(props: React.PropsWithChildren<ApiProviderProps>) {
 
     getUserMetadata();
 
-  }, [getAccessTokenSilently, baseApiUrl, accessToken, user, logout, isLoading, isAuthenticated, setPlanId, setUserId, setAccessToken]);
+  }, [getAccessTokenSilently, baseApiUrl, accessToken, user, userId, logout, isLoading, isAuthenticated, setPlanId, setUserId, setAccessToken]);
 
   const requestProcessor = useMemo(
     () => requestProcessorFactory(coreProviderName, { accessToken: accessToken, userId, planId, ...propsWithoutChildren, handleRefresh: getAccessTokenSilently }),

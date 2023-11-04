@@ -7,7 +7,7 @@ import { useApi } from 'hooks/useApi/useApi';
 import { useCallback, useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
-import { PlanCreationData, PlanOptions, PlanType } from 'types';
+import { Plan, PlanCreationData, PlanOptions, PlanType } from 'types';
 import { UserMeasurements, UserPreferences } from 'types/User';
 import loglevel from 'util/log';
 import Step1 from './Step1';
@@ -43,7 +43,7 @@ export interface StepProps {
 }
 
 export interface WizardProps {
-  onPlanCreated: () => void;
+  onPlanCreated: (plan: Plan) => void;
 }
 export function Wizard({ onPlanCreated }: WizardProps) {
 
@@ -87,7 +87,7 @@ export function Wizard({ onPlanCreated }: WizardProps) {
     if (response.status! > 400) throw new Error("Failed to save preferences");
 
     data.plan.dateStarting = new Date(data.plan.dateStarting);
-    data.plan.peakWeek = new Date(data.plan.peakWeek);
+    data.plan.peakWeekDateStarting = new Date(data.plan.peakWeekDateStarting);
     data.plan.planType = step3Option!;
     response = await planCreationMutation.mutateAsync(data.plan);
     if (response.status! > 400) throw new Error("Failed to save plan");
@@ -102,9 +102,9 @@ export function Wizard({ onPlanCreated }: WizardProps) {
       var response = await mutationResponse.then(async (success: boolean) => {
         if (success) {
           var planResponse = await api.getSchedule();
-          if (planResponse.status === 200) {
+          if (planResponse.status === 200 && planResponse.data?.plan !== undefined) {
 
-            onPlanCreated();
+            onPlanCreated(planResponse.data.plan);
             navigate('./dashboard');
             return "";
           }

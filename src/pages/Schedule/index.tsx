@@ -1,3 +1,4 @@
+import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
 import { usePlan } from "hooks/usePlan/usePlan";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -5,6 +6,7 @@ import TodayView from "./Today";
 
 export function Schedule() {
 
+    const [planId, setPlanId] = useLocalStorage("planId", "");
     const { data: plan, error } = usePlan({});
 
     const navigate = useNavigate();
@@ -13,9 +15,10 @@ export function Schedule() {
 
         if (!plan || error) {
 
-            navigate("../wizard");
+            navigate(0);
+            setPlanId("");
         }
-    }, [navigate, plan, error]);
+    }, [navigate, setPlanId, plan, error]);
 
     return (
         <div>

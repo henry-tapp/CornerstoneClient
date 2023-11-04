@@ -11,6 +11,7 @@ import { useLocalStorage } from 'hooks/useLocalStorage/useLocalStorage';
 import Home from "pages/Home";
 import { Bar as NavigationBar } from "pages/Navigation/Bar";
 import Wizard from 'pages/Wizard';
+import { Plan } from 'types';
 import App, { ITheme } from "./common/App";
 
 if (import.meta.env.MODE === 'production') {
@@ -95,13 +96,13 @@ function AuthCheck() {
 
 function AuthenticatedView() {
 
-  const [hasPlan, setHasPlan] = useLocalStorage("hasPlan", false);
+  const [planId, setPlanId] = useLocalStorage("planId", "");
 
   return (
     <Wrapper className="wrapper">
-      {hasPlan
+      {planId !== ""
         ? (<><MainRouter /><NavigationBar /></>)
-        : <Wizard onPlanCreated={() => setHasPlan(true)} />
+        : <Wizard onPlanCreated={(plan: Plan) => setPlanId(plan.id)} />
       }
 
     </Wrapper>

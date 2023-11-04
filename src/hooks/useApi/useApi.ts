@@ -22,7 +22,7 @@ export function useApi(): Api {
 
         createPlan: (data: PlanOptions) => apiProvider.post<PlanOptions, {}>(`${prefix}/plan`, data),
 
-        getSchedule: () => apiProvider.get<Schedule>(`${prefix}/plan/schedule`),
+        getSchedule: () => apiProvider.get<Schedule>(`${prefix}/schedule`),
 
         getScheduleWeek: (planId: string, weekNumber: number) => apiProvider.get<ScheduleWeekView>(`${prefix}/schedule/${planId}/${weekNumber}`),
 
@@ -31,7 +31,7 @@ export function useApi(): Api {
         getUserMeasurements: () => apiProvider.get<UserMeasurements>(`${prefix}/user/profile/measurements`),
 
         addUserMeasurements: (data: UserMeasurements) => apiProvider.post<UserMeasurements, {}>(`${prefix}/user/profile/measurements`, data),
-        
+
         updateUserMeasurements: (data: UserMeasurements) => apiProvider.put<UserMeasurements, {}>(`${prefix}/user/profile/measurements`, data),
 
         addUserPreferences: (data: UserPreferences) => apiProvider.post<UserPreferences, {}>(`${prefix}/user/profile/preferences`, data)

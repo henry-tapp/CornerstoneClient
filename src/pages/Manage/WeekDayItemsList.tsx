@@ -1,18 +1,18 @@
-import { Draggable, Droppable } from "react-beautiful-dnd";
-import { Task, Day, UNSCHEDULED, SortType } from "./WeekScheduleView";
-import { styled, useTheme } from "@mui/material/styles";
-import { IconButton, ListItemIcon, Typography } from "@mui/material";
-import { ItemCardSmall } from "components/ItemCard/ItemCardSmall";
-import { ITheme } from "common/App";
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import SortIcon from '@mui/icons-material/Sort';
+import AddIcon from '@mui/icons-material/Add';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
 import ReplayIcon from '@mui/icons-material/Replay';
 import SettingsIcon from '@mui/icons-material/Settings';
-import ClearAllIcon from '@mui/icons-material/ClearAll';
-import AddIcon from '@mui/icons-material/Add';
+import SortIcon from '@mui/icons-material/Sort';
+import { IconButton, ListItemIcon, Typography } from "@mui/material";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { styled, useTheme } from "@mui/material/styles";
+import { ITheme } from "common/App";
+import { ItemCardSmall } from "components/ItemCard/ItemCardSmall";
 import { useState } from "react";
-import { ItemType } from "types";
+import { Draggable, Droppable } from "react-beautiful-dnd";
+import { ItemType, UNSCHEDULED, WeekItemView } from "types";
+import { Day, SortType, Task } from "./WeekScheduleView";
 
 const Wrapper = styled("div")(({ theme }) => `
   padding: 0.5rem;
@@ -76,11 +76,11 @@ export interface ItemListProps {
   handleAutoSort: (type: SortType) => void;
   handleUnschedule: (prefix?: string | undefined) => void;
   handleItemAdd: (id: string) => void;
+  handleOpenInfo: (id: string, newState: boolean) => void;
 };
 
 
-export function WeekDayItemsList({ itemTypes, prefix, elements, index, handleAutoSort, handleUnschedule, handleItemAdd }: ItemListProps) {
-
+export function WeekDayItemsList({ itemTypes, prefix, elements, index, handleAutoSort, handleUnschedule, handleItemAdd, handleOpenInfo }: ItemListProps) {
 
   const theme = useTheme();
 
@@ -94,7 +94,6 @@ export function WeekDayItemsList({ itemTypes, prefix, elements, index, handleAut
   };
 
   const handleSort = (type?: SortType | undefined) => {
-
     if (!!type) {
       handleAutoSort(type);
     }
@@ -109,13 +108,11 @@ export function WeekDayItemsList({ itemTypes, prefix, elements, index, handleAut
     setAnchorEl(null);
   };
 
-
-
   return (
 
     <Wrapper style={{ border: `0.01rem solid ${borderColor}` }}>
       <Header>
-        <Typography style={{ alignSelf: "flex-end", color }} variant="h5">{prefix}</Typography >
+        <Typography style={{ alignSelf: "flex-end", color }} variant="subtitle1">{prefix}</Typography >
         <Toolbar>
           {prefix === UNSCHEDULED &&
             (<>
@@ -195,7 +192,7 @@ export function WeekDayItemsList({ itemTypes, prefix, elements, index, handleAut
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}>
-                        <ItemCardSmall name={item.content.name} description={item.content.description} />
+                        <ItemCardSmall handleOpenInfo={handleOpenInfo} id={item.id} name={item.content.name} description={(item.content as WeekItemView).description} />
                       </DragItem>
                     );
                   }}

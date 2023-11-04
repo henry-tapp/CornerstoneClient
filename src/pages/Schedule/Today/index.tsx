@@ -10,7 +10,7 @@ import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
 import { useScheduleWeek } from 'hooks/useSchedule/useSchedule';
 import { useCallback, useMemo, useRef, useState } from "react";
 import 'react-indiana-drag-scroll/dist/style.css';
-import { Plan } from "types";
+import { Plan } from 'types';
 import { addWeeksToDate, getCurrentWeek } from "util/dates";
 import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
 import ItemDetails from "../ItemDetails";
@@ -84,9 +84,11 @@ const ItemWrapper = styled("div")(({ theme }) => `
 export function TodayView(plan: Plan) {
 
     const queryClient = useQueryClient();
+
+
     const [weekSelectorOpenState, setWeekSelectorOpenState] = useState<boolean>(false);
 
-    const currentWeek = useMemo(() => (!!plan.dateStarting) ? getCurrentWeek(new Date(plan.dateStarting)) : 1, [plan]);
+    const currentWeek = useMemo(() => (!!plan?.dateStarting) ? getCurrentWeek(new Date(plan.dateStarting)) : 1, [plan]);
 
     const [selectedWeek, setSelectedWeek] = useLocalStorage("navigatedWeek", currentWeek);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -103,7 +105,7 @@ export function TodayView(plan: Plan) {
         setSelectedWeek(newWeek);
         queryClient.invalidateQueries(Queries.getPlanWeek(newWeek));
         setSelectedDate(new Date((newWeek === 1)
-            ? plan.dateStarting
+            ? plan?.dateStarting
             : addWeeksToDate(new Date(plan.dateStarting), newWeek)));
         console.log(selectedDate);
     }, [setSelectedWeek, selectedDate, setSelectedDate, plan, queryClient]);
@@ -136,9 +138,7 @@ export function TodayView(plan: Plan) {
             <ColumnStackFlexBox>
                 <Header>
                     <Typography variant="caption">{dayjs(selectedDate).format('D MMMM, YYYY')}</Typography>
-                    {selectedDate.getDate() === new Date().getDate()
-                        ? <Typography variant="h1">Today</Typography>
-                        : (<Typography variant="h1">{dayjs(selectedDate).format('dddd')}</Typography>)}
+                    <Typography variant="h3">{selectedDate.getDate() === new Date().getDate() ? "Today" : dayjs(selectedDate).format('dddd')}</Typography>
                 </Header>
             </ColumnStackFlexBox>
             <DayPickerWrapper><DayPicker weekNumber={selectedWeek} setWeek={handleWeekChange} onClick={handleClick} weekStarting={weekData?.weekStarting} weekEnding={weekData?.weekEnding} selectedDate={selectedDate} /></DayPickerWrapper>
@@ -152,7 +152,7 @@ export function TodayView(plan: Plan) {
                     </LinkPersistQuery>
                 </ToolbarButton>
                 <ToolbarButton style={{ width: "7rem", marginRight: "1rem" }} onClick={() => handleWeekSelectorToggle(!weekSelectorOpenState)}>
-                    <Typography variant="caption">Week {selectedWeek} </Typography>
+                    <Typography variant="button">Week {selectedWeek} </Typography>
                 </ToolbarButton>
             </Toolbar>
             {!!weekSelectorOpenState && (

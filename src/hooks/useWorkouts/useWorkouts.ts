@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "hooks/useApi/useApi";
-import { logQuerySettled } from "util/log";
+import { getUseQueryOptions } from "util/queryOptions";
 import { Queries } from "../../api";
 import { UseMultipleWorkoutGroupData, UseMultipleWorkoutGroupForPhaseProps } from "./useWorkouts.types";
 
@@ -12,7 +12,7 @@ export function useMultipleWorkoutGroupsForPhase({ phase, disableSuspense, disab
   const api = useApi();
 
   const { data, isLoading, error } = useQuery(
-    Queries.getItemTypes(),
+    Queries.getMultipleWorkoutGroupsForPhase(),
     async () => {
       const response = await api.getWorkoutGroupsForPhase(phase)
       if (response.status !== 200) {
@@ -20,14 +20,7 @@ export function useMultipleWorkoutGroupsForPhase({ phase, disableSuspense, disab
       }
       return response.data;
     },
-    {
-      staleTime: 5 * 1000 * 60,
-      refetchOnMount: true,
-      enabled: !disabled,
-      suspense: disableSuspense ? false : true,
-      onSettled: (d, err) =>
-        logQuerySettled(Queries.getItemTypes(), d, err),
-    }
+    getUseQueryOptions(Queries.getMultipleWorkoutGroupsForPhase(), disabled, disableSuspense)
   );
 
   return {

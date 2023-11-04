@@ -58,7 +58,7 @@ export function WeekSelector({ schedule: plan, onChange }: WeekViewProps) {
                     {Array.from(Array(plan.numberOfWeeks)).map((week, idx) =>
                         <GridItemContainer key={idx} onClick={() => handleWeekSet(idx + 1)}>
                             <ColumnStackFlexBox>
-                                <Typography variant="caption">{idx + 1}</Typography>
+                                <Typography variant="h6">{idx + 1}</Typography>
                                 <BarChartIcon />
                             </ColumnStackFlexBox>
                         </GridItemContainer>

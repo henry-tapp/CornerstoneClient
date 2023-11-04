@@ -84,8 +84,8 @@ export function DayPicker({ weekStarting, weekEnding, selectedDate, onClick }: D
             <GridItemContainer key={idx} data-datevalue={date} onClick={(e: React.MouseEvent<HTMLElement>) => onClick(new Date(e.currentTarget.dataset.datevalue ?? selectedDate))}>
               <FlexColumn selected={selectedDate.getDay() === date.getDay()}>
                 <DateTypographies>
-                  <Typography variant="caption">{date.getDate()}</Typography>
-                  <Typography variant="overline">{date.toLocaleDateString(intl.locale, { weekday: 'short' })}</Typography>
+                  <Typography variant="subtitle1">{date.getDate()}</Typography>
+                  <Typography variant="button">{date.toLocaleDateString(intl.locale, { weekday: 'short' })}</Typography>
                 </DateTypographies>
                 {selectedDate.getDay() === date.getDay() && (<OvalHighlight />)}
               </FlexColumn>

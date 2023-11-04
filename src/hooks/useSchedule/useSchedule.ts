@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "hooks/useApi/useApi";
-import { logQuerySettled } from "util/log";
 import { Queries } from "../../api";
 import { UseScheduleWeekData, UseScheduleWeekProps } from "./useSchedule.types";
+
+import { getUseQueryOptions } from "util/queryOptions";
 
 /**
  * A hook to retrieve {@link PlanWeek} data.
@@ -21,15 +22,7 @@ export function useScheduleWeek({ planId, weekNumber, disableSuspense, disabled 
       }
       return response.data;
     },
-    {
-      staleTime: 5 * 1000 * 60,
-      enabled: !disabled && !!weekNumber,
-      suspense: disableSuspense ? false : true,
-      refetchOnMount: true,
-
-      onSettled: (d, err) =>
-        logQuerySettled(Queries.getPlanWeek(weekNumber), d, err),
-    }
+    getUseQueryOptions(Queries.getPlanWeek(weekNumber), disabled, disableSuspense)
   );
 
   return {

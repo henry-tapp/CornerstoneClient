@@ -17,11 +17,11 @@ export interface WeekItemView {
 
     id: string;
     weekId: string;
+    name: string;
+    description: string;
     scheduled: boolean;
     completed: boolean;
     scheduledDayOfWeek: ScheduledDay;
-    name: string;
-    description: string;
     estimatedCompletionMinutes?: number;
     equipment: WorkoutEquipment;
     phaseType: PhaseType;

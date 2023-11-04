@@ -21,7 +21,7 @@ const Header = styled("div")(({ theme }) => `
     display:grid;
     padding: 1.5rem;    
     background-color: ${(theme as ITheme).palette.shades.g5}; 
-    border-radius: 0 0 2rem 2rem ;
+    border-radius: 0 0 1rem 1rem ;
     color: ${(theme as ITheme).palette.primary.light}; 
 `);
 
@@ -35,7 +35,7 @@ export function Manage() {
     <SubPage backLast>
       <PageWrapper>
         <Header>
-          <Typography variant="h1" fontWeight={"bold"}>Schedule</Typography>
+          <Typography variant="h5" fontWeight={"bold"}>Plan your week:</Typography>
         </Header>
         <WeekScheduleView weekNumber={navigatedWeek} />
       </PageWrapper >
