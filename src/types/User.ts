@@ -13,6 +13,7 @@ export interface User {
 export interface UserMeasurements {
     bodyWeight: number;
     height: number;
+    maxPullup: number;
     maxHang: number;
     maxRepeater: number;
     hipFlexibility: number;

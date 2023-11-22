@@ -2,6 +2,7 @@ import { Typography, styled } from "@mui/material";
 import { ITheme } from "common/App";
 import 'react-indiana-drag-scroll/dist/style.css';
 import { useIntl } from 'react-intl';
+import { ScheduleWeekView } from "types";
 
 const Wrapper = styled("div")(({ theme }) => `
   overflow: hidden;
@@ -65,21 +66,19 @@ const getDaysArray = function (start: Date, end: Date) {
 };
 
 export interface DayPickerProps {
-  weekNumber: number;
-  weekStarting: Date,
-  weekEnding: Date,
+  scheduleWeek: ScheduleWeekView;
   selectedDate: Date,
   onClick: (newDate: Date) => void;
-  setWeek: (newWeek: number) => void
 }
 
-export function DayPicker({ weekStarting, weekEnding, selectedDate, onClick }: DayPickerProps) {
+export function DayPicker({ scheduleWeek, selectedDate, onClick }: DayPickerProps) {
+
   const intl = useIntl();
 
   return (
     <Wrapper>
       <StyledGrid>
-        {getDaysArray(weekStarting, weekEnding).map((date, idx) => {
+        {getDaysArray(scheduleWeek.weekStarting, scheduleWeek.weekEnding).map((date, idx) => {
           return (
             <GridItemContainer key={idx} data-datevalue={date} onClick={(e: React.MouseEvent<HTMLElement>) => onClick(new Date(e.currentTarget.dataset.datevalue ?? selectedDate))}>
               <FlexColumn selected={selectedDate.getDay() === date.getDay()}>

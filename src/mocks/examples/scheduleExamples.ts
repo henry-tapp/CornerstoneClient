@@ -1,5 +1,5 @@
 import { ApiResponse } from "api";
-import { GetVariation, Item, PlanOptions, ScheduleWeek, WeekDayItems } from "types";
+import { GetVariation, PlanOptions, ScheduleWeek, WeekDayItems, WorkoutItem } from "types";
 import { addDaysToDate, addWeeksToDate, getMonday } from "util/dates";
 
 export function getSchedule() {
@@ -51,7 +51,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 1,
         estimatedCompletionMinutes: 45,
         state: "complete"
-      } as Item] as Item[],
+      } as WorkoutItem] as WorkoutItem[],
       "Tuesday": [{
         id: ids[1],
         name: "Pull Ups",
@@ -60,7 +60,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 1,
         estimatedCompletionMinutes: 7,
         state: "complete"
-      } as Item,
+      } as WorkoutItem,
       {
         id: ids[2],
         name: "Hamstring stretches",
@@ -69,7 +69,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 4,
         estimatedCompletionMinutes: 12,
         state: "complete"
-      } as Item] as Item[],
+      } as WorkoutItem] as WorkoutItem[],
       "Wednesday": [{
         id: ids[3],
         name: "Broken 40s",
@@ -78,7 +78,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 1,
         estimatedCompletionMinutes: 7,
         state: "complete"
-      } as Item,
+      } as WorkoutItem,
       {
         id: ids[4],
         name: "ARC 30",
@@ -87,7 +87,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 4,
         estimatedCompletionMinutes: 12,
         state: "complete"
-      } as Item] as Item[],
+      } as WorkoutItem] as WorkoutItem[],
       "Thursday": [{
         id: ids[5],
         name: "Pull Ups",
@@ -96,7 +96,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 1,
         estimatedCompletionMinutes: 7,
         state: "todo"
-      } as Item,
+      } as WorkoutItem,
       {
         id: ids[6],
         name: "Hamstring stretches",
@@ -105,7 +105,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 4,
         estimatedCompletionMinutes: 12,
         state: "todo"
-      } as Item,
+      } as WorkoutItem,
       {
         id: ids[7],
         name: "Hangboard",
@@ -114,7 +114,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 2,
         estimatedCompletionMinutes: 12,
         state: "complete"
-      } as Item,
+      } as WorkoutItem,
       {
         id: ids[8],
         name: "Kilter board",
@@ -123,7 +123,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 4,
         estimatedCompletionMinutes: 12,
         state: "complete"
-      } as Item] as Item[],
+      } as WorkoutItem] as WorkoutItem[],
       "Friday": [{
         id: ids[9],
         name: "Broken 40s",
@@ -132,7 +132,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 1,
         estimatedCompletionMinutes: 7,
         state: "complete"
-      } as Item,
+      } as WorkoutItem,
       {
         id: ids[10],
         name: "ARC 30",
@@ -141,14 +141,14 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 4,
         estimatedCompletionMinutes: 12,
         state: "complete"
-      } as Item] as Item[],
+      } as WorkoutItem] as WorkoutItem[],
       "Saturday": [{
         id: ids[11],
         name: "Rest",
         shortDescription: "Rest is important, relax and recover!",
         variation: GetVariation("Rest"),
         state: "partial"
-      } as Item] as Item[],
+      } as WorkoutItem] as WorkoutItem[],
       "Sunday": [{
         id: ids[12],
         name: "Open Climbing",
@@ -157,7 +157,7 @@ export function getScheduleWeek(weekNumber: number) {
         exercises: 1,
         estimatedCompletionMinutes: 7,
         state: "todo"
-      } as Item] as Item[]
+      } as WorkoutItem] as WorkoutItem[]
     } as WeekDayItems
   } as ApiResponse<ScheduleWeek>;
 }

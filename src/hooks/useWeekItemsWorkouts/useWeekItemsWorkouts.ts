@@ -1,28 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "hooks/useApi/useApi";
 import { Queries } from "../../api";
-import { UseScheduleWeekData, UseScheduleWeekProps } from "./useSchedule.types";
+import { UseWeekItemsData, UseWeekItemsProps } from "./useWeekItemsWorkouts.types";
 
 import { getUseQueryOptions } from "util/queryOptions";
 
 /**
- * A hook to retrieve {@link PlanWeek} data.
+ * A hook to retrieve {@link weekitems } data.
  */
-export function useScheduleWeek({ planId, weekNumber, disableSuspense, disabled }: UseScheduleWeekProps): UseScheduleWeekData {
+export function useWeekItemWorkouts({ weekItemId, disableSuspense, disabled }: UseWeekItemsProps): UseWeekItemsData {
 
   const api = useApi();
 
   const { data, isLoading, error } = useQuery(
-    Queries.getPlanWeek(weekNumber),
+    Queries.getWeekItemWorkouts(weekItemId),
     async () => {
-
-      const response = await api.getScheduleWeek(planId, weekNumber)
+      if (!weekItemId) {
+        throw new Error("No Week Item ID");
+      }
+      const response = await api.getWeekItemWorkouts(weekItemId)
       if (response.status !== 200) {
         throw new Error(response.statusText);
       }
       return response.data;
     },
-    getUseQueryOptions(Queries.getPlanWeek(weekNumber), disabled, disableSuspense)
+    getUseQueryOptions(Queries.getWeekItems(weekItemId), disabled, disableSuspense)
   );
 
   return {

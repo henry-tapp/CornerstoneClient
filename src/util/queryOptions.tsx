@@ -7,5 +7,6 @@ export function getUseQueryOptions<Q, D, E>(queryKey: Q, disabled: boolean | und
     enabled: !disabled,
     suspense: disableSuspense ? false : true,
     onSettled: (d: D, err: E) => logQuerySettled(queryKey, d, err),
+
   };
 }

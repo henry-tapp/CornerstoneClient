@@ -4,3 +4,4 @@ export * from "./Plan";
 export * from "./WeekDay";
 export * from "./Workout";
 export * from "./shared";
+export * from "./Schedule"

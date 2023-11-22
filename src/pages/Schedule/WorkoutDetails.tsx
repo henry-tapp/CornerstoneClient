@@ -1,14 +1,12 @@
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
+import TimerIcon from '@mui/icons-material/Timer';
 import { IconButton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-
-import TimerIcon from '@mui/icons-material/Timer';
 import { ITheme } from "common/App";
-
-import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import { WeekItemWorkout } from 'types';
 import StockExerciseImage from '../../images/gen/synth-climber-3.jpeg';
 
-
-import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
 const BackIconWrapper = styled(IconButton)(
     ({ theme }) => `
   position: absolute;
@@ -56,14 +54,11 @@ const IconButtonStyle = styled(IconButton)(({ theme }) => `
 `);
 
 export interface ItemDetailProps {
-    itemId: string;
+    workout: WeekItemWorkout;
     onBack?: () => void;
 }
 
-
-export function ItemDetails(props: ItemDetailProps) {
-
-    const { onBack } = props;
+export function WorkoutDetails({ workout, onBack }: ItemDetailProps) {
 
     return (
         <PageWrapper>
@@ -75,10 +70,10 @@ export function ItemDetails(props: ItemDetailProps) {
             </ButtonBar>
             <Description>
                 <Typography variant="h5">Description</Typography>
-                <Typography variant="body1">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Typography>
+                <Typography variant="body1">{workout.description}</Typography>
             </Description>
         </PageWrapper>
     );
 }
 
-export default ItemDetails;
+export default WorkoutDetails;

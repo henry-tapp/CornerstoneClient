@@ -1,49 +1,68 @@
 import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
-import { useTheme } from "@mui/material";
+import { alpha, styled, useTheme } from "@mui/material";
 import { ITheme } from "common/App";
+import { CardList } from 'components/ItemCard/CardList';
+import { FlashCardWrapper } from 'components/ItemCard/FlashCardWrapper';
+import { useState } from 'react';
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
-import { WeekItemView } from 'types';
+import { WeekItem } from 'types';
 import { ItemCard } from "../../components/ItemCard/ItemCard";
 import "./timeline.css";
 
+const TimelineItemWrapper = styled("div")(({ theme }) => `
+  
+  background: ${alpha((theme as ITheme).palette.shades.g1, 1)};
+  border-radius: 1rem; 
+  position: absolute;
+  height: calc(100vh - 20rem);
+  padding-top:1rem;
+  top: 0.5rem;
+  left: 0;
+  z-index: 5;
+`);
+
 export interface ItemViewProps {
-    items?: WeekItemView[];
-    handleSelectedItem: (itemId: string) => void;
+    items?: WeekItem[];
 }
 
-export function TimeLineView({ items, handleSelectedItem }: ItemViewProps) {
+export function TimeLineView({ items }: ItemViewProps) {
     const theme = useTheme();
-
+    const [expanded, setExpanded] = useState<boolean | number>(-1);
     return (<VerticalTimeline className="verticalClass">
         {items && items.map((item, idx2) => {
             return (
-                <VerticalTimelineElement
-                    key={idx2}
-                    className="vertical-timeline-element--work"
-                    contentArrowStyle={{ borderRight: `0.5rem solid ${(theme as ITheme).palette.shades.g1}` }}
-                    iconStyle={{
-                        boxShadow: `0 0 0 4px #000, inset 0 2px 0 rgba(0,0,0,.08), 0 3px 0 4px rgba(0,0,0,.05)`,
-                        background: item.completed ? (theme as ITheme).palette.tertiary.main : (theme as ITheme).palette.fourth.main,
-                        color: (theme as ITheme).palette.shades.g1
-                    }}
-                    contentStyle={{
-                        background: (theme as ITheme).palette.shades.g1,
-                        color: (theme as ITheme).palette.shades.g5,
-                        boxShadow: `${(theme as ITheme).palette.shades.g1} 0px 0px 20px`,
-                        padding: 0,
-                        marginLeft: '4rem',
-                        marginRight: '0.5rem'
+                <FlashCardWrapper key={idx2} i={idx2 + 1} expanded={expanded} setExpanded={setExpanded}
+                    smallChild={
+                        <VerticalTimelineElement
+                            className="vertical-timeline-element--work"
+                            contentArrowStyle={{ borderRight: `0.5rem solid ${(theme as ITheme).palette.shades.g1}` }}
+                            iconStyle={{
+                                boxShadow: `0 0 0 4px #000, inset 0 2px 0 rgba(0,0,0,.08), 0 3px 0 4px rgba(0,0,0,.05)`,
+                                background: item.completed ? (theme as ITheme).palette.tertiary.main : (theme as ITheme).palette.fourth.main,
+                                color: (theme as ITheme).palette.shades.g1
+                            }}
+                            contentStyle={{
+                                background: (theme as ITheme).palette.shades.g1,
+                                color: (theme as ITheme).palette.shades.g5,
+                                boxShadow: `${(theme as ITheme).palette.shades.g1} 0px 0px 20px`,
+                                padding: 0,
+                                marginLeft: '4rem',
+                                marginRight: '0.5rem'
+                            }}
+                            icon={item.completed ? <CheckBoxOutlinedIcon /> : <CheckBoxOutlineBlankRoundedIcon />}
+                        >
+                            <div key={idx2} >
+                                <ItemCard item={item} />
+                            </div>
+                        </VerticalTimelineElement>}
 
-                    }}
-
-                    icon={item.completed ? <CheckBoxOutlinedIcon /> : <CheckBoxOutlineBlankRoundedIcon />}
-                >
-                    <div key={idx2} onClick={() => handleSelectedItem(item.id)}>
-                        <ItemCard item={item} />
-                    </div>
-                </VerticalTimelineElement>);
+                    bigChild={
+                        <TimelineItemWrapper>
+                            <CardList item={item} />
+                        </TimelineItemWrapper>
+                    } />);
         })}
     </VerticalTimeline >);
 }

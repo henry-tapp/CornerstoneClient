@@ -4,11 +4,11 @@ import { ActionDialog } from "components/Dialog/ActionDialog";
 import { InfoDialog } from "components/Dialog/InfoDialog";
 import CSSelect from "components/FormItems/CSSelect";
 import CSTextField from "components/FormItems/CSTextField";
-import { useHipFlexibilityInformation, useMaxHangInformation, useRepeaterInformation, useSubmitInformation } from "hooks/useWizard/useFocusData";
+import { Information, useHipFlexibilityInformation, useMaxHangInformation, useRepeaterInformation, useSubmitInformation } from "hooks/useWizard/useFocusData";
 import { useCallback, useState } from "react";
 import { Fade } from "react-awesome-reveal";
 import { useForm } from 'react-hook-form';
-import { PlanOptions, PlanType } from "types";
+import { FocusType, PlanOptions, PlanType } from "types";
 import { UserMeasurementsAndPreferences, WeightUnits } from "types/User";
 import { StepProps } from ".";
 import image from '../../images/gen/real-bw-boulderer-2.jpeg';
@@ -71,12 +71,7 @@ const CreatePlanButton = styled(Button)(({ theme }) => `
 `);
 
 const weightUnits = [{ value: "Kilograms", text: "Kilograms" }, { value: "Pounds", text: "Pounds" }, { value: "Stones", text: "Stones" }];
-const initialDialogStates = [
-    { id: 0, state: false },
-    { id: 1, state: false },
-    { id: 2, state: false },
-    { id: 3, state: false }
-];
+
 
 const daysInWeek = [
     { value: 0, text: "0" },
@@ -87,6 +82,14 @@ const daysInWeek = [
     { value: 5, text: "5" },
     { value: 6, text: "6" },
     { value: 7, text: "7" },
+];
+
+const focus = [
+    { value: FocusType.AllRound, text: "General" },
+    { value: FocusType.FingerStrength, text: "Finger Strength" },
+    { value: FocusType.Flexibility, text: "Flexibility" },
+    { value: FocusType.Endurance, text: "Endurance" },
+    { value: FocusType.Power, text: "Power" }
 ];
 
 function getWeekStartingDates() {
@@ -124,7 +127,10 @@ const Step3 = (props: FinalStepProps) => {
     const [errors, setErrors] = useState<string>("");
 
     const [measurementsAndPreferences, setMeasurements] = useState<UserMeasurementsAndPreferences>();
-    const [openStates, setOpen] = useState(initialDialogStates);
+    const [openInfo, setOpenInfo] = useState(false);
+    const [openFinalDialog, setOpenFinalDialog] = useState(false);
+
+    const [selectedInformation, setSelectedInformation] = useState<Information>();
 
     const repeaterInformation = useRepeaterInformation();
     const maxHangInformation = useMaxHangInformation();
@@ -161,13 +167,16 @@ const Step3 = (props: FinalStepProps) => {
         }
     });
 
-    const handleToggleDialogForId = useCallback((id: number, newState: boolean) => {
-        let statesCopy = [...openStates];
-        let dialog = statesCopy[id];
-        dialog.state = newState;
-        statesCopy[id] = dialog;
-        setOpen(statesCopy);
-    }, [setOpen, openStates]);
+    const openDialogInfo = useCallback((id: number) => {
+
+        switch (id) {
+            case 0: setSelectedInformation(maxHangInformation); break;
+            case 1: setSelectedInformation(repeaterInformation); break;
+            case 2: setSelectedInformation(flexibilityInformation); break;
+            default: return;
+        }
+        setOpenInfo(true);
+    }, [setSelectedInformation, setOpenInfo, maxHangInformation, repeaterInformation, flexibilityInformation]);
 
     const handleClickMeasurementsFinish = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
 
@@ -175,11 +184,11 @@ const Step3 = (props: FinalStepProps) => {
         if (isValidMeasurements) {
             handleSubmitMeasurements((measurements: UserMeasurementsAndPreferences) => {
                 setMeasurements(measurements);
-                handleToggleDialogForId(3, true)
+                setOpenFinalDialog(true);
             })();
         }
 
-    }, [isValidMeasurements, handleToggleDialogForId, handleSubmitMeasurements, setMeasurements]);
+    }, [isValidMeasurements, setOpenFinalDialog, handleSubmitMeasurements, setMeasurements]);
 
     const coordinateSubmit = useCallback(async () => {
         handleSubmitPlan(async (plan: PlanOptions) => {
@@ -206,9 +215,10 @@ const Step3 = (props: FinalStepProps) => {
                                 <CSSelect setValue={(v: string) => setMeasurementValue("preferences.weightUnits", v as WeightUnits, { shouldValidate: true })} menuItems={weightUnits} helperText="Prefered Weight Unit" label={"WeightUnits"} defaultValue={weightUnits[0].value} />
                                 <CSTextField register={registerFormMeasurements} path="measurements.bodyWeight" required label="Body Weight" type="number" />
                                 <CSTextField register={registerFormMeasurements} path="measurements.height" required label="Height (cm)" type="number" />
-                                <CSTextField register={registerFormMeasurements} path="measurements.maxHang" required label="Max Weighted Hang (7 second)" type="number" info handleOpenInfo={() => handleToggleDialogForId(0, true)} />
-                                <CSTextField register={registerFormMeasurements} path="measurements.maxRepeater" required label="Max 60% Bodyweight Repeater" type="number" info handleOpenInfo={() => handleToggleDialogForId(1, true)} />
-                                <CSTextField register={registerFormMeasurements} path="measurements.hipFlexibility" required label="Hip Flexibility (Side Split) Cm" type="number" info handleOpenInfo={() => handleToggleDialogForId(2, true)} />
+                                <CSTextField register={registerFormMeasurements} path="measurements.maxPullup" required label="Max Weighted Pullup" type="number" />
+                                <CSTextField register={registerFormMeasurements} path="measurements.maxHang" required label="Max Weighted Hang (7 second)" type="number" info handleOpenInfo={() => openDialogInfo(0)} />
+                                <CSTextField register={registerFormMeasurements} path="measurements.maxRepeater" required label="Max 60% Bodyweight Repeater" type="number" info handleOpenInfo={() => openDialogInfo(1)} />
+                                <CSTextField register={registerFormMeasurements} path="measurements.hipFlexibility" required label="Hip Flexibility (Side Split) Cm" type="number" info handleOpenInfo={() => openDialogInfo(2)} />
                             </FormContainer>
                         </AbsolutePositionWrapper>
                     </FlexBox>
@@ -228,15 +238,13 @@ const Step3 = (props: FinalStepProps) => {
                     </CreatePlanButton>
                 </form>
             </Wrapper>
-            <InfoDialog title={maxHangInformation.title} description={maxHangInformation.description} handleClose={() => handleToggleDialogForId(0, false)} open={openStates[0].state} />
-            <InfoDialog title={repeaterInformation.title} description={repeaterInformation.description} handleClose={() => handleToggleDialogForId(1, false)} open={openStates[1].state} />
-            <InfoDialog title={flexibilityInformation.title} description={flexibilityInformation.description} handleClose={() => handleToggleDialogForId(2, false)} open={openStates[2].state} />
+            <InfoDialog title={selectedInformation?.title} description={selectedInformation?.description} handleClose={() => setOpenInfo(false)} open={openInfo} />
             <ActionDialog
                 title={submitInformation.title}
                 description={submitInformation.description}
                 actionText="Create Plan"
-                open={openStates[3].state}
-                handleClose={() => handleToggleDialogForId(3, false)}
+                open={openFinalDialog}
+                handleClose={() => setOpenFinalDialog(false)}
                 handleSubmit={coordinateSubmit}
                 disabled={!isValidPlan}
             >
@@ -264,6 +272,14 @@ const Step3 = (props: FinalStepProps) => {
                         helperText="How many outdoor climbing sessions do you want scheduled a week?"
                         defaultValue={daysInWeek[0].value.toString()}
                         setValue={(v: string) => setValue("availableWeeklyOutdoorClimbDays", parseInt(v), { shouldValidate: true })}
+                    />
+                    <CSSelect
+                        type="number"
+                        menuItems={focus}
+                        label="What's your primary training focus?"
+                        helperText="Do you have a training focus or are you trying to generally improve all areas?"
+                        defaultValue={focus[0].value.toString()}
+                        setValue={(v: string) => setValue("selectedFocus", parseInt(v), { shouldValidate: true })}
                     />
                     <Typography variant="overline">{errors}</Typography>
                 </FormContainer>

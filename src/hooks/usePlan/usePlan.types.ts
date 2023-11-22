@@ -1,7 +1,7 @@
 
 import { ApiResponseData } from "api/Api.types";
-import { DisableHook, DisableSuspenseHook, DisableSuspenseHookData } from "types";
-import { Plan, ScheduleWeekView } from "types/Plan";
+import { DisableHook, DisableSuspenseHook, DisableSuspenseHookData, ScheduleWeekView } from "types";
+import { Plan } from "types/Plan";
 
 export type PlanError =
   | undefined
@@ -16,7 +16,6 @@ export type PlanError =
  *  Plan
  */
 export interface UsePlanProps extends DisableHook, DisableSuspenseHook {
-
 }
 
 export interface UsePlanData extends ApiResponseData, DisableSuspenseHookData {

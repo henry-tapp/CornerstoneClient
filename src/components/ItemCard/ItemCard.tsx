@@ -1,7 +1,6 @@
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { IconButton, Typography, styled } from "@mui/material";
-import { useMemo } from 'react';
-import { WeekItemView, GetVariation as getVariation } from 'types';
+import { WeekItem } from 'types';
 
 
 const ItemCardGridContainer = styled("div")(
@@ -18,6 +17,7 @@ const ItemCardGridContainer = styled("div")(
     justify-content: flex-start;
     align-items: left;
     padding:1rem;
+    padding-right:2rem;
     position:relative;
 `);
 
@@ -29,7 +29,7 @@ const CardGrid = styled("div")`
 
 const HeaderArea = styled("div")`
 
-    grid-column: 1;
+    grid-column: 1 / span 3;
     grid-row: 1;
 `
 
@@ -51,29 +51,24 @@ const LogButtonArea = styled("div")`
 `
 
 interface ItemCardProps {
-    item: WeekItemView;
+    item: WeekItem;
 }
 
 export function ItemCard({ item }: ItemCardProps) {
 
-    const variation = useMemo(() => {
-
-        return getVariation(item.focus)?.name;
-    }, [item.focus]);
 
     return (
         <ItemCardGridContainer className="itemcard-container" >
             <CardGrid>
                 <HeaderArea>
-                    <Typography variant="h4" style={{ fontWeight: "bold" }}>{item.name}</Typography>
+                    <Typography variant="h5" style={{ fontWeight: "bold" }}>{item.name}</Typography>
                 </HeaderArea>
-
                 <DescriptionArea>
-                    <Typography variant="body1">{item.description}</Typography>
+                    <Typography variant="body1" style={{ wordBreak: "break-all" }}>{item.description}</Typography>
                 </DescriptionArea>
                 <RightArea>
-                    {item.estimatedCompletionMinutes !== 0 && variation && (<>
-                        <Typography variant="caption">{variation}</Typography >
+                    {item.estimatedCompletionMinutes !== 0 && item.type && (<>
+                        <Typography variant="caption">{item.type}</Typography >
                         <Typography variant="caption"> &#8226; </Typography>
                         <Typography variant="caption">{item.estimatedCompletionMinutes}m </Typography >
                     </>

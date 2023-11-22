@@ -1,6 +1,6 @@
 import { WorkoutType, WorkoutVariation } from "./Workout";
 
-export interface Item {
+export interface WorkoutItem {
     id: string;
     name: string;
     shortDescription: string;
@@ -26,11 +26,6 @@ export interface WeekItemView {
     equipment: WorkoutEquipment;
     phaseType: PhaseType;
     focus: WorkoutType;
-}
-
-export interface ItemType {
-    id: string;
-    name: string;
 }
 
 export enum ScheduledDay {

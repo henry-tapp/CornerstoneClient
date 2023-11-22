@@ -1,10 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { isApiBaseRespons as isApiBaseResponse } from "api/Api.types";
+import Axios from "axios";
 import React, { useMemo } from "react";
-import { ApiProvider, retryPolicy } from "../../api";
+import { ApiProvider } from "../../api";
 import { QueryProviderProps } from "./QueryProvider.types";
 
 const DefaultRefetchIntervalMillis = 15000;
+
+const MAX_RETRIES = 3;
+const HTTP_STATUS_TO_NOT_RETRY = [400, 401, 403, 404];
 
 const internalQueryClient = (defaultRefetchIntervalMillis?: number | null) =>
   new QueryClient({
@@ -27,38 +30,20 @@ const internalQueryClient = (defaultRefetchIntervalMillis?: number | null) =>
         // that query is called.
         // This is important so our tests run as we need to fully disable
         // retries in tests.
-        retry: retryPolicy,
-        // Applying this globally to all queries means that if the response
-        // is from our API and has the expires_in top level value, then all
-        // uses of queries will obey it.
-        refetchInterval: (data, query) => {
-          if (data && isApiBaseResponse(data)) {
-            if (data.expires_in) {
-              // This logging introduces A-LOT of log noise! as it's called a-lot
-              // loglevel.debug(
-              //   "Query refetchInterval set to response data.expires_in * 1000",
-              //   data.expires_in,
-              //   query.queryKey
-              // );
-              return data.expires_in * 1000;
-            }
-          }
-
-          // This logging introduces A-LOT of log noise! as it's called a-lot
-          // loglevel.debug("Query refetchInterval set to default", query.queryKey);
-
-          // Default case
-          if (defaultRefetchIntervalMillis === null) {
-            // NO default fallback desired
+        retry: (failureCount, error) => {
+          if (failureCount > MAX_RETRIES) {
             return false;
-          } else {
-            const def = Number(process.env.REACT_APP_DEFAULT_REFETCH_MS);
-            return (
-              defaultRefetchIntervalMillis ??
-              (isNaN(def) ? undefined : def) ??
-              60000
-            );
           }
+
+          if (
+            Axios.isAxiosError(error) &&
+            HTTP_STATUS_TO_NOT_RETRY.includes(error.response?.status ?? 0)
+          ) {
+            console.log(`Aborting retry due to ${error.response?.status} status`);
+            return false;
+          }
+
+          return true;
         },
       },
     },

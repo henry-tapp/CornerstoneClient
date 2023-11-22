@@ -23,14 +23,14 @@ const StyledGrid = styled("div")(({ theme }) => `
 
 
 const GridItemContainer = styled("div")(({ theme }) => `
-  width: 100%;
-  height:2rem;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  border-radius:1rem;
-  color: ${(theme as ITheme).palette.shades.g1};
-  height:4rem;
+    width: 100%;
+    height:2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    border-radius:1rem;
+    color: ${(theme as ITheme).palette.shades.g1};
+    height:4rem;
 `);
 
 

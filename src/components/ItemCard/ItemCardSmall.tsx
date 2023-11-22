@@ -20,26 +20,17 @@ const Name = styled(Typography)(({ theme }) => `
     align-items: center;
 `);
 
-const Description = styled("div")(({ theme }) => `
-    color: ${(theme as ITheme).palette.shades.g5};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left:auto;
-`);
-
 const AbsolutePositionWrapper = styled("div")(({ theme }) => `
     position: absolute;
     top: 0;
     right: 0;
 `);
 
-
 interface ItemCardSmallProps {
     id: string;
     name: string;
     description?: string | undefined;
-    handleOpenInfo: (id: string, newState: boolean) => void;
+    handleOpenInfo?: (id: string) => void;
 }
 
 export function ItemCardSmall({ id, name, description, handleOpenInfo }: ItemCardSmallProps) {
@@ -47,12 +38,14 @@ export function ItemCardSmall({ id, name, description, handleOpenInfo }: ItemCar
     return (<>
         <Container>
             <Name variant="subtitle2" style={{ fontWeight: "bold" }}>{name}</Name>
-            {description && (<Description><Typography variant="body2" >{description}</Typography></Description>)}
-
-            <AbsolutePositionWrapper>
+            {description &&
+                <Typography variant="body2">
+                    {description.length > 40 ? description.slice(0, 40).concat("...") : description}
+                </Typography>}
+            {handleOpenInfo && <AbsolutePositionWrapper>
                 {/* @ts-ignore */}
                 <IconButton size='small' color='tertiary' onClick={() => handleOpenInfo(id, true)}><InfoIcon fontSize='small' /></IconButton>
-            </AbsolutePositionWrapper>
+            </AbsolutePositionWrapper>}
         </Container>
     </>
     );

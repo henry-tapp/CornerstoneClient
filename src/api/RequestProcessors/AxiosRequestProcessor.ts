@@ -15,6 +15,9 @@ export class AxiosRequestProcessor extends RequestProcessorBase {
     this._axiosInstance = Axios.create({
       baseURL: baseUrl,
       headers: baseHeaders as AxiosRequestHeaders,
+      validateStatus: (status) => {
+        return status === 200 || status === 401;
+      }
     });
   }
 
@@ -40,15 +43,19 @@ export class AxiosRequestProcessor extends RequestProcessorBase {
       {
         headers: options?.headers as AxiosRequestHeaders,
         responseType: options?.responseType,
-        validateStatus: options?.validateStatus ?? ((status) => true),
       }
-    );
+    ).catch((error) => {
+      if (Axios.isAxiosError(error)) {
+        throw error;
+      }
+      throw new Error("Something unexpected happened while fetching.");
+    });
 
-    // TODO: Proper error handling - ApiResponseError
     if (response?.status === 401) {
 
       super.handleRefresh();
     }
+
     return this.makeResponse<ResponseDataType>(response);
   }
 
@@ -62,12 +69,14 @@ export class AxiosRequestProcessor extends RequestProcessorBase {
       payload,
       {
         headers: options?.headers as AxiosRequestHeaders,
-        responseType: options?.responseType,
-        validateStatus: options?.validateStatus ?? ((status) => true),
+        responseType: options?.responseType
       }
-    );
-
-    // TODO: Proper error handling - ApiResponseError
+    ).catch((error) => {
+      if (Axios.isAxiosError(error)) {
+        throw error;
+      }
+      throw new Error("Something unexpected happened while fetching.");
+    });
 
     if (response?.status === 401) {
 
@@ -87,12 +96,15 @@ export class AxiosRequestProcessor extends RequestProcessorBase {
       payload,
       {
         headers: options?.headers as AxiosRequestHeaders,
-        responseType: options?.responseType,
-        validateStatus: options?.validateStatus ?? ((status) => true),
+        responseType: options?.responseType
       }
-    );
+    ).catch((error) => {
+      if (Axios.isAxiosError(error)) {
+        throw error;
+      }
+      throw new Error("Something unexpected happened while fetching.");
+    });
 
-    // TODO: Proper error handling - ApiResponseError
     if (response?.status === 401) {
 
       super.handleRefresh();
@@ -110,12 +122,15 @@ export class AxiosRequestProcessor extends RequestProcessorBase {
       payload,
       {
         headers: options?.headers as AxiosRequestHeaders,
-        responseType: options?.responseType,
-        validateStatus: options?.validateStatus ?? ((status) => true),
+        responseType: options?.responseType
       }
-    );
+    ).catch((error) => {
+      if (Axios.isAxiosError(error)) {
+        throw error;
+      }
+      throw new Error("Something unexpected happened while fetching.");
+    });
 
-    // TODO: Proper error handling - ApiResponseError
     if (response?.status === 401) {
 
       super.handleRefresh();
@@ -131,12 +146,15 @@ export class AxiosRequestProcessor extends RequestProcessorBase {
       url ?? "",
       {
         headers: options?.headers as AxiosRequestHeaders,
-        responseType: options?.responseType,
-        validateStatus: options?.validateStatus ?? ((status) => true),
+        responseType: options?.responseType
       }
-    );
+    ).catch((error) => {
+      if (Axios.isAxiosError(error)) {
+        throw error;
+      }
+      throw new Error("Something unexpected happened while fetching.");
+    });
 
-    // TODO: Proper error handling - ApiResponseError
     if (response?.status === 401) {
 
       super.handleRefresh();

@@ -13,10 +13,7 @@ export function usePlan({ disableSuspense, disabled }: UsePlanProps): UsePlanDat
   const { data, isLoading, error } = useQuery(
     Queries.getPlan(),
     async () => {
-      const response = await api.getPlan()
-      if (response.status !== 200) {
-        throw new Error(response.statusText);
-      }
+      var response = await api.getPlan();
       return response.data;
     },
     getUseQueryOptions(Queries.getPlan(), disabled, disableSuspense)

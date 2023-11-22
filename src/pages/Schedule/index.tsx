@@ -1,30 +1,23 @@
-import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
+import { FullpageLoadingIndicator } from "components/LoadingIndicator";
 import { usePlan } from "hooks/usePlan/usePlan";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useScheduleWeeks } from "hooks/useScheduleWeeks/useScheduleWeeks";
 import TodayView from "./Today";
 
 export function Schedule() {
 
-    const [planId, setPlanId] = useLocalStorage("planId", "");
-    const { data: plan, error } = usePlan({});
+    const { data: plan } = usePlan({});
+    const { data: schedule } = useScheduleWeeks({ planId: plan?.id });
 
-    const navigate = useNavigate();
-
-    useEffect(() => {
-
-        if (!plan || error) {
-
-            navigate(0);
-            setPlanId("");
-        }
-    }, [navigate, setPlanId, plan, error]);
-
-    return (
-        <div>
-            {plan && (<TodayView {...plan} />)}
-        </div >
-    );
+    if (!plan || !schedule) {
+        return <FullpageLoadingIndicator></FullpageLoadingIndicator>;
+    }
+    else {
+        return (
+            <div>
+                {plan && (<TodayView plan={plan} scheduleWeeks={schedule} />)}
+            </div >
+        );
+    }
 }
 
 export default Schedule;

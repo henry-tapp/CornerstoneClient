@@ -12,14 +12,15 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export interface InfoDialogProps {
-    title: string;
-    description: string;
+    title?: string;
+    description?: string;
+    description2?: string;
     closeText?: string;
     open: boolean;
     handleClose: () => void;
 }
 
-export function InfoDialog({ title, description, closeText, open, handleClose, children }: React.PropsWithChildren<InfoDialogProps>) {
+export function InfoDialog({ title, description, description2, closeText, open, handleClose, children }: React.PropsWithChildren<InfoDialogProps>) {
 
     return (
 

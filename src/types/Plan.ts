@@ -1,4 +1,3 @@
-import { PhaseType, WeekItemView } from "./Item";
 import { UserMeasurements, UserPreferences } from "./User";
 
 export interface Plan extends PlanOptions {
@@ -11,6 +10,7 @@ export interface PlanOptions {
     peakWeekDateStarting: Date;
     availableWeeklyOutdoorClimbDays: number;
     planType: PlanType;
+    selectedFocus: FocusType;
 }
 
 export interface PlanCreationData {
@@ -19,25 +19,17 @@ export interface PlanCreationData {
     userPreferences: UserPreferences;
 }
 
-export interface Schedule {
-    plan: Plan;
-    weeks?: ScheduleWeekView[];
-}
-
-export interface ScheduleWeekView {
-
-    id: string;
-    planId: string;
-    weekStarting: Date;
-    weekEnding: Date;
-    weekNumber: number;
-    isPeakWeek: boolean;
-    phase: PhaseType;
-    weekItems: WeekItemView[];
-}
-
 export enum PlanType {
 
     "SportClimbing" = 1,
     "Bouldering" = 2
+}
+
+export enum FocusType {
+
+    AllRound = 0,
+    Flexibility = 1,
+    FingerStrength = 2,
+    Power = 3,
+    Endurance = 4
 }

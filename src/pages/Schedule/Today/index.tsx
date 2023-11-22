@@ -6,18 +6,18 @@ import { ITheme } from "common/App";
 import { SwipeableDrawerType, SwipeableEdgeDrawer } from "components/Drawer";
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 import dayjs from 'dayjs';
-import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import { useScheduleWeek } from 'hooks/useSchedule/useSchedule';
+import { useLocalStorage } from 'hooks/useLocalStorage/useLocalStorage';
+import { useWeekItems } from 'hooks/useWeekItems/useWeekItems';
+import WorkoutContextProvider from 'pages/Schedule/Today/WorkoutDrawerContextProvider';
 import { useCallback, useMemo, useRef, useState } from "react";
 import 'react-indiana-drag-scroll/dist/style.css';
-import { Plan } from 'types';
+import { Plan, ScheduleWeekView, WeekItemWorkout } from 'types';
 import { addWeeksToDate, getCurrentWeek } from "util/dates";
 import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
-import ItemDetails from "../ItemDetails";
 import { TimeLineView } from "../TimeLineItemView";
+import WorkoutDetails from "../WorkoutDetails";
 import { DayPicker } from "./DayPicker";
 import WeekSelector from "./WeekSelector";
-
 
 const Wrapper = styled("div")(({ theme }) => `
     max-height: calc(100vh - 2rem);
@@ -68,7 +68,7 @@ const WeekSelectorWrapper = styled("div")(({ theme }) => `
     z-index:3;
 `);
 
-const ItemWrapper = styled("div")(({ theme }) => `
+const TimelineWrapper = styled("div")(({ theme }) => `
     grid-column: 2;
     padding:0.5rem;
     padding-top:0;
@@ -80,59 +80,54 @@ const ItemWrapper = styled("div")(({ theme }) => `
     overflow: hidden;
 `);
 
+export interface TodayViewProps {
 
-export function TodayView(plan: Plan) {
+    plan: Plan;
+    scheduleWeeks?: ScheduleWeekView[];
+}
+
+export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
 
     const queryClient = useQueryClient();
-
-
     const [weekSelectorOpenState, setWeekSelectorOpenState] = useState<boolean>(false);
 
-    const currentWeek = useMemo(() => (!!plan?.dateStarting) ? getCurrentWeek(new Date(plan.dateStarting)) : 1, [plan]);
+    const currentWeek = useMemo(() => (!!plan.dateStarting) ? getCurrentWeek(new Date(plan.dateStarting)) : 1, [plan.dateStarting]);
 
-    const [selectedWeek, setSelectedWeek] = useLocalStorage("navigatedWeek", currentWeek);
+    const [navigatedWeek, setNavigatedWeek] = useLocalStorage("navigatedWeek", currentWeek);
+
+    const [selectedWeek, setSelectedWeek] = useState<ScheduleWeekView | undefined>(scheduleWeeks?.find(x => x.weekNumber === navigatedWeek));
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [selectedItem, setSelectedItem] = useState<string | undefined>();
+    const [selectedWorkout, setSelectedWorkout] = useState<WeekItemWorkout | undefined>(undefined);
 
-    const { data: weekData } = useScheduleWeek({ planId: plan.id, weekNumber: selectedWeek });
+    const { data: weekItems } = useWeekItems({ weekId: selectedWeek?.id });
 
     const currentDayItems = useMemo(() => {
         let dayIndex = selectedDate.getDay();
-        return weekData?.weekItems && weekData.weekItems.filter(x => x.scheduledDayOfWeek === dayIndex);
-    }, [selectedDate, weekData]);
+        return weekItems && weekItems.filter(x => x.scheduledDayOfWeek === dayIndex);
+    }, [selectedDate, weekItems]);
 
     const handleWeekChange = useCallback((newWeek: number) => {
-        setSelectedWeek(newWeek);
-        queryClient.invalidateQueries(Queries.getPlanWeek(newWeek));
+        const week = scheduleWeeks?.find(x => x.weekNumber === newWeek);
+        setNavigatedWeek(week?.weekNumber);
+        setSelectedWeek(week);
+        queryClient.invalidateQueries(Queries.getWeekItems(week?.id));
         setSelectedDate(new Date((newWeek === 1)
             ? plan?.dateStarting
-            : addWeeksToDate(new Date(plan.dateStarting), newWeek)));
-        console.log(selectedDate);
-    }, [setSelectedWeek, selectedDate, setSelectedDate, plan, queryClient]);
+            : addWeeksToDate(new Date(plan?.dateStarting), newWeek)));
+    }, [setNavigatedWeek, setSelectedWeek, setSelectedDate, plan, scheduleWeeks, queryClient]);
 
-    const handleClick = useCallback((newDate: Date) => {
-        setSelectedDate(newDate);
-    }, []);
-
-    const childRef = useRef<SwipeableDrawerType>(null);
-    const handleItemClick = useCallback((itemId: string | undefined) => {
-        setSelectedItem(itemId);
-
-        if (!childRef.current?.isOpen) {
-            childRef.current?.toggleDrawer();
-        }
-    }, []);
+    const workoutDrawerRef = useRef<SwipeableDrawerType>(null);
 
     const handleClose = useCallback(() => {
-        setSelectedItem(undefined);
-        childRef.current?.toggleDrawer();
+        setSelectedWorkout(undefined);
+        workoutDrawerRef.current?.toggleDrawer();
     }, []);
 
     const handleWeekSelectorToggle = useCallback((toggle: boolean) => {
         setWeekSelectorOpenState(toggle);
     }, []);
 
-    return (weekData?.weekStarting && weekData?.weekStarting && (
+    return (selectedWeek?.weekStarting && selectedWeek?.weekStarting && (
         <Wrapper>
             <GradientBox />
             <ColumnStackFlexBox>
@@ -141,18 +136,18 @@ export function TodayView(plan: Plan) {
                     <Typography variant="h3">{selectedDate.getDate() === new Date().getDate() ? "Today" : dayjs(selectedDate).format('dddd')}</Typography>
                 </Header>
             </ColumnStackFlexBox>
-            <DayPickerWrapper><DayPicker weekNumber={selectedWeek} setWeek={handleWeekChange} onClick={handleClick} weekStarting={weekData?.weekStarting} weekEnding={weekData?.weekEnding} selectedDate={selectedDate} /></DayPickerWrapper>
+            <DayPickerWrapper><DayPicker scheduleWeek={selectedWeek} onClick={setSelectedDate} selectedDate={selectedDate} /></DayPickerWrapper>
             <RoundedLayer />
             <RoundedLayer2 />
             <Pseudo />
             <Toolbar>
                 <ToolbarButton style={{ width: "2rem" }}>
-                    <LinkPersistQuery pathname={`/manage/${selectedWeek}`}>
+                    <LinkPersistQuery pathname={`/manage`}>
                         <IconButton><ScheduleIcon style={{ color: "white" }} /></IconButton>
                     </LinkPersistQuery>
                 </ToolbarButton>
                 <ToolbarButton style={{ width: "7rem", marginRight: "1rem" }} onClick={() => handleWeekSelectorToggle(!weekSelectorOpenState)}>
-                    <Typography variant="button">Week {selectedWeek} </Typography>
+                    <Typography variant="button">Week {selectedWeek.weekNumber} </Typography>
                 </ToolbarButton>
             </Toolbar>
             {!!weekSelectorOpenState && (
@@ -160,14 +155,12 @@ export function TodayView(plan: Plan) {
                     <WeekSelector schedule={plan} onChange={handleWeekChange} />
                 </WeekSelectorWrapper>
             )}
-            <ItemWrapper>{currentDayItems &&
-                <TimeLineView items={currentDayItems} handleSelectedItem={handleItemClick} />}
-            </ItemWrapper>
-            <SwipeableEdgeDrawer onClose={handleClose} ref={childRef}>
-                <div>
-                    {selectedItem && (<ItemDetails onBack={handleClose} itemId={selectedItem} />)}
-                </div>
-            </SwipeableEdgeDrawer>
+            <WorkoutContextProvider workoutDrawerRef={workoutDrawerRef} setSelectedWorkout={setSelectedWorkout}>
+                <TimelineWrapper>{currentDayItems && <TimeLineView items={currentDayItems} />}</TimelineWrapper>
+                <SwipeableEdgeDrawer onClose={handleClose} ref={workoutDrawerRef}>
+                    <div>{selectedWorkout && (<WorkoutDetails onBack={handleClose} workout={selectedWorkout} />)}</div>
+                </SwipeableEdgeDrawer>
+            </WorkoutContextProvider>
         </Wrapper>));
 }
 

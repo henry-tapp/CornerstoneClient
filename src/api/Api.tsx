@@ -1,4 +1,3 @@
-import Axios from "axios";
 import loglevel from "loglevel";
 // import log from "loglevel";
 import React, { createContext, useContext, useEffect, useMemo } from "react";
@@ -39,10 +38,6 @@ const requestProcessorFactory = (
     headers["UserId"] = `${props.userId}`;
   }
 
-  if (props.planId) {
-    headers["PlanId"] = `${props.planId}`;
-  }
-
   loglevel.info(`ApiProvider creating axios provider.`);
 
   return new AxiosRequestProcessor(props.handleRefresh, props.baseApiUrl, {
@@ -71,8 +66,6 @@ export function ApiProvider(props: React.PropsWithChildren<ApiProviderProps>) {
   const { user, isLoading, isAuthenticated, getAccessTokenSilently, logout } = useAuth0();
 
   const [accessToken, setAccessToken] = useLocalStorage("jwt", "");
-
-  const [planId, setPlanId] = useLocalStorage("planId", "");
 
   const [userId, setUserId] = useLocalStorage("userId", "");
 
@@ -116,11 +109,11 @@ export function ApiProvider(props: React.PropsWithChildren<ApiProviderProps>) {
 
     getUserMetadata();
 
-  }, [getAccessTokenSilently, baseApiUrl, accessToken, user, userId, logout, isLoading, isAuthenticated, setPlanId, setUserId, setAccessToken]);
+  }, [getAccessTokenSilently, baseApiUrl, accessToken, user, userId, logout, isLoading, isAuthenticated, setUserId, setAccessToken]);
 
   const requestProcessor = useMemo(
-    () => requestProcessorFactory(coreProviderName, { accessToken: accessToken, userId, planId, ...propsWithoutChildren, handleRefresh: getAccessTokenSilently }),
-    [coreProviderName, propsWithoutChildren, accessToken, getAccessTokenSilently, userId, planId]
+    () => requestProcessorFactory(coreProviderName, { accessToken: accessToken, userId, ...propsWithoutChildren, handleRefresh: getAccessTokenSilently }),
+    [coreProviderName, propsWithoutChildren, accessToken, getAccessTokenSilently, userId]
   );
 
   return (
@@ -157,23 +150,4 @@ export type GenericRequestOptions = {
    * considered valid.
    */
   validateStatus?: ValidateStatusFunc;
-};
-
-/**
- * The default retry policy used by the API throughout the app/components.
- *
- * This can be overriden for specific queries by passing a `retry` option
- *
- * @param failureCount How many failures have there been so far
- * @param error If there is an error then it is included here.
- * @returns true if the request should be retried again, otherwise false.
- */
-export const retryPolicy = (failureCount: number, error: unknown) => {
-  if (Axios.isAxiosError(error)) {
-    if (error.response?.status === 404 || error.response?.status === 401) {
-      return false;
-    }
-  }
-  // Retry a few times in-case it's just network issues
-  return failureCount < 3;
 };

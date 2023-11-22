@@ -15,7 +15,6 @@ export interface ApiProviderProps {
 export interface RequestProcessorProps extends ApiProviderProps {
   accessToken?: string;
   userId: string,
-  planId: string,
   handleRefresh: () => Promise<string>;
 }
 

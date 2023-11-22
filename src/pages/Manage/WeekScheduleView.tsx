@@ -1,12 +1,20 @@
-import { styled } from "@mui/material/styles";
-import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
-import { useScheduleWeek } from "hooks/useSchedule/useSchedule";
-import { useMultipleWorkoutGroupsForPhase } from "hooks/useWorkouts/useMultipleWorkoutGroupsForPhase";
+import { Typography } from "@mui/material";
+import { styled, useTheme } from "@mui/material/styles";
+import { useMutation } from "@tanstack/react-query";
+import { ITheme } from "common/App";
+import { useCornerstoneStableData } from "common/CornerstoneDataProvider";
+import { InfoDialog } from "components/Dialog/InfoDialog";
+import DraggableItem from "components/Draggable/DraggableItem";
+import { DroppableCard } from "components/Draggable/DroppableCard";
+import { ItemCardSmall } from "components/ItemCard/ItemCardSmall";
+import { useApi } from "hooks/useApi/useApi";
+import { DropArea, Item, PLACEHOLDER, useDragDrop } from "hooks/useDragDrop/useDragDrop";
+import { useWeekItems } from "hooks/useWeekItems/useWeekItems";
+import { Information } from "hooks/useWizard/useFocusData";
 import { useCallback, useMemo, useState } from "react";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { PhaseType, UNSCHEDULED, WeekItemView, scheduleLists, scheduledDayOfWeekMapper } from "types";
-import { v4 } from "uuid";
-import WeekDayItemsList from "./WeekDayItemsList";
+import { DragDropContext } from "react-beautiful-dnd";
+import { ScheduledDay, UNSCHEDULED, WeekItem, scheduleLists, scheduledDayOfWeekMapper } from "types";
+import { ScheduleToolbar } from "./ScheduleToolbar";
 
 export type SortType = "previous_week" | "template";
 
@@ -23,33 +31,12 @@ const ListGrid = styled("div")(({ theme }) => `
   padding: 1rem;
 `);
 
-export interface Placeholder {
-  name: string;
-}
-
-export interface Task {
-  id: string;
-  prefix: string;
-  isPlaceholder: boolean;
-  content: WeekItemView | Placeholder;
-}
-
-export interface Day {
-  id: string;
-  day: string;
-  hasPlaceholder: boolean;
-  tasks: Task[];
-}
-
-
-export const PLACEHOLDER: Task = {
-  id: v4(),
-  prefix: "placeholder",
-  isPlaceholder: true,
-  content: {
-    name: "No workouts currently scheduled."
-  }
-};
+const PlaceholderCard = styled("div")(({ theme }) => `
+  margin:auto;
+  text-align:center;
+  color: ${(theme as ITheme).palette.shades.g5};
+  padding: 0.5rem;
+`);
 
 export interface ViewProps {
   weekNumber: number;
@@ -57,136 +44,75 @@ export interface ViewProps {
 
 export function WeekScheduleView({ weekNumber }: ViewProps) {
 
-  const [planId, setPlanId] = useLocalStorage("planId", "");
+  const { scheduleWeeks } = useCornerstoneStableData();
 
-  const { data: weekData } = useScheduleWeek({ planId: planId, weekNumber: weekNumber });
-  const { data: itemTypes } = useMultipleWorkoutGroupsForPhase({ phase: weekData?.phase ?? PhaseType.Any });
+  const currentWeek = useMemo(() => scheduleWeeks?.find(x => x.weekNumber === weekNumber), [scheduleWeeks, weekNumber])
 
+  const { data: weekData } = useWeekItems({ weekId: currentWeek?.id });
+  // const { data: itemTypes } = useMultipleWorkoutGroupsForPhase({ phase: currentWeek?.phase ?? PhaseType.Any });
   const current = useMemo(() => scheduleLists.map((list, idx) => {
 
+    const listItems = weekData?.filter(y => scheduledDayOfWeekMapper[idx].enum === y.scheduledDayOfWeek);
     return {
       id: idx.toString(),
-      day: list,
-      hasPlaceholder: list === UNSCHEDULED,
-      tasks: list !== UNSCHEDULED ? [PLACEHOLDER] : weekData?.weekItems
-        .filter(y => scheduledDayOfWeekMapper[idx].enum === y.scheduledDayOfWeek)
-        .map((item) => createScheduleTask(item))
-    } as Day
-  }), [weekData?.weekItems]);
+      title: list,
+      items: listItems?.length === 0 ? [PLACEHOLDER] : listItems?.map((item) => ({
+        id: item.id,
+        prefix: "task",
+        isPlaceholder: false,
+        content: item
+      }))
+    } as DropArea<WeekItem>
+  }), [weekData]);
+
+  const api = useApi();
+  const { mutateAsync } = useMutation(async (weekItems: WeekItem[]) => await api.updateWeekItem(weekItems));
+  const updateItemList = useCallback(async (newList: string, items: WeekItem[]) => {
+    await mutateAsync(items.map(x => {
+      x.scheduledDayOfWeek = ScheduledDay[newList];
+      return x;
+    }));
+  }, [mutateAsync]);
+
+  const { onDragEnd, moveAllItems, resetList, elements } = useDragDrop({ dropAreas: current, onItemsMoved: updateItemList });
 
   const allUnscheduled = useMemo(() => scheduleLists.map((list, idx) => {
     return {
       id: idx.toString(),
-      day: list,
-      hasPlaceholder: list === UNSCHEDULED,
-      tasks: list !== UNSCHEDULED ? [PLACEHOLDER] : weekData?.weekItems.map((item) => createScheduleTask(item))
-    } as Day
-  }), [weekData?.weekItems]);
+      title: list,
+      items: list !== UNSCHEDULED ? [PLACEHOLDER] : weekData?.map((item) => ({
+        id: item.id,
+        prefix: "task",
+        isPlaceholder: false,
+        content: item
+      }))
+    } as DropArea<WeekItem>
+  }), [weekData]);
 
-  const template = useMemo(() => scheduleLists.map((list, idx) => {
-    return {
-      id: idx.toString(),
-      day: list,
-      hasPlaceholder: list === UNSCHEDULED,
-      tasks: weekData?.weekItems.map((item) => createScheduleTask(item))
-    } as Day
-  }), [weekData?.weekItems]);
+  // const template = useMemo(() => scheduleLists.map((list, idx) => {
+  //   return {
+  //     id: idx.toString(),
+  //     title: list,
+  //     hasPlaceholder: list === UNSCHEDULED,
+  //     items: weekData?.map((item) => createScheduleTask(item))
+  //   } as DropArea<WeekItem>
+  // }), [weekData]);
 
-  const [elements, setElements] = useState<Day[]>(current);
+  const theme = useTheme();
 
-  const removeFromList = (list: Task[], index: number): [Task, Task[]] => {
-    const result = Array.from(list);
-    const [removed] = result.splice(index, 1);
-    return [removed, result];
-  };
+  const color = (prefix: string) => prefix === UNSCHEDULED ? (theme as ITheme).palette.shades.g5 : (theme as ITheme).palette.tertiary.main;
 
-  const addToList = useCallback((list: Task[], index: number, element: any) => {
-    const result = Array.from(list);
-    result.splice(index, 0, element);
-    return result;
-  }, []);
+  const borderColor = (prefix: string) => prefix === UNSCHEDULED ? (theme as ITheme).palette.shades.g5 : (theme as ITheme).palette.tertiary.main;
 
-  const onDragEnd = useCallback(
-    (result: DropResult) => {
-      if (!result.destination) {
-        return;
-      }
+  const unschedule = useCallback((prefix?: string | undefined) => (!prefix) ? resetList(allUnscheduled) : moveAllItems(UNSCHEDULED, prefix), [resetList, moveAllItems, allUnscheduled]);
 
-      // Get the source day
-      const listCopy = JSON.parse(JSON.stringify(elements)) as typeof elements;
-      const sourceDay = listCopy?.[result.source.droppableId] as Day;
-
-      // Remove it from the list
-      const [removedElement, newSourceDay] = removeFromList(
-        sourceDay.tasks,
-        result.source.index
-      );
-
-      // Add placeholder if necessary
-      if (sourceDay.day !== UNSCHEDULED && newSourceDay.length === 0) {
-        newSourceDay.push(PLACEHOLDER);
-        sourceDay.hasPlaceholder = true;
-      }
-
-      // assign spliced tasks to source day tasks list
-      listCopy[result.source.droppableId].tasks = newSourceDay;
-
-      // Get destination day
-      const destinationDay = listCopy[result.destination.droppableId];
-
-      // remove placeholder if necessary
-      if (destinationDay.day !== UNSCHEDULED && destinationDay.hasPlaceholder) {
-        destinationDay.tasks.pop();
-        destinationDay.hasPlaceholder = false;
-      }
-
-      // add task to new day
-      listCopy[result.destination.droppableId].tasks = addToList(
-        destinationDay.tasks,
-        result.destination.index,
-        removedElement
-      );
-
-      setElements(listCopy);
-      console.log("DD", result, sourceDay, listCopy);
-
-    },
-    [elements, addToList]
-  );
-
-  const unscheduleByPrefix = useCallback((prefix: string) => {
-    const listCopy = JSON.parse(JSON.stringify(elements)) as typeof elements;
-    let unscheduled = listCopy.find(x => x.day === UNSCHEDULED)!;
-    let dayToUnschedule = listCopy.find(x => x.day === prefix)!;
-    if (!dayToUnschedule.hasPlaceholder) {
-      unscheduled.tasks = unscheduled?.tasks.concat(dayToUnschedule.tasks);
-    }
-    dayToUnschedule.tasks = [PLACEHOLDER];
-    dayToUnschedule.hasPlaceholder = true;
-    setElements(listCopy);
-  }, [setElements, elements]);
-
-
-  const autoSort = useCallback((type: SortType) => (type === "template") && setElements(template), [setElements, template]);
-
-  const unschedule = useCallback((prefix?: string | undefined) => (!prefix) ? setElements(allUnscheduled) : unscheduleByPrefix(prefix), [setElements, unscheduleByPrefix, allUnscheduled]);
-
-  const handleNewItem = useCallback((id: string) => {
-
-    // todo new items
-
-
-  }, []);
-
-
-  const [openStates, setOpen] = useState(elements.map(x => { return { id: x.id, state: false } }));
-  const handleToggleDialogForId = useCallback((id: string, newState: boolean) => {
-    let statesCopy = [...openStates];
-    let dialog = statesCopy[id];
-    dialog.state = newState;
-    statesCopy[id] = dialog;
-    setOpen(statesCopy);
-  }, [setOpen, openStates]);
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelctedItem] = useState<Information>();
+  const handleToggleDialogForId = useCallback((id: string) => {
+    const item = weekData?.find(x => x.id === id);
+    setSelctedItem({ title: item?.name ?? "", description: item?.description ?? "" });
+    setOpen(true);
+  }, [weekData, setOpen, setSelctedItem]);
 
   return (
     <Container>
@@ -194,34 +120,29 @@ export function WeekScheduleView({ weekNumber }: ViewProps) {
         <ListGrid>
           {scheduleLists.map((list, idx) => {
             return (
-              <WeekDayItemsList
-                elements={elements.find(x => x.day === list)}
+              <DroppableCard
                 key={list}
                 prefix={list}
                 index={idx}
-                handleAutoSort={autoSort}
-                handleUnschedule={unschedule}
-                handleItemAdd={handleNewItem}
-                handleOpenInfo={handleToggleDialogForId}
-                itemTypes={itemTypes ?? []}
-              />
+                color={color(list)}
+                borderColor={borderColor(list)}
+                toolbar={ScheduleToolbar({ prefix: list, color: color(list), handleUnschedule: unschedule })}
+              >
+                <div key={idx}>
+                  {elements && elements.find(x => x.title === list)?.items.map((item: Item<WeekItem>, index: number) =>
+                  (item.isPlaceholder
+                    ? <PlaceholderCard key={item.id}><Typography variant="caption">{item.content.name}</Typography></PlaceholderCard>
+                    : <DraggableItem key={item.id} index={index} id={item.id}>
+                      <ItemCardSmall handleOpenInfo={handleToggleDialogForId} id={item.id} name={item.content.name} description={(item.content as WeekItem).description} />
+                    </DraggableItem>
+                  ))}
+                </div>
+              </DroppableCard>
             )
           })}
         </ListGrid>
       </DragDropContext>
-    </Container>
+      <InfoDialog title={selectedItem?.title} description={selectedItem?.description} handleClose={() => setOpen(false)} open={open} />
+    </Container >
   )
-
-  function createScheduleTask(item: WeekItemView): { id: string; prefix: string; isPlaceholder: false; content: { name: string; description: string; item: WeekItemView; }; } {
-    return {
-      id: item.id,
-      prefix: "task",
-      isPlaceholder: false,
-      content: {
-        name: item.name,
-        description: item.description,
-        item: item
-      }
-    };
-  }
-}
+} 

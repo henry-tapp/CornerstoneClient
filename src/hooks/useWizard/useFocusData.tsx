@@ -45,6 +45,11 @@ export const routeClimbingMarketing = () => {
     ]
 }
 
+export interface Information {
+    title: string;
+    description: string;
+}
+
 export const useRepeaterInformation = () => {
 
     return {

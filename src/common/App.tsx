@@ -1,4 +1,5 @@
 import "@/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Regular.ttf";
+import { Auth0Provider, CacheLocation } from "@auth0/auth0-react";
 import "@fontsource/bebas-neue";
 import "@fontsource/open-sans";
 import type { } from "@mui/lab/themeAugmentation";
@@ -13,6 +14,7 @@ import type { } from "@mui/material/themeCssVarsAugmentation";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { FullpageLoadingIndicator } from "components/LoadingIndicator";
 import { ResponsiveRootLayout } from "components/ResponsiveRootLayout";
+import { getConfig } from "config";
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
 import log from "loglevel";
 import React, { Suspense, useEffect } from "react";
@@ -24,6 +26,7 @@ import "style/baseTheme.css";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import "util/i18n";
+import { CornerstoneDataProvider } from "./CornerstoneDataProvider";
 import { GlobalErrorBoundary } from "./GlobalErrorBoundary";
 import { QueryProvider } from "./QueryProvider";
 
@@ -121,11 +124,11 @@ const theme = extendTheme({
       letterSpacing: "0.04rem",
     },
     body2: {
+      fontSize: "0.70rem",
       fontFamily: "Open Sans",
-      fontSize: "0.8rem",
       fontStyle: "normal",
-      fontWeight: "400",
-      lineHeight: "1.2rem",
+      fontWeight: "250",
+      lineHeight: "1rem",
       letterSpacing: "0.0275rem",
     },
     button: {
@@ -215,6 +218,21 @@ const theme = extendTheme({
 // @ts-ignore 2790
 delete theme.colorSchemes.dark;
 
+const config = getConfig();
+
+const providerConfig = {
+  domain: config.domain,
+  clientId: config.clientId,
+  authorizationParams: {
+    redirect_uri: window.location.origin + "/#/dashboard",
+    scope: "openid profile email offline_access",
+    useRefreshTokensFallback: true,
+    ...(config.audience ? { audience: config.audience } : null),
+  },
+  useRefreshTokens: true,
+  cacheLocation: "localstorage" as CacheLocation
+};
+
 
 Modal.setAppElement("#root");
 
@@ -236,40 +254,46 @@ function App({
   const apiUrl = import.meta.env.REACT_APP_API_URL;
 
   return (
-    <HelmetProvider>
-      <HashRouter>
-        <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <GlobalErrorBoundary>
-            <ResponsiveRootLayout
-              disabled={disableResponsiveComp}
-            >
-              <GlobalErrorBoundary>
-                <QueryProvider
-                  apiUrl={apiUrl}
-                  authMethod="Bearer"
-                >
-                  {reactDevTools && <ReactQueryDevtools initialIsOpen={false} />}
-                  <CssVarsProvider
-                    theme={theme}
-                    defaultMode="light"
+    <Auth0Provider
+      {...providerConfig}
+    >
+      <HelmetProvider>
+        <HashRouter>
+          <QueryParamProvider adapter={ReactRouter6Adapter}>
+            <GlobalErrorBoundary>
+              <ResponsiveRootLayout
+                disabled={disableResponsiveComp}
+              >
+                <GlobalErrorBoundary>
+                  <QueryProvider
+                    apiUrl={apiUrl}
+                    authMethod="Bearer"
                   >
-                    <Suspense
-                      fallback={<FullpageLoadingIndicator />}
+                    {reactDevTools && <ReactQueryDevtools initialIsOpen={false} />}
+                    <CssVarsProvider
+                      theme={theme}
+                      defaultMode="light"
                     >
-                      <IntlProvider locale="en-Gb">
-                        <div className={className}>
-                          {children}
-                        </div>
-                      </IntlProvider>
-                    </Suspense>
-                  </CssVarsProvider>
-                </QueryProvider>
-              </GlobalErrorBoundary>
-            </ResponsiveRootLayout>
-          </GlobalErrorBoundary>
-        </QueryParamProvider>
-      </HashRouter>
-    </HelmetProvider>
+                      <Suspense
+                        fallback={<FullpageLoadingIndicator />}
+                      >
+                        <IntlProvider locale="en-Gb">
+                          <CornerstoneDataProvider>
+                            <div className={className}>
+                              {children}
+                            </div>
+                          </CornerstoneDataProvider>
+                        </IntlProvider>
+                      </Suspense>
+                    </CssVarsProvider>
+                  </QueryProvider>
+                </GlobalErrorBoundary>
+              </ResponsiveRootLayout>
+            </GlobalErrorBoundary>
+          </QueryParamProvider>
+        </HashRouter>
+      </HelmetProvider>
+    </Auth0Provider>
   );
 }
 

@@ -1,13 +1,14 @@
 import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
 import { IconButton } from "@mui/material";
 import { alpha, styled, useTheme } from "@mui/material/styles";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Queries } from 'api';
 import { ITheme } from 'common/App';
 import { useApi } from 'hooks/useApi/useApi';
 import { useCallback, useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
-import { Plan, PlanCreationData, PlanOptions, PlanType } from 'types';
+import { PlanCreationData, PlanOptions, PlanType } from 'types';
 import { UserMeasurements, UserPreferences } from 'types/User';
 import loglevel from 'util/log';
 import Step1 from './Step1';
@@ -42,11 +43,9 @@ export interface StepProps {
   handleStepMove: (currentStep: number, option?: PlanType) => void;
 }
 
-export interface WizardProps {
-  onPlanCreated: (plan: Plan) => void;
-}
-export function Wizard({ onPlanCreated }: WizardProps) {
+export function Wizard() {
 
+  const queryClient = useQueryClient();
   const theme = useTheme() as ITheme;
   const navigate = useNavigate();
   const [currentStep, setStepNumber] = useState<number>(1);
@@ -101,16 +100,10 @@ export function Wizard({ onPlanCreated }: WizardProps) {
       ref.current!.continuousStart(5);
       var response = await mutationResponse.then(async (success: boolean) => {
         if (success) {
-          var planResponse = await api.getSchedule();
-          if (planResponse.status === 200 && planResponse.data?.plan !== undefined) {
-
-            onPlanCreated(planResponse.data.plan);
-            navigate('./dashboard');
-            return "";
-          }
-          else {
-            return "There was something wrong with the information provided please ensure each field is filled in and try again."
-          }
+          queryClient.invalidateQueries({ queryKey: Queries.getPlan() });
+        }
+        else {
+          return "There was something wrong with the information provided please ensure each field is filled in and try again."
         }
       });
       ref.current!.complete();
