@@ -14,13 +14,13 @@ import 'react-indiana-drag-scroll/dist/style.css';
 import { Plan, ScheduleWeekView, WeekItemWorkout } from 'types';
 import { addWeeksToDate, getCurrentWeek } from "util/dates";
 import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
-import { TimeLineView } from "../TimeLineItemView";
 import WorkoutDetails from "../WorkoutDetails";
+import { DayItemList } from './DayItemList';
 import { DayPicker } from "./DayPicker";
 import WeekSelector from "./WeekSelector";
 
 const Wrapper = styled("div")(({ theme }) => `
-    max-height: calc(100vh - 2rem);
+    height: 100%;
 `);
 
 const Header = styled("div")(({ theme }) => `
@@ -68,10 +68,8 @@ const WeekSelectorWrapper = styled("div")(({ theme }) => `
     z-index:3;
 `);
 
-const TimelineWrapper = styled("div")(({ theme }) => `
+const ItemListWrapper = styled("div")(({ theme }) => `
     grid-column: 2;
-    padding:0.5rem;
-    padding-top:0;
     position:relative;
     z-index: 3;
     height: 100%;
@@ -154,7 +152,9 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
                 </WeekSelectorWrapper>
             )}
             <WorkoutContextProvider workoutDrawerRef={workoutDrawerRef} setSelectedWorkout={setSelectedWorkout}>
-                <TimelineWrapper>{currentDayItems && <TimeLineView items={currentDayItems} />}</TimelineWrapper>
+                <ItemListWrapper>
+                    {currentDayItems && <DayItemList items={currentDayItems} />}
+                </ItemListWrapper>
                 <SwipeableEdgeDrawer onClose={handleClose} ref={workoutDrawerRef}>
                     <div>{selectedWorkout && (<WorkoutDetails onBack={handleClose} workout={selectedWorkout} />)}</div>
                 </SwipeableEdgeDrawer>

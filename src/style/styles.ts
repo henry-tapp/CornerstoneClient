@@ -8,7 +8,7 @@ export const ColumnStackFlexBox = styled("div")(({ theme }) => `
 `);
 
 export const RoundedLayer = styled("div")(({ theme }) => `
-    background-color: ${(theme as ITheme).palette.shades.g6};
+    background-color: ${(theme as ITheme).palette.shades.g4};
     border-radius: 3rem 0 0 0;
     min-height: calc(100% - 12rem);
     overflow: hidden;
@@ -19,7 +19,7 @@ export const RoundedLayer = styled("div")(({ theme }) => `
 `);
 
 export const RoundedLayer2 = styled("div")(({ theme }) => `
-    background-color: ${alpha((theme as ITheme).palette.shades.g6, 1)};
+    background-color: ${alpha((theme as ITheme).palette.shades.g4, 1)};
     z-index: 0;
     border-radius: 1rem 3rem 0 1rem;
     height:50vh;
@@ -37,7 +37,7 @@ export const Pseudo = styled("div")(({ theme }) => `
     position:absolute;
     top: 7rem;
     right: 1rem;
-    box-shadow: 1rem 1rem 0 0 ${alpha((theme as ITheme).palette.shades.g6, 1)};;
+    box-shadow: 1rem 1rem 0 0 ${alpha((theme as ITheme).palette.shades.g4, 1)};;
 `);
 
 export const GradientBox = styled("div")(({ theme }) => `
