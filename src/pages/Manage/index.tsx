@@ -8,13 +8,14 @@ import { useMemo } from "react";
 import { getCurrentWeek } from "util/dates";
 import { WeekScheduleView } from "./WeekScheduleView";
 
-const PageWrapper = styled("div")`
+const PageWrapper = styled("div")(({ theme }) => `
   width: 100%;
   height: 100%;
   text-align: center;
   margin: auto;
   padding-bottom: 3rem;
-`;
+  background-color: ${(theme as ITheme).palette.shades.g5}; 
+`);
 
 const Header = styled("div")(({ theme }) => `
     margin: auto;

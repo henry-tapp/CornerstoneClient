@@ -14,8 +14,7 @@ const BackIconWrapper = styled(IconButton)(
   top: 1rem;
   border-radius: 0.5rem;
   background-color: rgba(186, 186, 186, 0.75);
-`
-);
+`);
 
 const PageWrapper = styled("div")(({ theme }) => `
 

@@ -15,7 +15,9 @@ import { SortType } from "./WeekScheduleView";
 const Toolbar = styled("div")(({ theme }) => `
     display: flex;
     margin-left: auto;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: -0.25rem;
     gap: 1rem;
 `);
 const ToolbarButton = styled("div")(({ theme }) => `
@@ -35,7 +37,6 @@ const ToolbarButton = styled("div")(({ theme }) => `
 
 export interface ScheduleToolbarProps {
     prefix: string;
-    color: string;
     handleAutoSort?: (type: SortType) => void;
     handleUnschedule?: (prefix?: string | undefined) => void;
     handleItemAdd?: (id: string) => void;
@@ -43,7 +44,7 @@ export interface ScheduleToolbarProps {
 }
 export function ScheduleToolbar(props: ScheduleToolbarProps) {
 
-    const { prefix, color, handleAutoSort, handleUnschedule } = props;
+    const { prefix, handleAutoSort, handleUnschedule } = props;
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -59,11 +60,11 @@ export function ScheduleToolbar(props: ScheduleToolbarProps) {
         setAnchorEl(null);
     };
 
-    return (<Toolbar>
+    return (<Toolbar className='toolbar'>
         {prefix === UNSCHEDULED &&
             (<>
                 <ToolbarButton onClick={handleClick}>
-                    <SortIcon />
+                    <SortIcon fontSize='medium' />
                 </ToolbarButton>
                 <Menu
                     anchorEl={anchorEl}
@@ -99,11 +100,11 @@ export function ScheduleToolbar(props: ScheduleToolbarProps) {
             (<>
                 {handleUnschedule &&
                     (<ToolbarButton onClick={() => handleUnschedule(prefix)}>
-                        <IconButton style={{ color: color }}><DeleteOutlineIcon /></IconButton>
+                        <IconButton color='inherit'><DeleteOutlineIcon /></IconButton>
                     </ToolbarButton>
                     )}
                 <ToolbarButton onClick={handleClick}>
-                    <IconButton style={{ color: color }}><AddIcon /></IconButton>
+                    <IconButton color='inherit'><AddIcon /></IconButton>
                 </ToolbarButton></>
             )}
     </Toolbar>);

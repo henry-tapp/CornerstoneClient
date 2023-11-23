@@ -5,8 +5,7 @@ import { ITheme } from "common/App";
 import { useCornerstoneStableData } from "common/CornerstoneDataProvider";
 import { InfoDialog } from "components/Dialog/InfoDialog";
 import DraggableItem from "components/Draggable/DraggableItem";
-import { DroppableCard } from "components/Draggable/DroppableCard";
-import { ItemCardSmall } from "components/ItemCard/ItemCardSmall";
+import DroppableZone from "components/Draggable/DroppableZone";
 import { useApi } from "hooks/useApi/useApi";
 import { DropArea, Item, PLACEHOLDER, useDragDrop } from "hooks/useDragDrop/useDragDrop";
 import { useWeekItems } from "hooks/useWeekItems/useWeekItems";
@@ -14,6 +13,7 @@ import { Information } from "hooks/useWizard/useFocusData";
 import { useCallback, useMemo, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { ScheduledDay, UNSCHEDULED, WeekItem, scheduleLists, scheduledDayOfWeekMapper } from "types";
+import ScheduleItemCard from "./ScheduleItemCard";
 import { ScheduleToolbar } from "./ScheduleToolbar";
 
 export type SortType = "previous_week" | "template";
@@ -36,6 +36,24 @@ const PlaceholderCard = styled("div")(({ theme }) => `
   text-align:center;
   color: ${(theme as ITheme).palette.shades.g5};
   padding: 0.5rem;
+`);
+
+
+const DropZoneWrapper = styled("div")(({ theme }) => `
+  padding: 1rem;
+  border-radius: 1rem;
+  background: ${(theme as ITheme).palette.primary.light};
+  margin: 0.25rem; 
+`);
+
+const Header = styled("div")(({ theme }) => `
+    text-align:left;
+    display: flex;
+    gap: 0.5rem;
+    padding-left: 0.25rem;
+    padding-top:0.5rem;
+    padding-bottom:0.5rem;
+    color: ${(theme as ITheme).palette.shades.g6};
 `);
 
 export interface ViewProps {
@@ -120,24 +138,27 @@ export function WeekScheduleView({ weekNumber }: ViewProps) {
         <ListGrid>
           {scheduleLists.map((list, idx) => {
             return (
-              <DroppableCard
-                key={list}
-                prefix={list}
-                index={idx}
-                color={color(list)}
-                borderColor={borderColor(list)}
-                toolbar={ScheduleToolbar({ prefix: list, color: color(list), handleUnschedule: unschedule })}
-              >
-                <div key={idx}>
-                  {elements && elements.find(x => x.title === list)?.items.map((item: Item<WeekItem>, index: number) =>
-                  (item.isPlaceholder
-                    ? <PlaceholderCard key={item.id}><Typography variant="caption">{item.content.name}</Typography></PlaceholderCard>
-                    : <DraggableItem key={item.id} index={index} id={item.id}>
-                      <ItemCardSmall handleOpenInfo={handleToggleDialogForId} id={item.id} name={item.content.name} description={(item.content as WeekItem).description} />
-                    </DraggableItem>
-                  ))}
-                </div>
-              </DroppableCard>
+              <DropZoneWrapper
+                key={list}>
+                <Header>
+                  <Typography variant="subtitle1">{list}</Typography >
+                  <ScheduleToolbar prefix={list} handleUnschedule={unschedule} />
+                </Header>
+                <DroppableZone
+                  prefix={list}
+                  index={idx}
+                >
+                  <div key={idx}>
+                    {elements && elements.find(x => x.title === list)?.items.map((item: Item<WeekItem>, index: number) =>
+                    (item.isPlaceholder
+                      ? <PlaceholderCard key={item.id}><Typography variant="caption">{item.content.name}</Typography></PlaceholderCard>
+                      : <DraggableItem key={item.id} index={index} id={item.id}>
+                        <ScheduleItemCard handleOpenInfo={handleToggleDialogForId} item={item.content} />
+                      </DraggableItem>
+                    ))}
+                  </div>
+                </DroppableZone>
+              </DropZoneWrapper>
             )
           })}
         </ListGrid>
