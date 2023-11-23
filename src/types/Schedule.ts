@@ -38,6 +38,7 @@ export interface WeekItemWorkout {
     activityType: ActivityType;
     routineType: RoutineType;
     step: number;
+    instructions?: string;
     estimatedCompletionMinutes: number;
 }
 

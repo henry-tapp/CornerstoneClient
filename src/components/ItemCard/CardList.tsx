@@ -9,6 +9,7 @@ const ItemCardGridContainer = styled("div")(
     color: inherit;
     border-radius: 0.5rem;
     width: 100%;
+    height: 100%;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -19,14 +20,23 @@ const ItemCardGridContainer = styled("div")(
     position:relative;
 `);
 
+
+const Inline = styled("div")(
+    ({ theme }) => `
+    display: flex;
+    align-items: center
+  `
+);
+
 interface CardListProps {
     item: WeekItem;
+    onBack: () => void;
 }
 
-export function CardList({ item }: CardListProps) {
+export function CardList({ item, onBack }: CardListProps) {
 
     return (
-        <ItemCardGridContainer className="itemcard-container" >
+        <ItemCardGridContainer className="card-list-container" >
             <Typography variant="subtitle1" >Workouts:</Typography>
             <br />
             {item.workouts.map((workout, i) => {

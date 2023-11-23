@@ -53,6 +53,13 @@ const IconButtonStyle = styled(IconButton)(({ theme }) => `
     color: ${(theme as ITheme).palette.primary.dark};
 `);
 
+const Inline = styled("div")(
+    ({ theme }) => `
+    display: flex;
+    align-items: center
+  `
+);
+
 export interface ItemDetailProps {
     workout: WeekItemWorkout;
     onBack?: () => void;
@@ -69,9 +76,20 @@ export function WorkoutDetails({ workout, onBack }: ItemDetailProps) {
                 <IconButtonStyle><ContentPasteIcon /><Typography style={{ fontWeight: "bold" }} variant="caption">Log Workout</Typography></IconButtonStyle>
             </ButtonBar>
             <Description>
-                <Typography variant="h5">Description</Typography>
+                <Inline>
+                    <Typography style={{ alignItems: "flex-start" }} variant="h5">Description</Typography>
+                    {/* <Typography style={{ alignItems: "flex-end" }} variant="subtitle2">0</Typography> */}
+                </Inline>
                 <Typography variant="body1">{workout.description}</Typography>
             </Description>
+            {workout.summary && (<Description>
+                <Typography variant="body2">{workout.summary}</Typography>
+            </Description>)}
+            {workout.instructions && (<Description>
+                <Typography variant="h5">Instructions</Typography>
+                <Typography variant="body1">{workout.instructions}</Typography>
+            </Description>)}
+
         </PageWrapper>
     );
 }

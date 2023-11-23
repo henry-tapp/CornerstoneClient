@@ -76,8 +76,6 @@ const TimelineWrapper = styled("div")(({ theme }) => `
     z-index: 3;
     height: 100%;
     padding-bottom: 3rem;
-    overflow-y: scroll;
-    overflow: hidden;
 `);
 
 export interface TodayViewProps {

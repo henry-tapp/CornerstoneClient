@@ -11,15 +11,14 @@ export interface AccordionProps {
 }
 
 const MotionHeader = styled(motion.header)(({ theme }) => `
-    
-    border-radius: 10px;
-    color: white;
+    background: inherit;
     cursor: pointer;
-    margin-bottom: 20px;    
+    margin-bottom: 1rem;    
 `);
 
 const MotionSection = styled(motion.section)(({ theme }) => `
-    padding-bottom: 0.5rem;
+    position: relative;
+    background: inherit;
 `);
 
 export function FlashCardWrapper({ i, expanded, setExpanded, smallChild, bigChild }: AccordionProps) {
@@ -42,8 +41,8 @@ export function FlashCardWrapper({ i, expanded, setExpanded, smallChild, bigChil
                         animate="open"
                         exit="collapsed"
                         variants={{
-                            open: { opacity: 1, height: "calc(100vh)" },
-                            collapsed: { opacity: 0, height: 0 }
+                            open: { opacity: 1 },
+                            collapsed: { opacity: 0 }
                         }}
                         transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
                         onClick={() => setExpanded(-1)}

@@ -12,15 +12,12 @@ import { ItemCard } from "../../components/ItemCard/ItemCard";
 import "./timeline.css";
 
 const TimelineItemWrapper = styled("div")(({ theme }) => `
-  
-  background: ${alpha((theme as ITheme).palette.shades.g1, 1)};
-  border-radius: 1rem; 
-  position: absolute;
-  height: calc(100vh - 20rem);
-  padding-top:1rem;
-  top: 0.5rem;
-  left: 0;
-  z-index: 5;
+    background: ${alpha((theme as ITheme).palette.shades.g1, 1)};
+    border-radius: 1rem; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
 `);
 
 export interface ItemViewProps {
@@ -60,7 +57,7 @@ export function TimeLineView({ items }: ItemViewProps) {
 
                     bigChild={
                         <TimelineItemWrapper>
-                            <CardList item={item} />
+                            <CardList item={item} onBack={() => setExpanded(-1)} />
                         </TimelineItemWrapper>
                     } />);
         })}
