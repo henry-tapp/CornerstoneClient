@@ -161,9 +161,9 @@ const theme = extendTheme({
     light: {
       palette: {
         primary: {
-          main: "#262938",
-          dark: "#1c1f2b",
-          light: "#3f455e",
+          main: "#254352",
+          dark: "#242c4c",
+          light: "#0D6976",
           contrastText: "#D8D8D8"
         },
         secondary: {
@@ -178,8 +178,8 @@ const theme = extendTheme({
         },
         fourth: {
           main: "#FF1E86",
-          dark: "",
-          light: ""
+          dark: "#9CDC7B",
+          light: "#F9F871"
         },
         success: {
           main: "#83BCA9",

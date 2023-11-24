@@ -6,18 +6,22 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardItem, ItemViewType } from "./DashboardItem";
 
-const Wrapper = styled("div")`
-  width:100%;
-`;
+const Wrapper = styled("div")(({ theme }) => `
+    position: relative;
+    background-color: ${(theme as ITheme).palette.shades.g6};
+    min-height: 100vh;
+    z-index: 100;
+    width: 100%;
+`);
 
 const Header = styled("div")(({ theme }) => `
     margin: auto;
     display:grid;
     grid-template-columns: 5fr 1fr;
     padding: 1.5rem;
-    background-color: ${(theme as ITheme).palette.shades.g5}; 
+    background-color: ${(theme as ITheme).palette.primary.main}; 
     border-radius: 0 0 2rem 2rem ;
-    color: ${(theme as ITheme).palette.primary.light}; 
+    color: ${(theme as ITheme).palette.shades.g4}; 
 `);
 
 
@@ -29,7 +33,7 @@ const LeftAlign = styled("div")`
 const RightAlign = styled("div")`
   grid-column: 2;
   text-align: right;
-  padding-top:1rem;
+  padding-top:0.5rem;
 `;
 
 const Grid = styled("div")(({ theme }) => `
@@ -43,7 +47,7 @@ const Grid = styled("div")(({ theme }) => `
 
 
 const GridItem = styled("div")(({ theme }) => `
-  background: ${(theme as ITheme).palette.primary.main};
+  background-image: linear-gradient(#254352, #242c4c);
   color: ${(theme as ITheme).palette.shades.g4};
   margin: 1rem;
   padding-top:1rem; 
@@ -57,7 +61,7 @@ const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   color: (theme as ITheme).palette.tertiary.light,
 
   '&:hover, &.Mui-focusVisible': {
-    backgroundColor: (theme as ITheme).palette.tertiary.light,
+    backgroundColor: (theme as ITheme).palette.primary.light,
     color: (theme as ITheme).palette.primary.dark
 
   },

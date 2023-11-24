@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
-import WeekItemCard from "pages/Schedule/Today/WeekItemCard";
-import WorkoutList from "pages/Schedule/Today/WorkoutList";
+import WeekItemCard from "pages/Schedule/Components/WeekItemCard";
+import WorkoutList from "pages/Schedule/Components/WorkoutList";
 import 'react-vertical-timeline-component/style.min.css';
 import { WeekItem } from 'types';
 import StockExerciseImage from '../../../images/gen/indoor-boulder-2.jpeg';

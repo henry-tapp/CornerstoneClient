@@ -14,7 +14,7 @@ const PageWrapper = styled("div")(({ theme }) => `
   text-align: center;
   margin: auto;
   padding-bottom: 3rem;
-  background-color: ${(theme as ITheme).palette.shades.g5}; 
+  background-image: linear-gradient(${(theme as ITheme).palette.primary.dark}, ${(theme as ITheme).palette.secondary.light});
 `);
 
 const Header = styled("div")(({ theme }) => `
@@ -23,7 +23,7 @@ const Header = styled("div")(({ theme }) => `
     padding: 1.5rem;    
     background-color: ${(theme as ITheme).palette.shades.g5}; 
     border-radius: 0 0 1rem 1rem ;
-    color: ${(theme as ITheme).palette.primary.light}; 
+    color: ${(theme as ITheme).palette.shades.g1}; 
 `);
 
 export function Manage() {

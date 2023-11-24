@@ -7,7 +7,6 @@ import SortIcon from '@mui/icons-material/Sort';
 import { IconButton, ListItemIcon, styled } from "@mui/material";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { ITheme } from 'common/App';
 import { useState } from "react";
 import { UNSCHEDULED } from "types";
 import { SortType } from "./WeekScheduleView";
@@ -26,7 +25,6 @@ const ToolbarButton = styled("div")(({ theme }) => `
     align-items: center;
     width:1rem;
     height:1rem;
-    color: ${(theme as ITheme).palette.shades.g5};
     padding-top:0.25rem;
     padding-right:0.5rem;
     text-align:center;

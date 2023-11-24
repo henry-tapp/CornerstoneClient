@@ -7,8 +7,7 @@ import { Outlet, Route, Routes, useLocation } from "react-router-dom";
 const Account = lazy(() => import("pages/Account"));
 const Dashboard = lazy(() => import("pages/Dashboard"));
 const Schedule = lazy(() => import("pages/Schedule"));
-const Diary = lazy(() => import("pages/Diary"));
-const Manage = lazy(() => import("pages/Manage"));
+const Manage = lazy(() => import("pages/Schedule/Manage"));
 const Wizard = lazy(() => import("pages/Wizard"));
 
 export function MainRouter() {
@@ -25,9 +24,7 @@ export function MainRouter() {
           <Routes key={location.pathname} location={location}>
             <Route path="/" element={<Outlet />}>
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="schedule/:view" element={<Schedule />} />
-              <Route path="schedule/week/diary" element={<Diary />} />
-              <Route path="schedule/item/:itemid/diary" element={<Diary />} />
+              <Route path="schedule" element={<Schedule />} />
               <Route path="manage" element={<Manage />} />
               <Route path="progress" element={<Progress />} />
               <Route path="wizard" element={<Wizard />} />

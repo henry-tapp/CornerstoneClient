@@ -7,7 +7,7 @@ import CardMedia from '@mui/material/CardMedia';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { WeekItem } from 'types';
-import StockExerciseImage from '../../images/gen/cyberpunk-man-on-cliff.jpeg';
+import StockExerciseImage from '../../../images/gen/cyberpunk-man-on-cliff.jpeg';
 
 export interface ScheduleItemCardProps {
     handleOpenInfo: (id: string) => void;
@@ -22,7 +22,7 @@ export default function ScheduleItemCard({ item, handleOpenInfo }: ScheduleItemC
                 component="img"
                 sx={{ width: 151 }}
                 image={StockExerciseImage}
-                alt="WorkoutImage"
+                alt="itemImage"
             />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '1 0 auto' }}>
@@ -30,7 +30,7 @@ export default function ScheduleItemCard({ item, handleOpenInfo }: ScheduleItemC
                         {item.name}
                     </Typography>
                     <Typography style={{ wordBreak: "break-all" }} variant="body2" color="text.secondary" component="div">
-                        {item.description}
+                        {item.description?.length > 40 ? item.description.slice(0, 60).concat("...") : item.description}
                     </Typography>
                 </CardContent>
             </Box>

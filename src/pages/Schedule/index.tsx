@@ -1,7 +1,7 @@
 import { FullpageLoadingIndicator } from "components/LoadingIndicator";
 import { usePlan } from "hooks/usePlan/usePlan";
 import { useScheduleWeeks } from "hooks/useScheduleWeeks/useScheduleWeeks";
-import TodayView from "./Today";
+import TodayView from "./TodayView";
 
 export function Schedule() {
 
@@ -12,10 +12,9 @@ export function Schedule() {
         return <FullpageLoadingIndicator></FullpageLoadingIndicator>;
     }
     else {
-        return (
-            <div>
-                {plan && (<TodayView plan={plan} scheduleWeeks={schedule} />)}
-            </div >
+        return (<>
+            {plan && (<TodayView plan={plan} scheduleWeeks={schedule} />)}
+        </>
         );
     }
 }

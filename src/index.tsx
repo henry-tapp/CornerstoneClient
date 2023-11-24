@@ -8,7 +8,6 @@ import { styled } from "@mui/material/styles";
 import { MainRouter } from "MainRouter";
 import { usePlan } from 'hooks/usePlan/usePlan';
 import Home from "pages/Home";
-import { Bar as NavigationBar } from "pages/Navigation/Bar";
 import Wizard from 'pages/Wizard';
 import App, { ITheme } from "./common/App";
 

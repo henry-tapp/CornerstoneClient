@@ -8,29 +8,33 @@ import { LinkPersistQuery } from "components/LinkPersistQuery";
 import dayjs from 'dayjs';
 import { useLocalStorage } from 'hooks/useLocalStorage/useLocalStorage';
 import { useWeekItems } from 'hooks/useWeekItems/useWeekItems';
-import WorkoutContextProvider from 'pages/Schedule/Today/WorkoutDrawerContextProvider';
+import WorkoutContextProvider from 'pages/Schedule/Context/WorkoutDrawerContextProvider';
 import { useCallback, useMemo, useRef, useState } from "react";
 import 'react-indiana-drag-scroll/dist/style.css';
 import { Plan, ScheduleWeekView, WeekItemWorkout } from 'types';
 import { addWeeksToDate, getCurrentWeek } from "util/dates";
-import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../../style/styles";
-import WorkoutDetails from "../WorkoutDetails";
-import { DayItemList } from './DayItemList';
-import { DayPicker } from "./DayPicker";
-import WeekSelector from "./WeekSelector";
+import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../style/styles";
+import { DayItemList } from './Components/DayItemList';
+import { DayPicker } from "./Components/DayPicker";
+import WeekSelector from "./Components/WeekSelector";
+import WorkoutDetails from "./WorkoutDetails";
 
 const Wrapper = styled("div")(({ theme }) => `
-    height: 100%;
+    position: relative;
+    background-color: ${(theme as ITheme).palette.shades.g6};
+    min-height: 100vh;
+    z-index: 100;
 `);
 
+
 const Header = styled("div")(({ theme }) => `
-    
     padding-left:1rem;
     padding-top:1rem;
     text-align: left;
     justify-content: center;
     gap: 0.25rem;
     padding-bottom: 1.5rem;
+    z-index: 200;
 `);
 
 const DayPickerWrapper = styled("div")(({ theme }) => `
@@ -124,7 +128,7 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
     }, []);
 
     return (selectedWeek?.weekStarting && selectedWeek?.weekStarting && (
-        <Wrapper>
+        <Wrapper className='wrapper'>
             <GradientBox />
             <ColumnStackFlexBox>
                 <Header>
@@ -133,9 +137,9 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
                 </Header>
             </ColumnStackFlexBox>
             <DayPickerWrapper><DayPicker scheduleWeek={selectedWeek} onClick={setSelectedDate} selectedDate={selectedDate} /></DayPickerWrapper>
-            <RoundedLayer />
-            <RoundedLayer2 />
-            <Pseudo />
+            <RoundedLayer className='roundLayer' />
+            <RoundedLayer2 className='roundLayer2' />
+            <Pseudo className='pseudo' />
             <Toolbar>
                 <ToolbarButton style={{ width: "2rem" }}>
                     <LinkPersistQuery pathname={`/manage`}>
