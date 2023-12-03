@@ -26,7 +26,7 @@ export default function WorkoutDrawerContextProvider({ workoutDrawerRef, setSele
         if (!workoutDrawerRef.current?.isOpen) {
             workoutDrawerRef.current?.toggleDrawer();
         }
-    }, []);
+    }, [workoutDrawerRef, setSelectedWorkout]);
 
     return (
         <WorkoutDrawerContext.Provider

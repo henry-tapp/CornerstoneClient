@@ -17,6 +17,6 @@ export const getMonday = (d: Date) => {
 
 export function getCurrentWeek(startingWeek: Date): number {
     dayjs.extend(duration);
-    var weeksAwayFromdate = Math.floor(dayjs.duration(dayjs().diff(dayjs(startingWeek))).asWeeks());
-    return (weeksAwayFromdate < 0) ? 1 : weeksAwayFromdate + 1;
+    var weeksAwayFromdate = Math.floor(dayjs.duration(dayjs().diff(dayjs(startingWeek))).asWeeks()) * -1;
+    return (weeksAwayFromdate <= 0) ? 1 : weeksAwayFromdate;
 }

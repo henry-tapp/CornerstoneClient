@@ -10,32 +10,32 @@ import { WeekItem } from 'types';
 import StockExerciseImage from '../../../images/gen/cyberpunk-man-on-cliff.jpeg';
 
 export interface ScheduleItemCardProps {
-    handleOpenInfo: (id: string) => void;
+    handleOpenInfo?: (item: WeekItem) => void;
     item: WeekItem;
 }
 
 export default function ScheduleItemCard({ item, handleOpenInfo }: ScheduleItemCardProps) {
 
     return (
-        <Card className='schedule-item-card' sx={{ display: 'flex', maxHeight: "8rem" }}>
+        <Card className='schedule-item-card' sx={{ display: 'flex', maxHeight: "7rem" }}>
             <CardMedia
                 component="img"
-                sx={{ width: 151 }}
+                sx={{ width: 100 }}
                 image={StockExerciseImage}
                 alt="itemImage"
             />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flex: '1 0 auto' }}>
+                <CardContent style={{ textAlign: "left" }} sx={{ flex: '1 0 auto' }}>
                     <Typography component="div" variant="body1">
                         {item.name}
                     </Typography>
                     <Typography style={{ wordBreak: "break-all" }} variant="body2" color="text.secondary" component="div">
-                        {item.description?.length > 40 ? item.description.slice(0, 60).concat("...") : item.description}
+                        {item.description?.length > 65 ? item.description.slice(0, 65).concat("...") : item.description}
                     </Typography>
                 </CardContent>
             </Box>
             <CardActions>
-                <IconButton size='small' color='primary' onClick={() => handleOpenInfo(item.id)}><KeyboardArrowRightIcon fontSize='small' /></IconButton>
+                {handleOpenInfo && (<IconButton size='small' color='primary' onClick={() => handleOpenInfo(item)}><KeyboardArrowRightIcon fontSize='small' /></IconButton>)}
             </CardActions>
         </Card>
     );

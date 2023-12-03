@@ -1,18 +1,12 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { IconButton, IconButtonProps, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ITheme } from "common/App";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { Wrapper } from 'style/styles';
+import { AccountManagementButton } from './AccountManagementButton';
 import { DashboardItem, ItemViewType } from "./DashboardItem";
-
-const Wrapper = styled("div")(({ theme }) => `
-    position: relative;
-    background-color: ${(theme as ITheme).palette.shades.g6};
-    min-height: 100vh;
-    z-index: 100;
-    width: 100%;
-`);
 
 const Header = styled("div")(({ theme }) => `
     margin: auto;
@@ -42,41 +36,32 @@ const Grid = styled("div")(({ theme }) => `
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    padding-inline: 1rem 1rem;
+    padding: 1rem;
 `);
 
 
 const GridItem = styled("div")(({ theme }) => `
-  background-image: linear-gradient(#254352, #242c4c);
-  color: ${(theme as ITheme).palette.shades.g4};
-  margin: 1rem;
-  padding-top:1rem; 
   width:100%;
+`);
+
+const ColourWrapper = styled("div")(({ theme }) => `
+  background-image: linear-gradient(${(theme as ITheme).palette.primary.dark}, ${(theme as ITheme).palette.primary.light});
+  color: ${(theme as ITheme).palette.shades.g6};
   border: 0.15rem solid ${(theme as ITheme).palette.secondary.dark};
   border-radius:1rem;
 `);
 
-const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
-  backgroundColor: (theme as ITheme).palette.shades.g1,
-  color: (theme as ITheme).palette.tertiary.light,
-
-  '&:hover, &.Mui-focusVisible': {
-    backgroundColor: (theme as ITheme).palette.primary.light,
-    color: (theme as ITheme).palette.primary.dark
-
-  },
-  '&.Mui-active': {
-    backgroundColor: (theme as ITheme).palette.tertiary.light,
-    color: (theme as ITheme).palette.primary.dark,
-  }
-}));
-
 function useDashboardItems() {
-  return [{
+  return [
+    {
 
-    item: 1,
-    type: "Graph" as ItemViewType
-  }];
+      item: 2,
+      type: "stats" as ItemViewType
+    }, {
+
+      item: 1,
+      type: "Graph" as ItemViewType
+    },];
 }
 
 export function Dashboard() {
@@ -91,17 +76,27 @@ export function Dashboard() {
   const dashboardItems = useDashboardItems();
 
   return (
-    <Wrapper>
+    <Wrapper className="wrapper">
       <Header>
         <LeftAlign>
           <Typography variant="caption" fontWeight={"bold"}>Hey Henry!</Typography>
           <Typography variant="h5" fontWeight={"bold"}>How's your training going?</Typography>
         </LeftAlign>
-        <RightAlign><IconButtonStyle onClick={handleAccountClick}><AccountCircleIcon style={{ transform: 'scale(1.8)' }} /></IconButtonStyle></RightAlign>
+        <RightAlign>
+          <AccountManagementButton onClick={handleAccountClick}>
+            <AccountCircleIcon style={{ transform: 'scale(1.8)' }} />
+          </AccountManagementButton>
+        </RightAlign>
       </Header>
-
       <Grid >
-        {dashboardItems && dashboardItems.map((item, idx) => (<GridItem key={idx}><DashboardItem  {...item}></DashboardItem></GridItem>))}
+        {dashboardItems && dashboardItems.map((item, idx) =>
+        (
+          <GridItem key={idx}>
+            <ColourWrapper>
+              <DashboardItem {...item} />
+            </ColourWrapper>
+          </GridItem>
+        ))}
       </Grid>
     </Wrapper>
   );

@@ -1,4 +1,3 @@
-import BarChartIcon from '@mui/icons-material/BarChart';
 import { Typography, styled } from "@mui/material";
 import { ITheme } from "common/App";
 import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
@@ -19,18 +18,20 @@ const StyledGrid = styled("div")(({ theme }) => `
     text-align: center;
     grid-gap: 0.25rem;
     vertical-align: middle;
+    padding-inline: 1rem 1rem;
 `);
 
 
 const GridItemContainer = styled("div")(({ theme }) => `
     width: 100%;
-    height:2rem;
+    height:1rem;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    border-radius:1rem;
-    color: ${(theme as ITheme).palette.shades.g1};
-    height:4rem;
+    border-radius:0.5rem;
+    background-color: ${(theme as ITheme).palette.primary.light};
+    color: ${(theme as ITheme).palette.shades.g5};
+    height:2rem;
 `);
 
 
@@ -46,9 +47,7 @@ export function WeekSelector({ schedule: plan, onChange }: WeekViewProps) {
 
     const handleWeekSet = useCallback((newWeek: number) => {
         setWeek(newWeek);
-        console.log(newWeek);
         onChange(newWeek);
-
     }, [setWeek, onChange]);
 
     return (
@@ -59,11 +58,12 @@ export function WeekSelector({ schedule: plan, onChange }: WeekViewProps) {
                         <GridItemContainer key={idx} onClick={() => handleWeekSet(idx + 1)}>
                             <ColumnStackFlexBox>
                                 <Typography variant="h6">{idx + 1}</Typography>
-                                <BarChartIcon />
                             </ColumnStackFlexBox>
                         </GridItemContainer>
                     )}
                 </StyledGrid>
+
+
             </Wrapper>
         </>);
 }

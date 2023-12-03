@@ -20,7 +20,7 @@ export interface InfoDialogProps {
     handleClose: () => void;
 }
 
-export function InfoDialog({ title, description, description2, closeText, open, handleClose, children }: React.PropsWithChildren<InfoDialogProps>) {
+export function InfoDialog({ title, description, closeText, open, handleClose, children }: React.PropsWithChildren<InfoDialogProps>) {
 
     return (
 

@@ -1,20 +1,19 @@
 import { Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useMutation } from "@tanstack/react-query";
 import { ITheme } from "common/App";
 import { useCornerstoneStableData } from "common/CornerstoneDataProvider";
 import { InfoDialog } from "components/Dialog/InfoDialog";
 import DraggableItem from "components/Draggable/DraggableItem";
 import DroppableZone from "components/Draggable/DroppableZone";
-import { useApi } from "hooks/useApi/useApi";
-import { DropArea, Item, PLACEHOLDER, useDragDrop } from "hooks/useDragDrop/useDragDrop";
-import { useWeekItems } from "hooks/useWeekItems/useWeekItems";
-import { Information } from "hooks/useWizard/useFocusData";
+import { LoadingIndicator } from "components/LoadingIndicator";
+import { ConvertToDragDropData, Item, useDragDrop } from "hooks/useDragDrop/useDragDrop";
+import { useWeekItemUpdate, useWeekItems } from "hooks/useWeekItems/useWeekItems";
 import { useCallback, useMemo, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { ScheduledDay, UNSCHEDULED, WeekItem, scheduleLists, scheduledDayOfWeekMapper } from "types";
 import ScheduleItemCard from "./Components/ScheduleItemCard";
-import { ScheduleToolbar } from "./ScheduleToolbar";
+import { ScheduleItemSelectionDialog } from "./Components/ScheduleItemSelectionDialog";
+import { ScheduleToolbar } from "./Components/ScheduleToolbar";
 
 export type SortType = "previous_week" | "template";
 
@@ -28,7 +27,8 @@ const Container = styled("div")(({ theme }) => `
 
 const ListGrid = styled("div")(({ theme }) => `
   width: 100%;
-  padding: 1rem;
+  padding-top: 1rem;
+  padding-inline: 1rem;
 `);
 
 const PlaceholderCard = styled("div")(({ theme }) => `
@@ -43,14 +43,14 @@ const DropZoneWrapper = styled("div")(({ theme }) => `
   padding: 1rem;
   border-radius: 1rem;
   background: ${(theme as ITheme).palette.shades.g4};
-  margin: 0.25rem; 
+  margin-bottom: 0.25rem; 
 `);
 
 const Header = styled("div")(({ theme }) => `
     text-align:left;
     display: flex;
     gap: 0.5rem;
-    padding-left: 0.25rem;
+    padding-inline: 0.25rem 0.25rem;
     padding-top:0.5rem;
     padding-bottom:0.5rem;
     color: ${(theme as ITheme).palette.shades.g1};
@@ -66,81 +66,74 @@ export function WeekScheduleView({ weekNumber }: ViewProps) {
 
   const currentWeek = useMemo(() => scheduleWeeks?.find(x => x.weekNumber === weekNumber), [scheduleWeeks, weekNumber])
 
-  const { data: weekData } = useWeekItems({ weekId: currentWeek?.id });
-  // const { data: itemTypes } = useMultipleWorkoutGroupsForPhase({ phase: currentWeek?.phase ?? PhaseType.Any });
-  const current = useMemo(() => scheduleLists.map((list, idx) => {
+  const { updateItems } = useWeekItemUpdate();
+  const updateItemScheduleDay = useCallback(async (newList: string, items: WeekItem[]) => {
+    const newScheduledDay = scheduledDayOfWeekMapper.find(x => x.title === newList)?.enum;
+    if (!newScheduledDay) throw new Error("Tried to schedule to a day that doesn't exist");
 
-    const listItems = weekData?.filter(y => scheduledDayOfWeekMapper[idx].enum === y.scheduledDayOfWeek);
-    return {
-      id: idx.toString(),
-      title: list,
-      items: listItems?.length === 0 ? [PLACEHOLDER] : listItems?.map((item) => ({
-        id: item.id,
-        prefix: "task",
-        isPlaceholder: false,
-        content: item
-      }))
-    } as DropArea<WeekItem>
-  }), [weekData]);
-
-  const api = useApi();
-  const { mutateAsync } = useMutation(async (weekItems: WeekItem[]) => await api.updateWeekItem(weekItems));
-  const updateItemList = useCallback(async (newList: string, items: WeekItem[]) => {
-    await mutateAsync(items.map(x => {
-      x.scheduledDayOfWeek = ScheduledDay[newList];
+    await updateItems(items.map(x => {
+      x.scheduledDayOfWeek = newScheduledDay;
       return x;
     }));
-  }, [mutateAsync]);
 
-  const { onDragEnd, moveAllItems, resetList, elements } = useDragDrop({ dropAreas: current, onItemsMoved: updateItemList });
+  }, [updateItems]);
 
-  const allUnscheduled = useMemo(() => scheduleLists.map((list, idx) => {
-    return {
-      id: idx.toString(),
-      title: list,
-      items: list !== UNSCHEDULED ? [PLACEHOLDER] : weekData?.map((item) => ({
-        id: item.id,
-        prefix: "task",
-        isPlaceholder: false,
-        content: item
-      }))
-    } as DropArea<WeekItem>
-  }), [weekData]);
+  const { data: weekData } = useWeekItems({ weekId: currentWeek?.id });
+  const initialDropZones = ConvertToDragDropData<WeekItem>(scheduleLists, weekData, (weekItem: WeekItem, index: number) => scheduledDayOfWeekMapper[index].enum === weekItem.scheduledDayOfWeek);
+  const unscheduledDropZones = ConvertToDragDropData<WeekItem>(scheduleLists, weekData, (weekItem: WeekItem, index: number) => scheduledDayOfWeekMapper[index].enum === ScheduledDay.None);
+  const { onDragEnd, moveAllItems, resetList, dropAreas, setDropAreas } = useDragDrop<WeekItem>({ initialDropAreas: initialDropZones, onItemsMoved: updateItemScheduleDay });
 
-  const unschedule = useCallback((prefix?: string | undefined) => (!prefix) ? resetList(allUnscheduled) : moveAllItems(UNSCHEDULED, prefix), [resetList, moveAllItems, allUnscheduled]);
+  const [selectedItem, setSelctedItem] = useState<WeekItem>();
+  const [infoOpen, setInfoOpen] = useState(false);
+  const openDialogForItem = useCallback((item: WeekItem) => {
+    setSelctedItem(item);
+    setInfoOpen(true);
+  }, [setInfoOpen, setSelctedItem]);
 
-  const [open, setOpen] = useState(false);
-  const [selectedItem, setSelctedItem] = useState<Information>();
-  const handleToggleDialogForId = useCallback((id: string) => {
-    const item = weekData?.find(x => x.id === id);
-    setSelctedItem({ title: item?.name ?? "", description: item?.description ?? "" });
-    setOpen(true);
-  }, [weekData, setOpen, setSelctedItem]);
+  const [selectedDay, setSelectedDay] = useState<string>("");
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  const openSelectionDialogForDay = useCallback((prefix: string) => {
+    setSelectedDay(prefix);
+    setScheduleDialogOpen(true);
+  }, [setSelectedDay, setScheduleDialogOpen]);
 
+  const handleSelectionDialogOnSave = useCallback((items: WeekItem[]) => {
+    updateItems(items);
+    setDropAreas(ConvertToDragDropData<WeekItem>(scheduleLists, weekData, (weekItem: WeekItem, index: number) => scheduledDayOfWeekMapper[index].enum === weekItem.scheduledDayOfWeek));
+    setScheduleDialogOpen(false);
+  }, [updateItems, setDropAreas, weekData]);
+
+  if (!weekData) {
+    return <LoadingIndicator />
+  }
   return (
     <Container>
       <DragDropContext onDragEnd={onDragEnd}>
         <ListGrid>
           {scheduleLists.map((list, idx) => {
             return (
-              <DropZoneWrapper
-                key={list}>
+              <DropZoneWrapper key={list}>
                 <Header>
                   <Typography variant="subtitle1">{list}</Typography >
-                  <ScheduleToolbar prefix={list} handleUnschedule={unschedule} />
+                  <ScheduleToolbar
+                    prefix={list}
+                    handleUnschedule={(prefix?: string | undefined) => (!prefix)
+                      ? resetList(unscheduledDropZones)
+                      : moveAllItems(UNSCHEDULED, prefix)}
+                    openSelection={openSelectionDialogForDay} />
                 </Header>
-                <DroppableZone
-                  prefix={list}
-                  index={idx}
-                >
+                <DroppableZone prefix={list} index={idx}>
                   <div key={idx}>
-                    {elements && elements.find(x => x.title === list)?.items.map((item: Item<WeekItem>, index: number) =>
-                    (item.isPlaceholder
-                      ? <PlaceholderCard key={item.id}><Typography variant="button">{item.content.name}</Typography></PlaceholderCard>
-                      : <DraggableItem key={item.id} index={index} id={item.id}>
-                        <ScheduleItemCard handleOpenInfo={handleToggleDialogForId} item={item.content} />
-                      </DraggableItem>
-                    ))}
+                    {dropAreas && dropAreas.find(x => x.title === list)?.items.map((item: Item<WeekItem>, index: number) => (item.isPlaceholder
+                      ? (
+                        <PlaceholderCard key={item.content.id}>
+                          <Typography variant="button">{item.content.name}</Typography>
+                        </PlaceholderCard>)
+                      : (
+                        <DraggableItem key={item.content.id} index={index} id={item.content.id}>
+                          <ScheduleItemCard handleOpenInfo={openDialogForItem} item={item.content} />
+                        </DraggableItem>)))
+                    }
                   </div>
                 </DroppableZone>
               </DropZoneWrapper>
@@ -148,7 +141,19 @@ export function WeekScheduleView({ weekNumber }: ViewProps) {
           })}
         </ListGrid>
       </DragDropContext>
-      <InfoDialog title={selectedItem?.title} description={selectedItem?.description} handleClose={() => setOpen(false)} open={open} />
+      <InfoDialog
+        title={selectedItem?.name}
+        description={selectedItem?.description}
+        handleClose={() => setInfoOpen(false)}
+        open={infoOpen}
+      />
+      <ScheduleItemSelectionDialog
+        items={weekData}
+        day={ScheduledDay[selectedDay] as ScheduledDay}
+        handleClose={() => setScheduleDialogOpen(false)}
+        open={scheduleDialogOpen}
+        onSave={handleSelectionDialogOnSave}
+      />
     </Container >
   )
 } 

@@ -1,6 +1,13 @@
 import { styled } from "@mui/material";
 import { ITheme } from "common/App";
 
+export const Wrapper = styled("div")(({ theme }) => `
+    position: relative;
+    background-image: linear-gradient(${(theme as ITheme).palette.shades.g4}, ${(theme as ITheme).palette.primary.main});
+    min-height: 100vh; 
+    width: 100%;
+`);
+
 export const ColumnStackFlexBox = styled("div")(({ theme }) => `
     display: flex;
     flex-wrap: wrap;
@@ -8,7 +15,7 @@ export const ColumnStackFlexBox = styled("div")(({ theme }) => `
 `);
 
 export const RoundedLayer = styled("div")(({ theme }) => `
-    background-image: linear-gradient(${(theme as ITheme).palette.shades.g4}, #254352);
+    background-image: linear-gradient(${(theme as ITheme).palette.shades.g4}, ${(theme as ITheme).palette.primary.main});
     border-radius: 3rem 0 0 0;
     min-height: calc(100% - 14rem);
     overflow: hidden;
@@ -36,7 +43,7 @@ export const Pseudo = styled("div")(({ theme }) => `
     position:absolute;
     top: 7rem;
     right: 1rem;
-    box-shadow: 1rem 1rem 0 0 ${(theme as ITheme).palette.shades.g4};;
+    box-shadow: 1rem 1rem 0 0 ${(theme as ITheme).palette.shades.g4};
 `);
 
 export const GradientBox = styled("div")(({ theme }) => `
@@ -46,7 +53,7 @@ export const GradientBox = styled("div")(({ theme }) => `
     width:100%;
     top: 0;
     left: 0;
-    background-image: linear-gradient(#274151, #242c4c);
+    background-image: linear-gradient(${(theme as ITheme).palette.primary.dark}, ${(theme as ITheme).palette.primary.light});
 `);
 
 export const BubbleBox = styled("div")(({ theme }) => `

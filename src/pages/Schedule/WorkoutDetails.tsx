@@ -4,7 +4,10 @@ import TimerIcon from '@mui/icons-material/Timer';
 import { IconButton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ITheme } from "common/App";
-import { WeekItemWorkout } from 'types';
+import { LinkPersistQuery } from 'components/LinkPersistQuery';
+import { useWorkoutDetails } from 'hooks/useWorkoutDetails/useWorkoutDetails';
+import { useMemo } from 'react';
+import { ScheduledActivity, ScheduledRoutine, WeekItemWorkout } from 'types';
 import StockExerciseImage from '../../images/gen/synth-climber-3.jpeg';
 
 const BackIconWrapper = styled(IconButton)(
@@ -66,28 +69,23 @@ export interface ItemDetailProps {
 
 export function WorkoutDetails({ workout, onBack }: ItemDetailProps) {
 
+    const { data: workoutDetails } = useWorkoutDetails({ weekItemId: workout.weekItemId, weekItemWorkoutId: workout.id });
+
+    const routine = useMemo(() => workoutDetails as ScheduledRoutine, [workoutDetails]);
+    const activity = useMemo(() => workoutDetails as ScheduledActivity, [workoutDetails]);
+
     return (
         <PageWrapper>
             {onBack && (<BackIconWrapper onClick={onBack}><KeyboardBackspaceOutlinedIcon /></BackIconWrapper>)}
             <ImageArea src={StockExerciseImage} alt=""></ImageArea>
             <ButtonBar>
-                <IconButtonStyle><TimerIcon /><Typography style={{ fontWeight: "bold" }} variant="caption">Start Workout</Typography></IconButtonStyle>
+                <LinkPersistQuery pathname={`/workout/${workout.weekItemId}/${workout.id}`}>
+                    <IconButtonStyle><TimerIcon /><Typography style={{ fontWeight: "bold" }} variant="caption">Start Workout</Typography></IconButtonStyle>
+                </LinkPersistQuery>
                 <IconButtonStyle><ContentPasteIcon /><Typography style={{ fontWeight: "bold" }} variant="caption">Log Workout</Typography></IconButtonStyle>
             </ButtonBar>
-            <Description>
-                <Inline>
-                    <Typography style={{ alignItems: "flex-start" }} variant="h5">Description</Typography>
-                    {/* <Typography style={{ alignItems: "flex-end" }} variant="subtitle2">0</Typography> */}
-                </Inline>
-                <Typography variant="body1">{workout.description}</Typography>
-            </Description>
-            {workout.summary && (<Description>
-                <Typography variant="body2">{workout.summary}</Typography>
-            </Description>)}
-            {workout.instructions && (<Description>
-                <Typography variant="h5">Instructions</Typography>
-                <Typography variant="body1">{workout.instructions}</Typography>
-            </Description>)}
+            {routine && <RoutineDetails workout={workout} routine={routine} />}
+            {activity && <ActivityDetails workout={workout} activity={activity} />}
 
         </PageWrapper>
     );

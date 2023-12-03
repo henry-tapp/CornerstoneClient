@@ -17,7 +17,7 @@ const NavBarContainer = styled("div")(
     padding-top: 0.5rem;
     bottom: 0;
     width: 100%;
-    background-image: linear-gradient(#254352, #242c4c);
+    background-image: linear-gradient(${(theme as ITheme).palette.primary.main}, ${(theme as ITheme).palette.primary.dark});
     border-radius: 1rem 1rem 0 0 ;
     z-index:200;
 `);
@@ -55,7 +55,7 @@ export function Bar() {
 
     return (
         <NavBarContainer data-testid="navbar" className="wrapper-nav-bar">
-            <NavBarLinkPersistQuery pathname="/dashboard" activeOnEmpty>
+            <NavBarLinkPersistQuery pathname="/" activeOnEmpty>
                 <IconButtonStyle><HomeIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
             <NavBarLinkPersistQuery pathname={`schedule`}>

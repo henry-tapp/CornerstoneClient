@@ -1,5 +1,5 @@
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import { IconButton, Typography, styled } from "@mui/material";
+import { IconButton, Typography, styled, useTheme } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Queries } from "api";
 import { ITheme } from "common/App";
@@ -12,20 +12,12 @@ import WorkoutContextProvider from 'pages/Schedule/Context/WorkoutDrawerContextP
 import { useCallback, useMemo, useRef, useState } from "react";
 import 'react-indiana-drag-scroll/dist/style.css';
 import { Plan, ScheduleWeekView, WeekItemWorkout } from 'types';
-import { addWeeksToDate, getCurrentWeek } from "util/dates";
-import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2 } from "../../style/styles";
+import { getCurrentWeek } from "util/dates";
+import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2, Wrapper } from "../../style/styles";
 import { DayItemList } from './Components/DayItemList';
 import { DayPicker } from "./Components/DayPicker";
-import WeekSelector from "./Components/WeekSelector";
+import WeekPicker from './Components/WeekCalanderPicker';
 import WorkoutDetails from "./WorkoutDetails";
-
-const Wrapper = styled("div")(({ theme }) => `
-    position: relative;
-    background-color: ${(theme as ITheme).palette.shades.g6};
-    min-height: 100vh;
-    z-index: 100;
-`);
-
 
 const Header = styled("div")(({ theme }) => `
     padding-left:1rem;
@@ -43,25 +35,38 @@ const DayPickerWrapper = styled("div")(({ theme }) => `
 `);
 
 const Toolbar = styled("div")(({ theme }) => `
-    padding-inline: 0.5rem 0.5rem;
-    padding-top:1.5rem;
-    display: flex;
-    margin-left: auto;
-    justify-content: flex-end;
-    gap: 0.5rem;
-
+    padding-top: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
 `);
 
-const ToolbarButton = styled("div")(({ theme }) => `
+const ScheduleButton = styled("div")(({ theme }) => `
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align:center;
+    grid-column: 3;
     height:2rem;
+    width: 2rem;
     background-color: ${(theme as ITheme).palette.shades.g1};
     color: ${(theme as ITheme).palette.shades.g5};
     border-radius: 1rem;
     position:relative;
+    z-index:3; 
+`);
+
+
+const WeekSelectorButton = styled("div")(({ theme }) => `
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-column: 2;
+    place-self: center;
+    height:2rem;
+    width: 12rem;
+    background-color: ${(theme as ITheme).palette.primary.main};
+    color: ${(theme as ITheme).palette.shades.g6};
+    border-radius: 1rem;
+    position: relative;
     z-index:3; 
 `);
 
@@ -83,11 +88,12 @@ const ItemListWrapper = styled("div")(({ theme }) => `
 export interface TodayViewProps {
 
     plan: Plan;
-    scheduleWeeks?: ScheduleWeekView[];
+    scheduleWeeks: ScheduleWeekView[];
 }
 
 export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
 
+    const theme = useTheme();
     const queryClient = useQueryClient();
     const [weekSelectorOpenState, setWeekSelectorOpenState] = useState<boolean>(false);
 
@@ -95,8 +101,9 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
 
     const [navigatedWeek, setNavigatedWeek] = useLocalStorage("navigatedWeek", currentWeek);
 
-    const [selectedWeek, setSelectedWeek] = useState<ScheduleWeekView | undefined>(scheduleWeeks?.find(x => x.weekNumber === navigatedWeek));
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const selectedWeek = useMemo(() => scheduleWeeks.find(x => x.weekNumber === navigatedWeek) ?? scheduleWeeks[0], [navigatedWeek, scheduleWeeks]);
+
+    const [selectedDate, setSelectedDate] = useState<Date>(navigatedWeek === currentWeek ? new Date() : new Date(selectedWeek.weekStarting) ?? new Date());
     const [selectedWorkout, setSelectedWorkout] = useState<WeekItemWorkout | undefined>(undefined);
 
     const { data: weekItems } = useWeekItems({ weekId: selectedWeek?.id });
@@ -108,23 +115,17 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
 
     const handleWeekChange = useCallback((newWeek: number) => {
         const week = scheduleWeeks?.find(x => x.weekNumber === newWeek);
+        if (!week) throw new Error("This calander week is not included in the current plan.");
         setNavigatedWeek(week?.weekNumber);
-        setSelectedWeek(week);
         queryClient.invalidateQueries(Queries.getWeekItems(week?.id));
-        setSelectedDate(new Date((newWeek === 1)
-            ? plan?.dateStarting
-            : addWeeksToDate(new Date(plan?.dateStarting), newWeek)));
-    }, [setNavigatedWeek, setSelectedWeek, setSelectedDate, plan, scheduleWeeks, queryClient]);
+        setSelectedDate(new Date(week?.weekStarting));
+        setWeekSelectorOpenState(false);
+    }, [setNavigatedWeek, setSelectedDate, setWeekSelectorOpenState, scheduleWeeks, queryClient]);
 
     const workoutDrawerRef = useRef<SwipeableDrawerType>(null);
-
     const handleClose = useCallback(() => {
         setSelectedWorkout(undefined);
         workoutDrawerRef.current?.toggleDrawer();
-    }, []);
-
-    const handleWeekSelectorToggle = useCallback((toggle: boolean) => {
-        setWeekSelectorOpenState(toggle);
     }, []);
 
     return (selectedWeek?.weekStarting && selectedWeek?.weekStarting && (
@@ -141,18 +142,18 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
             <RoundedLayer2 className='roundLayer2' />
             <Pseudo className='pseudo' />
             <Toolbar>
-                <ToolbarButton style={{ width: "2rem" }}>
-                    <LinkPersistQuery pathname={`/manage`}>
-                        <IconButton><ScheduleIcon style={{ color: "white" }} /></IconButton>
-                    </LinkPersistQuery>
-                </ToolbarButton>
-                <ToolbarButton style={{ width: "7rem", marginRight: "1rem" }} onClick={() => handleWeekSelectorToggle(!weekSelectorOpenState)}>
+                <WeekSelectorButton onClick={() => setWeekSelectorOpenState(!weekSelectorOpenState)}>
                     <Typography variant="button">Week {selectedWeek.weekNumber} </Typography>
-                </ToolbarButton>
+                </WeekSelectorButton>
+                <ScheduleButton style={{ width: "2rem" }}>
+                    <LinkPersistQuery pathname={`/manage`}>
+                        <IconButton style={{ backgroundColor: (theme as ITheme).palette.primary.main, color: "white" }}><ScheduleIcon fontSize='small' /></IconButton>
+                    </LinkPersistQuery>
+                </ScheduleButton>
             </Toolbar>
             {!!weekSelectorOpenState && (
                 <WeekSelectorWrapper>
-                    <WeekSelector schedule={plan} onChange={handleWeekChange} />
+                    <WeekPicker currentWeek={selectedWeek.weekNumber} schedule={plan} setWeek={handleWeekChange} />
                 </WeekSelectorWrapper>
             )}
             <WorkoutContextProvider workoutDrawerRef={workoutDrawerRef} setSelectedWorkout={setSelectedWorkout}>

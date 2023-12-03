@@ -1,4 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
+import ChecklistIcon from '@mui/icons-material/Checklist';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ReplayIcon from '@mui/icons-material/Replay';
@@ -9,7 +10,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from "react";
 import { UNSCHEDULED } from "types";
-import { SortType } from "./WeekScheduleView";
+import { SortType } from "../WeekScheduleView";
 
 const Toolbar = styled("div")(({ theme }) => `
     display: flex;
@@ -39,10 +40,11 @@ export interface ScheduleToolbarProps {
     handleUnschedule?: (prefix?: string | undefined) => void;
     handleItemAdd?: (id: string) => void;
     handleOpenInfo?: (id: string, newState: boolean) => void;
+    openSelection: (prefix: string) => void;
 }
 export function ScheduleToolbar(props: ScheduleToolbarProps) {
 
-    const { prefix, handleAutoSort, handleUnschedule } = props;
+    const { prefix, handleAutoSort, handleUnschedule, openSelection } = props;
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -103,7 +105,29 @@ export function ScheduleToolbar(props: ScheduleToolbarProps) {
                     )}
                 <ToolbarButton onClick={handleClick}>
                     <IconButton color='inherit'><AddIcon /></IconButton>
-                </ToolbarButton></>
-            )}
+                </ToolbarButton>
+                <Menu
+                    anchorEl={anchorEl}
+                    id="options-menu"
+                    open={open}
+                    onClose={() => handleSort()}
+                    onClick={() => handleSort()}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                    <MenuItem onClick={() => handleSort("previous_week")}>
+                        <ListItemIcon>
+                            <ReplayIcon fontSize="small" />
+                        </ListItemIcon>
+                        Use previous week
+                    </MenuItem>
+                    <MenuItem onClick={() => openSelection(prefix)}>
+                        <ListItemIcon>
+                            <ChecklistIcon fontSize="small" />
+                        </ListItemIcon>
+                        Manual Selection
+                    </MenuItem>
+                </Menu>
+            </>)}
     </Toolbar>);
 }

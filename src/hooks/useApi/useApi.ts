@@ -28,7 +28,9 @@ export function useApi(): Api {
 
         updateWeekItem: (weekItems: WeekItem[]) => apiProvider.patch(`${prefix}/schedule/week/item`, weekItems.map(weekItem => ({ id: weekItem.id, completed: weekItem.completed, scheduledDayOfWeek: weekItem.scheduledDayOfWeek }))),
 
-        getWeekItemWorkouts: (weekItemId: string) => apiProvider.get<WeekItemWorkout[]>(`${prefix}/schedule/item/${weekItemId}`),
+        getWeekItemWorkout: (weekItemId: string, weekItemWorkoutId: string) => apiProvider.get<WeekItemWorkout>(`${prefix}/scheduleitem/${weekItemId}/workout/${weekItemWorkoutId}`),
+
+        getWeekItemWorkouts: (weekItemId: string) => apiProvider.get<WeekItemWorkout[]>(`${prefix}/scheduleitem/${weekItemId}`),
 
         getWorkoutGroupsForPhase: (phase: PhaseType) => apiProvider.get<MultipleWorkoutGroup[]>(`${prefix}/workout/groups/phase/${phase}`),
 

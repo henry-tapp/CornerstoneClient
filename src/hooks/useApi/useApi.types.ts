@@ -5,11 +5,9 @@ import {
     RequestProcessor,
 } from "../../api";
 import {
-    MultipleWorkoutGroup,
-    PhaseType,
     Plan,
     PlanOptions,
-    ScheduleWeekView, WeekItem, WeekItemWorkout
+    ScheduleWeekView, ScheduledWorkout, WeekItem
 } from "../../types";
 
 export interface Api {
@@ -45,9 +43,9 @@ export interface Api {
 
     /* Workouts */
 
-    getWeekItemWorkouts: (weekItemId: string) => Promise<ApiResponse<WeekItemWorkout[]>>;
+    getWeekItemWorkout: (weekItemId: string, weekItemWorkoutId: string) => Promise<ApiResponse<ScheduledWorkout>>;
 
-    getWorkoutGroupsForPhase: (phase: PhaseType) => Promise<ApiResponse<MultipleWorkoutGroup[]>>;
+    getWeekItemWorkouts: (weekItemId: string) => Promise<ApiResponse<ScheduledWorkout[]>>;
 
     /* User */
 

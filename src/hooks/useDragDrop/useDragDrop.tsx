@@ -1,23 +1,22 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { v4 } from "uuid";
 
 export const PLACEHOLDER: Item<Content> = {
-    id: v4(),
     prefix: "placeholder",
     isPlaceholder: true,
     content: {
+        id: v4(),
         name: "Drag an item here"
     }
 };
 
 export interface Content {
+    id: string;
     name: string;
 }
 
 export interface Item<TContent extends Content> {
-
-    id: string;
     prefix: string;
     isPlaceholder: boolean;
     content: TContent;
@@ -25,26 +24,44 @@ export interface Item<TContent extends Content> {
 
 export interface DropArea<TContent extends Content> {
     id: string;
-    title: string; //day
-    items: Item<TContent>[]; // tasks
+    title: string;
+    items: Item<TContent>[];
 }
 
 export interface UseDragDropProps<TContent extends Content> {
 
     onItemsMoved: (newList: string, items: TContent[]) => Promise<void>;
-    dropAreas: DropArea<TContent>[];
+    initialDropAreas: DropArea<TContent>[];
 }
 
 export interface UseDragDropData<TContent extends Content> {
-    elements: DropArea<TContent>[];
+    dropAreas: DropArea<TContent>[];
     onDragEnd: (result: DropResult) => void;
     moveAllItems: (to: string, from: string) => void;
     resetList: (list: DropArea<TContent>[]) => void;
+    setDropAreas: (areas: DropArea<TContent>[]) => void;
 }
 
-export function useDragDrop<TContent extends Content>({ dropAreas, onItemsMoved }: UseDragDropProps<TContent>): UseDragDropData<TContent> {
+export function ConvertToDragDropData<TContent extends Content>(headers: string[], data?: TContent[], filter?: (content: TContent, index: number) => boolean) {
 
-    const [elements, setElements] = useState<DropArea<TContent>[]>(dropAreas);
+    return (data && headers.map((header, idx) => {
+
+        const listItems = (!filter ? data : data?.filter((d) => filter(d, idx))).map(item => ({
+            prefix: "task",
+            isPlaceholder: false,
+            content: item
+        } as Item<TContent>));
+        return {
+            id: idx.toString(),
+            title: header,
+            items: listItems?.length === 0 ? [PLACEHOLDER] : listItems
+        } as DropArea<TContent>
+    })) ?? [];
+}
+
+export function useDragDrop<TContent extends Content>({ initialDropAreas, onItemsMoved }: UseDragDropProps<TContent>): UseDragDropData<TContent> {
+
+    const [dropAreas, setDropAreas] = useState<DropArea<TContent>[]>(initialDropAreas);
 
     const addToList = useCallback((list: Item<TContent>[], index: number, element: any) => {
         const result = Array.from(list);
@@ -58,24 +75,41 @@ export function useDragDrop<TContent extends Content>({ dropAreas, onItemsMoved 
         return [removed, result];
     }, []);
 
-    const resetList = useCallback((list: DropArea<TContent>[]) => {
-        setElements(list);
-    }, []);
+    const resetList = useCallback(async (list: DropArea<TContent>[]) => {
+        setDropAreas(list);
 
-    const moveAllItems = useCallback((to: string, from: string) => {
+        await Promise.all(list.map(async x => {
+            const items = x.items
+                .filter(x => !x.isPlaceholder)
+                .map(y => y.content);
 
-        const listCopy = JSON.parse(JSON.stringify(elements)) as typeof elements;
-        let unscheduled = listCopy.find(x => x.title === to)!;
-        let dayToUnschedule = listCopy.find(x => x.title === from)!;
+            if (items.length > 0) {
+                await onItemsMoved?.(x.title, items);
+            }
+        }));
+    }, [onItemsMoved]);
 
-        const destinationPlaceholder = dayToUnschedule.items.find(x => x.isPlaceholder);
-        if (!destinationPlaceholder) {
-            unscheduled.items = unscheduled?.items.concat(dayToUnschedule.items);
+    const moveAllItems = useCallback(async (to: string, from: string) => {
+
+        const listCopy = JSON.parse(JSON.stringify(dropAreas)) as typeof dropAreas;
+        let toList = listCopy.find(x => x.title === to)!;
+        let fromList = listCopy.find(x => x.title === from)!;
+
+        const toPlaceholder = toList.items.find(x => x.isPlaceholder);
+        const fromPlaceholder = fromList.items.find(x => x.isPlaceholder);
+        if (!fromPlaceholder) {
+            if (toPlaceholder) {
+                toList.items = [];
+            }
+            toList.items = toList?.items.concat(fromList.items);
         }
 
-        dayToUnschedule.items = [PLACEHOLDER] as Item<TContent>[];
-        setElements(listCopy);
-    }, [setElements, elements]);
+        fromList.items = [PLACEHOLDER] as Item<TContent>[];
+        setDropAreas(listCopy);
+
+        await onItemsMoved?.(toList.title, toList.items.map(x => x.content));
+
+    }, [setDropAreas, onItemsMoved, dropAreas]);
 
     const onDragEnd = useCallback(
         (result: DropResult) => {
@@ -84,7 +118,7 @@ export function useDragDrop<TContent extends Content>({ dropAreas, onItemsMoved 
             }
 
             // Get the source day
-            const listCopy = elements.slice() as DropArea<TContent>[];
+            const listCopy = dropAreas.slice() as DropArea<TContent>[];
             const sourceList = listCopy?.[result.source.droppableId] as DropArea<TContent>;
 
             // Remove it from the list
@@ -107,7 +141,7 @@ export function useDragDrop<TContent extends Content>({ dropAreas, onItemsMoved 
             // remove placeholder if necessary
             const destinationPlaceholder = destinationList.items.find(x => x.isPlaceholder);
             if (destinationPlaceholder) {
-                destinationList.items = destinationList.items.filter(x => x.id !== destinationPlaceholder.id)
+                destinationList.items = destinationList.items.filter(x => x.content.id !== destinationPlaceholder.content.id)
             }
 
             // add task to new day
@@ -117,17 +151,18 @@ export function useDragDrop<TContent extends Content>({ dropAreas, onItemsMoved 
                 removedElement
             );
 
-            setElements(listCopy);
+            setDropAreas(listCopy);
 
             onItemsMoved?.(destinationList.title, [removedElement.content]);
         },
-        [elements, addToList, removeFromList, onItemsMoved]
+        [dropAreas, addToList, removeFromList, onItemsMoved]
     );
 
     return {
-        elements,
+        dropAreas,
         onDragEnd,
         moveAllItems,
-        resetList
+        resetList,
+        setDropAreas
     }
 }

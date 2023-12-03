@@ -6,7 +6,8 @@ import { disableReactDevTools } from '@fvilers/disable-react-devtools';
 // import reportWebVitals from "../../reportWebVitals";
 import { styled } from "@mui/material/styles";
 import { MainRouter } from "MainRouter";
-import { usePlan } from 'hooks/usePlan/usePlan';
+import { useCornerstoneStableData } from 'common/CornerstoneDataProvider';
+import SystemErrorPage from 'pages/Error/SystemErrorPage';
 import Home from "pages/Home";
 import Wizard from 'pages/Wizard';
 import App, { ITheme } from "./common/App";
@@ -73,11 +74,12 @@ function AuthCheck() {
 
 function AuthenticatedView() {
 
-  const plan = usePlan({});
+  const { plan } = useCornerstoneStableData();
 
+  if (!plan) return (<SystemErrorPage />);
   return (
     <Wrapper className="wrapper">
-      {!!plan.data
+      {!!plan
         ? (<><MainRouter /></>)
         : <Wizard />
       }

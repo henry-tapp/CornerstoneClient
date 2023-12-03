@@ -3,6 +3,7 @@ import { UserMeasurements, UserPreferences } from "./User";
 export interface Plan extends PlanOptions {
     id: string;
     numberOfWeeks: number;
+    dateEnding: Date;
 }
 
 export interface PlanOptions {

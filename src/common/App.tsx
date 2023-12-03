@@ -110,11 +110,11 @@ const theme = extendTheme({
       letterSpacing: "0.05rem",
     },
     subtitle2: {
-      fontSize: "1.2rem",
+      fontSize: "1.15rem",
       fontStyle: "normal",
       fontWeight: "700",
       lineHeight: "1rem",
-      letterSpacing: "0.01rem",
+      letterSpacing: "0.05rem",
     },
     body1: {
       fontSize: "1rem",
@@ -163,7 +163,7 @@ const theme = extendTheme({
         primary: {
           main: "#254352",
           dark: "#242c4c",
-          light: "#0D6976",
+          light: "#274151",
           contrastText: "#D8D8D8"
         },
         secondary: {

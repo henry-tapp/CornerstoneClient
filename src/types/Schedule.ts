@@ -29,7 +29,8 @@ export interface WeekItem {
 
 export interface WeekItemWorkout {
     id: string;
-    workoutId: string;
+    weekItemId: string;
+    workoutId: string; // routineid or activityid
     completed: boolean;
     name: string;
     description: string;
