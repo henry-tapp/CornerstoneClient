@@ -3,21 +3,18 @@ import { IconButton, Typography, styled, useTheme } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Queries } from "api";
 import { ITheme } from "common/App";
-import { SwipeableDrawerType, SwipeableEdgeDrawer } from "components/Drawer";
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 import dayjs from 'dayjs';
 import { useLocalStorage } from 'hooks/useLocalStorage/useLocalStorage';
 import { useWeekItems } from 'hooks/useWeekItems/useWeekItems';
-import WorkoutContextProvider from 'pages/Schedule/Context/WorkoutDrawerContextProvider';
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import 'react-indiana-drag-scroll/dist/style.css';
-import { Plan, ScheduleWeekView, WeekItemWorkout } from 'types';
+import { Plan, ScheduleWeekView } from 'types';
 import { getCurrentWeek } from "util/dates";
 import { ColumnStackFlexBox, GradientBox, Pseudo, RoundedLayer, RoundedLayer2, Wrapper } from "../../style/styles";
 import { DayItemList } from './Components/DayItemList';
 import { DayPicker } from "./Components/DayPicker";
 import WeekPicker from './Components/WeekCalanderPicker';
-import WorkoutDetails from "./WorkoutDetails";
 
 const Header = styled("div")(({ theme }) => `
     padding-left:1rem;
@@ -26,7 +23,7 @@ const Header = styled("div")(({ theme }) => `
     justify-content: center;
     gap: 0.25rem;
     padding-bottom: 1.5rem;
-    z-index: 200;
+    z-index: 2;
 `);
 
 const DayPickerWrapper = styled("div")(({ theme }) => `
@@ -54,7 +51,6 @@ const ScheduleButton = styled("div")(({ theme }) => `
     z-index:3; 
 `);
 
-
 const WeekSelectorButton = styled("div")(({ theme }) => `
     display: flex;
     justify-content: center;
@@ -78,20 +74,19 @@ const WeekSelectorWrapper = styled("div")(({ theme }) => `
 `);
 
 const ItemListWrapper = styled("div")(({ theme }) => `
-    grid-column: 2;
     position:relative;
     z-index: 3;
     height: 100%;
-    padding-bottom: 3rem;
+    padding-bottom: 4rem;
 `);
 
-export interface TodayViewProps {
+export interface WeekViewProps {
 
     plan: Plan;
     scheduleWeeks: ScheduleWeekView[];
 }
 
-export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
+export function WeekView({ plan, scheduleWeeks }: WeekViewProps) {
 
     const theme = useTheme();
     const queryClient = useQueryClient();
@@ -104,7 +99,6 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
     const selectedWeek = useMemo(() => scheduleWeeks.find(x => x.weekNumber === navigatedWeek) ?? scheduleWeeks[0], [navigatedWeek, scheduleWeeks]);
 
     const [selectedDate, setSelectedDate] = useState<Date>(navigatedWeek === currentWeek ? new Date() : new Date(selectedWeek.weekStarting) ?? new Date());
-    const [selectedWorkout, setSelectedWorkout] = useState<WeekItemWorkout | undefined>(undefined);
 
     const { data: weekItems } = useWeekItems({ weekId: selectedWeek?.id });
 
@@ -121,12 +115,6 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
         setSelectedDate(new Date(week?.weekStarting));
         setWeekSelectorOpenState(false);
     }, [setNavigatedWeek, setSelectedDate, setWeekSelectorOpenState, scheduleWeeks, queryClient]);
-
-    const workoutDrawerRef = useRef<SwipeableDrawerType>(null);
-    const handleClose = useCallback(() => {
-        setSelectedWorkout(undefined);
-        workoutDrawerRef.current?.toggleDrawer();
-    }, []);
 
     return (selectedWeek?.weekStarting && selectedWeek?.weekStarting && (
         <Wrapper className='wrapper'>
@@ -146,7 +134,7 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
                     <Typography variant="button">Week {selectedWeek.weekNumber} </Typography>
                 </WeekSelectorButton>
                 <ScheduleButton style={{ width: "2rem" }}>
-                    <LinkPersistQuery pathname={`/manage`}>
+                    <LinkPersistQuery pathname={`/schedule`}>
                         <IconButton style={{ backgroundColor: (theme as ITheme).palette.primary.main, color: "white" }}><ScheduleIcon fontSize='small' /></IconButton>
                     </LinkPersistQuery>
                 </ScheduleButton>
@@ -156,15 +144,11 @@ export function TodayView({ plan, scheduleWeeks }: TodayViewProps) {
                     <WeekPicker currentWeek={selectedWeek.weekNumber} schedule={plan} setWeek={handleWeekChange} />
                 </WeekSelectorWrapper>
             )}
-            <WorkoutContextProvider workoutDrawerRef={workoutDrawerRef} setSelectedWorkout={setSelectedWorkout}>
-                <ItemListWrapper>
-                    {currentDayItems && <DayItemList items={currentDayItems} />}
-                </ItemListWrapper>
-                <SwipeableEdgeDrawer onClose={handleClose} ref={workoutDrawerRef}>
-                    <div>{selectedWorkout && (<WorkoutDetails onBack={handleClose} workout={selectedWorkout} />)}</div>
-                </SwipeableEdgeDrawer>
-            </WorkoutContextProvider>
-        </Wrapper>));
+            <ItemListWrapper className="item-list">
+                {currentDayItems && <DayItemList items={currentDayItems} />}
+            </ItemListWrapper>
+        </Wrapper>)
+    );
 }
 
-export default TodayView; 
+export default WeekView; 

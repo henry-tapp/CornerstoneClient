@@ -34,5 +34,8 @@ export default defineConfig({
     tsconfigPaths(),
     requireTransform({}),
     svgrPlugin()
-  ]
+  ],
+  optimizeDeps: {
+    exclude: ['use-elapsed-time']
+  }
 });

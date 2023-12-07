@@ -58,7 +58,7 @@ export function Bar() {
             <NavBarLinkPersistQuery pathname="/" activeOnEmpty>
                 <IconButtonStyle><HomeIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
-            <NavBarLinkPersistQuery pathname={`schedule`}>
+            <NavBarLinkPersistQuery pathname={`weekview`}>
                 <IconButtonStyle><CalendarTodayIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
             <NavBarLinkPersistQuery pathname="/progress">

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "hooks/useApi/useApi";
-import { ScheduledActivity, ScheduledRoutine, ScheduledWorkout } from "types";
 import { getUseQueryOptions } from "util/queryOptions";
 import { Queries } from "../../api";
 import { UseWorkoutDetailsData, UseWorkoutDetailsProps } from "./useWorkoutDetails.types";
@@ -18,13 +17,13 @@ export function useWorkoutDetails({ weekItemId, weekItemWorkoutId, disableSuspen
       if (!weekItemId || !weekItemWorkoutId) {
         throw new Error("No Week Item ID or workout id");
       }
-      const response = await api.getWeekItemWorkout(weekItemId, weekItemWorkoutId)
+      const response = await api.getWorkout(weekItemId, weekItemWorkoutId)
       if (response.status !== 200) {
         throw new Error(response.statusText);
       }
-      return response.data && CastDownToItemType(response.data);
+      return response.data;
     },
-    getUseQueryOptions(Queries.getWeekItemWorkout(weekItemId, weekItemWorkoutId), disabled, disableSuspense)
+    getUseQueryOptions(Queries.getWeekItemWorkout(weekItemId, weekItemWorkoutId), !weekItemId || !weekItemWorkoutId || disabled, disableSuspense)
   );
 
   return {
@@ -32,14 +31,5 @@ export function useWorkoutDetails({ weekItemId, weekItemWorkoutId, disableSuspen
     error: error ? (error as any)?.message : undefined,
     isLoading,
   };
-}
-function CastDownToItemType(data: ScheduledWorkout): ScheduledActivity | ScheduledRoutine {
-
-  if (data.itemType === 1) {
-
-    data as ScheduledActivity;
-  }
-
-  return data as ScheduledRoutine;
 }
 

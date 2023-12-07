@@ -1,12 +1,12 @@
 import { styled } from "@mui/material";
-import WeekItemCard from "pages/Schedule/Components/WeekItemCard";
-import WorkoutList from "pages/Schedule/Components/WorkoutList";
 import 'react-vertical-timeline-component/style.min.css';
 import { WeekItem } from 'types';
 import StockExerciseImage from '../../../images/gen/indoor-boulder-2.jpeg';
+import WeekItemCard from "./WeekItemCard";
+import WorkoutList from "./WorkoutList";
 
 const ItemListWrapper = styled("div")(({ theme }) => `
-    padding: 1rem;
+    padding-top: 1rem;
     width: 100%;
     text-align: center;
 `);
@@ -15,6 +15,7 @@ const ItemListWrapper = styled("div")(({ theme }) => `
 const CardWrapper = styled("div")(({ theme }) => `
     display: inline-block;
     text-align: left;
+    padding-bottom: 1rem;
 `);
 
 export interface ItemViewProps {
@@ -31,5 +32,6 @@ export function DayItemList({ items }: ItemViewProps) {
                     </WeekItemCard>
                 </CardWrapper>
                 )
-            })}</ItemListWrapper>);
+            })}
+        </ItemListWrapper>);
 }

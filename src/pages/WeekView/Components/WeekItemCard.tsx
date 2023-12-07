@@ -67,7 +67,7 @@ export default function WeekItemCard({ item, imageSrc, children }: React.PropsWi
                 alt="WorkoutImage"
             />
             <CardContent>
-                <Typography variant="body2" color="text.secondary">
+                <Typography style={{ wordWrap: "break-word" }} variant="body2" color="text.secondary">
                     {item.description}
                 </Typography>
             </CardContent>

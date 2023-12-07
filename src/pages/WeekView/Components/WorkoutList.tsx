@@ -6,8 +6,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import { ITheme } from 'common/App';
 import * as React from 'react';
-import { WeekItemWorkout } from 'types';
-import { useWorkoutDrawer } from '../Context/WorkoutDrawerContextProvider';
+import { useNavigate } from 'react-router-dom';
+import { WorkoutInformation } from 'types';
 
 const Flexbox = styled("span")(({ theme }) => `
     display:flex;
@@ -26,12 +26,12 @@ const StyledList = styled(List)(({ theme }) => `
 `);
 
 export interface WorkoutListProps {
-    workouts: WeekItemWorkout[];
+    workouts: WorkoutInformation[];
 }
 
 export default function WorkoutList({ workouts }: WorkoutListProps) {
 
-    const { openWorkout } = useWorkoutDrawer();
+    const navigate = useNavigate();
 
     return (
         <StyledList>
@@ -52,7 +52,7 @@ export default function WorkoutList({ workouts }: WorkoutListProps) {
                                         >
                                             {workout.description}
                                         </Typography>
-                                        <IconButton color='inherit' onClick={() => openWorkout(workout)}><KeyboardArrowRightIcon /></IconButton>
+                                        <IconButton color='inherit' onClick={() => navigate(`../workout/${workout.weekItemId}/${workout.id}`)}><KeyboardArrowRightIcon /></IconButton>
                                     </Flexbox>
                                 </React.Fragment>
                             }
@@ -61,6 +61,6 @@ export default function WorkoutList({ workouts }: WorkoutListProps) {
                     {workouts.length - 1 === i && <Divider component="li" />}
                 </div>
             ))}
-        </StyledList >
+        </StyledList>
     );
 }

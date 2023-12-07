@@ -1,17 +1,18 @@
 import { AnimatePresence, LayoutGroup } from "framer-motion";
 import { Bar as NavigationBar } from "pages/Navigation/Bar";
 import Progress from "pages/Progress";
-import WorkoutRunner from "pages/Workout/WorkoutRunner";
 import { lazy } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 
 const Account = lazy(() => import("pages/Account"));
 const Dashboard = lazy(() => import("pages/Dashboard"));
+const WeekView = lazy(() => import("pages/WeekView"));
+const WorkoutDetails = lazy(() => import("pages/WorkoutDetails"));
+const WorkoutRunner = lazy(() => import("pages/WorkoutRunner"));
 const Schedule = lazy(() => import("pages/Schedule"));
-const Manage = lazy(() => import("pages/Schedule/Manage"));
 const Wizard = lazy(() => import("pages/Wizard"));
 
-const routesWithoutNavbar = ["/manage", "/workout"]
+const routesWithoutNavbar = ["/schedule", "/workout"]
 
 export function MainRouter() {
   const location = useLocation();
@@ -27,12 +28,13 @@ export function MainRouter() {
         <LayoutGroup>
           <Routes key={location.pathname} location={location}>
             <Route path="/" element={<Dashboard />} />
+            <Route path="weekview" element={<WeekView />} />
             <Route path="schedule" element={<Schedule />} />
-            <Route path="manage" element={<Manage />} />
+            <Route path="workout/:weekItemId/:weekItemWorkoutId" element={<WorkoutDetails />} />
+            <Route path="workout/runner/:weekItemId/:weekItemWorkoutId" element={<WorkoutRunner />} />
             <Route path="progress" element={<Progress />} />
             <Route path="wizard" element={<Wizard />} />
             <Route path="/account/" element={<Account />} />
-            <Route path="/workout/:weekItemId/:weekItemWorkoutId" element={<WorkoutRunner />} />
           </Routes>
         </LayoutGroup>
       </AnimatePresence>

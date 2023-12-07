@@ -6,7 +6,6 @@ import { Queries } from 'api';
 import { ITheme } from 'common/App';
 import { useApi } from 'hooks/useApi/useApi';
 import { useCallback, useRef, useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { PlanCreationData, PlanOptions, PlanType } from 'types';
 import { UserMeasurements, UserPreferences } from 'types/User';
@@ -47,7 +46,6 @@ export function Wizard() {
 
   const queryClient = useQueryClient();
   const theme = useTheme() as ITheme;
-  const navigate = useNavigate();
   const [currentStep, setStepNumber] = useState<number>(1);
   const [step3Option, setStep3Option] = useState<PlanType>();
 

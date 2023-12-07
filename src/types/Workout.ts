@@ -2,45 +2,58 @@ import { Exercise } from "./Exercise";
 import { ActivityType, ItemType, RoutineType } from "./Schedule";
 
 export interface ScheduledActivity {
+    name: string;
+    description: string;
+    summary: string;
+    instructions: string;
     itemType: ItemType;
     activityId: string;
     itemGroupLinkId: string;
-    estimatedCompletionMinutes: number;
+    estimatedCompletionSeconds: number;
     exercise: Exercise;
     workoutType: ActivityType;
     completed: boolean;
 }
 
 export interface ScheduledRoutine {
+    name: string;
+    description: string;
+    summary: string;
     itemType: ItemType;
     routineId: string;
     itemGroupLinkId: string;
-    estimatedCompletionMinutes: number;
+    estimatedCompletionSeconds: number;
     workoutType: RoutineType;
     completed: boolean;
-    activities: RoutineActivities;
+    activities: RoutineActivity[];
 }
 
-export interface RoutineActivities {
-    itemType: ItemType;
-    activityId: string;
-    routineId: string;
-    estimatedCompletionMinutes: number;
-    exercise: Exercise;
-    workoutType: ActivityType;
-    completed: boolean;
+export interface RoutineActivity extends ScheduledActivity {
     routineStep: number;
 }
 
 export interface ScheduledWorkout {
 
+    weekItemWorkoutId: string;
+    name: string;
+    description: string;
+    summary: string;
+    instructions: string;
     itemType: ItemType;
     activityId: string;
     routineId: string;
     itemGroupLinkId: string;
-    estimatedCompletionMinutes: number;
+    estimatedCompletionSeconds: number;
     exercise: Exercise;
     workoutType: number;
     completed: boolean;
-    activities: RoutineActivities;
+    activities: RoutineActivity;
+}
+
+
+export interface UpdateWorkoutProps {
+
+    weekItemId: string;
+    weekItemWorkoutId: string;
+    complete: boolean;
 }

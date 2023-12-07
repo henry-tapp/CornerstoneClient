@@ -177,7 +177,7 @@ const theme = extendTheme({
           light: "#05fffc"
         },
         fourth: {
-          main: "#FF1E86",
+          main: "#F45866",
           dark: "#9CDC7B",
           light: "#F9F871"
         },
