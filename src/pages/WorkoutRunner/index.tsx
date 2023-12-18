@@ -1,4 +1,4 @@
-import { Box, Typography, styled, useTheme } from "@mui/material";
+import { Typography, useTheme } from "@mui/material";
 import { ITheme } from 'common/App';
 import { CountdownCircleTimer } from "components/CountdownTimer/CountdownCircleTimer";
 import { ColorHex } from "components/CountdownTimer/useCountdown/types";
@@ -13,28 +13,8 @@ import { LogWorkoutDialog } from "./Components/LogWorkoutDialog";
 import { Time } from "./Components/Time";
 import { WorkoutRunnerProvider } from "./Context/WorkoutRunnerContext";
 import RoutineRunner from './RoutineRunner';
+import { CenterBox, MidBox, RunnerWrapper, TopBox } from "./WorkoutRunner.styles";
 
-const CenterContainer = styled("div")(({ theme }) => `
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-`);
-
-export const Wrapper = styled("div")(({ theme }) => `
-    position: relative;
-    background-image: linear-gradient(${(theme as ITheme).palette.shades.g4}, ${(theme as ITheme).palette.primary.main});
-    height: 100vh;
-    width: 100vw;
-`);
-
-const TopBox = styled(Box)(({ theme }) => `
-    position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 1rem;
-`);
 
 export function Index() {
 
@@ -65,24 +45,28 @@ export function Index() {
                 <WorkoutRunnerProvider weekItemId={weekItemId} weekItemWorkoutId={weekItemWorkoutId} workout={workoutDetails as ScheduledWorkout} onWorkoutComplete={() => setOpen(true)}>
                     {!isStarted &&
                         (
-                            <Wrapper>
+                            <RunnerWrapper>
                                 <TopBox>
-                                    <Typography variant="subtitle1" color={theme.palette.shades.g1}>Get Ready!</Typography>
+                                    <CenterBox>
+                                        <Typography variant="subtitle1" color={theme.palette.shades.g1}>Get Ready!</Typography>
+                                    </CenterBox>
                                 </TopBox>
-                                <CenterContainer>
-                                    <CountdownCircleTimer
-                                        isPlaying
-                                        duration={5}
-                                        colors={theme.palette.primary.main as ColorHex}
-                                        onComplete={() => {
-                                            setIsStarted(true);
-                                            return { shouldRepeat: false };
-                                        }}
-                                    >
-                                        {Time}
-                                    </CountdownCircleTimer>
-                                </CenterContainer>
-                            </Wrapper>
+                                <MidBox>
+                                    <CenterBox>
+                                        <CountdownCircleTimer
+                                            isPlaying
+                                            duration={5}
+                                            colors={theme.palette.primary.main as ColorHex}
+                                            onComplete={() => {
+                                                setIsStarted(true);
+                                                return { shouldRepeat: false };
+                                            }}
+                                        >
+                                            {Time}
+                                        </CountdownCircleTimer>
+                                    </CenterBox>
+                                </MidBox>
+                            </RunnerWrapper>
                         )
                     }
                     {isStarted && workoutDetails.itemType === ItemType.Routine && <RoutineRunner routine={workoutDetails as ScheduledRoutine} />}

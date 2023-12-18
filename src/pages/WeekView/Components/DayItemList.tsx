@@ -16,6 +16,7 @@ const CardWrapper = styled("div")(({ theme }) => `
     display: inline-block;
     text-align: left;
     padding-bottom: 1rem;
+    padding-inline: 1rem 1rem;
 `);
 
 export interface ItemViewProps {

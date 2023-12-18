@@ -21,12 +21,11 @@ import React, { Suspense, useEffect } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { IntlProvider } from "react-intl";
 import Modal from "react-modal";
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import "style/baseTheme.css";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import "util/i18n";
-import { CornerstoneDataProvider } from "./CornerstoneDataProvider";
 import { GlobalErrorBoundary } from "./GlobalErrorBoundary";
 import { QueryProvider } from "./QueryProvider";
 
@@ -258,7 +257,7 @@ function App({
       {...providerConfig}
     >
       <HelmetProvider>
-        <HashRouter>
+        <BrowserRouter>
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <GlobalErrorBoundary>
               <ResponsiveRootLayout
@@ -278,11 +277,9 @@ function App({
                         fallback={<FullpageLoadingIndicator />}
                       >
                         <IntlProvider locale="en-Gb">
-                          <CornerstoneDataProvider>
-                            <div className={className}>
-                              {children}
-                            </div>
-                          </CornerstoneDataProvider>
+                          <div className={className}>
+                            {children}
+                          </div>
                         </IntlProvider>
                       </Suspense>
                     </CssVarsProvider>
@@ -291,7 +288,7 @@ function App({
               </ResponsiveRootLayout>
             </GlobalErrorBoundary>
           </QueryParamProvider>
-        </HashRouter>
+        </BrowserRouter>
       </HelmetProvider>
     </Auth0Provider>
   );

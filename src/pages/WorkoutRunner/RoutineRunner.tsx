@@ -4,7 +4,6 @@ import { ITheme } from "common/App";
 import { useCallback, useState } from "react";
 import { Wrapper } from "style/styles";
 import { RoutineActivity, ScheduledRoutine } from 'types';
-import { WorkoutTimer } from "./Components/WorkoutTimer";
 import { useWorkoutRunnerContext } from "./Context/WorkoutRunnerContext";
 
 const TopBox = styled(Box)(({ theme }) => `
@@ -34,6 +33,8 @@ export interface RoutineRunnerProps {
 
 export function RoutineRunner({ routine }: RoutineRunnerProps) {
 
+    const theme = useTheme() as ITheme;
+
     const [currentActivity, setCurrentActivity] = useState<RoutineActivity>(routine.activities[0]);
 
     const { onWorkoutComplete } = useWorkoutRunnerContext();
@@ -48,7 +49,6 @@ export function RoutineRunner({ routine }: RoutineRunnerProps) {
         }
     }, [currentActivity, routine, onWorkoutComplete, setCurrentActivity]);
 
-    const theme = useTheme() as ITheme;
 
     if (!routine) {
         return <></>;
@@ -60,7 +60,6 @@ export function RoutineRunner({ routine }: RoutineRunnerProps) {
                     <Typography variant="subtitle1">{routine.name}</Typography>
                 </TopBox>
                 <MidBox>
-                    <WorkoutTimer exercise={currentActivity.exercise} activeColour={theme.palette.fourth.dark} restColour={theme.palette.fourth.main} onComplete={onActivityComplete} />
                 </MidBox>
             </Wrapper>
         );

@@ -4,8 +4,8 @@ import { IconButton, Typography, useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ITheme } from "common/App";
 import { LinkPersistQuery } from 'components/LinkPersistQuery';
-import { useLocalStorage } from "hooks/useLocalStorage/useLocalStorage";
 import { usePlan } from "hooks/usePlan/usePlan";
+import { useSessionStorage } from 'hooks/useSessionStorage/useSessionStorage';
 import { useMemo } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Wrapper } from 'style/styles';
@@ -53,7 +53,7 @@ export function Index() {
   const navigate = useNavigate();
   const { data: schedule } = usePlan({});
   const currentWeek = useMemo(() => (!!schedule?.dateStarting) ? getCurrentWeek(new Date(schedule.dateStarting)) : 1, [schedule]);
-  const [navigatedWeek] = useLocalStorage("navigatedWeek", currentWeek);
+  const [navigatedWeek] = useSessionStorage("navigatedWeek", currentWeek);
 
   return (
     <Wrapper>

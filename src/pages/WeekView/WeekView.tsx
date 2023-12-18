@@ -5,7 +5,7 @@ import { Queries } from "api";
 import { ITheme } from "common/App";
 import { LinkPersistQuery } from "components/LinkPersistQuery";
 import dayjs from 'dayjs';
-import { useLocalStorage } from 'hooks/useLocalStorage/useLocalStorage';
+import { useSessionStorage } from 'hooks/useSessionStorage/useSessionStorage';
 import { useWeekItems } from 'hooks/useWeekItems/useWeekItems';
 import { useCallback, useMemo, useState } from "react";
 import 'react-indiana-drag-scroll/dist/style.css';
@@ -94,11 +94,11 @@ export function WeekView({ plan, scheduleWeeks }: WeekViewProps) {
 
     const currentWeek = useMemo(() => (!!plan.dateStarting) ? getCurrentWeek(new Date(plan.dateStarting)) : 1, [plan.dateStarting]);
 
-    const [navigatedWeek, setNavigatedWeek] = useLocalStorage("navigatedWeek", currentWeek);
+    const [navigatedWeek, setNavigatedWeek] = useSessionStorage("navigatedWeek", currentWeek);
 
     const selectedWeek = useMemo(() => scheduleWeeks.find(x => x.weekNumber === navigatedWeek) ?? scheduleWeeks[0], [navigatedWeek, scheduleWeeks]);
 
-    const [selectedDate, setSelectedDate] = useState<Date>(navigatedWeek === currentWeek ? new Date() : new Date(selectedWeek.weekStarting) ?? new Date());
+    const [selectedDate, setSelectedDate] = useSessionStorage("lastSelectedDate", navigatedWeek === currentWeek ? new Date() : new Date(selectedWeek.weekStarting) ?? new Date(), true);
 
     const { data: weekItems } = useWeekItems({ weekId: selectedWeek?.id });
 

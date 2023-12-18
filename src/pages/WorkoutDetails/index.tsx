@@ -16,6 +16,7 @@ const PageWrapper = styled("div")(({ theme }) => `
 
     background-color: ${(theme as ITheme).palette.shades.g5};
     color: ${(theme as ITheme).palette.primary.dark};
+    min-height: 100vh;
 `);
 
 const ImageArea = styled("img")(({ theme }) => `
