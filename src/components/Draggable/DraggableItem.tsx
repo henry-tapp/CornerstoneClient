@@ -1,9 +1,7 @@
 import { styled } from "@mui/material/styles";
-import { ITheme } from "common/App";
 import { Draggable } from "react-beautiful-dnd";
 
 const DragItem = styled("div")(({ theme }) => `
-  background: ${(theme as ITheme).palette.primary.dark};
   margin-bottom: 0.5rem;  
   border-radius: 0.5rem;
   padding-inline: 0.5rem 0.5rem;

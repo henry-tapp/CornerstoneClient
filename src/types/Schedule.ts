@@ -21,15 +21,16 @@ export interface WeekItem {
     weekNumber: number;
     scheduled: boolean;
     completed: boolean;
-    estimatedCompletionMinutes: number;
+    estimatedCompletionSeconds: number;
     scheduledDayOfWeek: ScheduledDay;
     type: WorkoutGroupType;
-    workouts: WeekItemWorkout[];
+    workouts: WorkoutInformation[];
 }
 
-export interface WeekItemWorkout {
+export interface WorkoutInformation {
     id: string;
-    workoutId: string;
+    weekItemId: string;
+    workoutId: string; // routineid or activityid
     completed: boolean;
     name: string;
     description: string;
@@ -39,7 +40,6 @@ export interface WeekItemWorkout {
     routineType: RoutineType;
     step: number;
     instructions?: string;
-    estimatedCompletionMinutes: number;
 }
 
 export enum WorkoutGroupType {

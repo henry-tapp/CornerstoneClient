@@ -2,9 +2,9 @@ import { LinkPersistQuery } from "components/LinkPersistQuery";
 import { CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { styled } from "@mui/material/styles";
 import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
 import { IconButton } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
 const SubpageWrapper = styled("div")(
   ({ theme }) => `

@@ -1,6 +1,7 @@
 import { useApiProvider } from "api";
-import { MultipleWorkoutGroup, PhaseType, Plan, PlanOptions, ScheduleWeekView, WeekItem, WeekItemWorkout } from "types";
+import { Plan, PlanOptions, ScheduleWeekView, ScheduledWorkout, UpdateWorkoutProps, WeekItem } from "types";
 import { UserMeasurements, UserPreferences } from "types/User";
+import { WorkoutLog } from "types/WorkoutLog";
 import { Api } from "./useApi.types";
 
 export function useApi(): Api {
@@ -28,9 +29,13 @@ export function useApi(): Api {
 
         updateWeekItem: (weekItems: WeekItem[]) => apiProvider.patch(`${prefix}/schedule/week/item`, weekItems.map(weekItem => ({ id: weekItem.id, completed: weekItem.completed, scheduledDayOfWeek: weekItem.scheduledDayOfWeek }))),
 
-        getWeekItemWorkouts: (weekItemId: string) => apiProvider.get<WeekItemWorkout[]>(`${prefix}/schedule/item/${weekItemId}`),
+        getWorkout: (weekItemId: string, weekItemWorkoutId: string) => apiProvider.get<ScheduledWorkout>(`${prefix}/scheduleitem/${weekItemId}/workout/${weekItemWorkoutId}`),
 
-        getWorkoutGroupsForPhase: (phase: PhaseType) => apiProvider.get<MultipleWorkoutGroup[]>(`${prefix}/workout/groups/phase/${phase}`),
+        getWorkouts: (weekItemId: string) => apiProvider.get<ScheduledWorkout[]>(`${prefix}/scheduleitem/${weekItemId}`),
+
+        updateWorkout: ({ weekItemId, weekItemWorkoutId, complete }: UpdateWorkoutProps) => apiProvider.patch(`${prefix}/scheduleitem/${weekItemId}/workout/${weekItemWorkoutId}`, { complete: complete }),
+
+        addWorkoutLog: (workoutLog: WorkoutLog) => apiProvider.post(`${prefix}/workout/log`, workoutLog),
 
         getUserMeasurements: () => apiProvider.get<UserMeasurements>(`${prefix}/user/profile/measurements`),
 

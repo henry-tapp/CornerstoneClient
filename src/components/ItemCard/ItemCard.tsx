@@ -1,6 +1,6 @@
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { IconButton, Typography, styled } from "@mui/material";
-import { WeekItem } from 'types';
+import { ItemCardProps } from './ItemCardProps';
 
 
 const ItemCardGridContainer = styled("div")(
@@ -50,10 +50,6 @@ const LogButtonArea = styled("div")`
     right: 0;
 `
 
-interface ItemCardProps {
-    item: WeekItem;
-}
-
 export function ItemCard({ item }: ItemCardProps) {
 
 
@@ -67,10 +63,10 @@ export function ItemCard({ item }: ItemCardProps) {
                     <Typography variant="body1" style={{ wordBreak: "break-all" }}>{item.description}</Typography>
                 </DescriptionArea>
                 <RightArea>
-                    {item.estimatedCompletionMinutes !== 0 && item.type && (<>
+                    {item.estimatedCompletionSeconds !== 0 && item.type && (<>
                         <Typography variant="caption">{item.type}</Typography >
                         <Typography variant="caption"> &#8226; </Typography>
-                        <Typography variant="caption">{item.estimatedCompletionMinutes}m </Typography >
+                        <Typography variant="caption">{item.estimatedCompletionSeconds}m </Typography >
                     </>
                     )}
                 </RightArea>

@@ -28,7 +28,7 @@ export class GlobalErrorBoundary extends React.Component<
 
   componentDidCatch(error: unknown, errorInfo: unknown) {
     // You can also log the error to an error reporting service
-    // console.error(error, errorInfo);
+    console.error(error, errorInfo);
   }
 
   render() {

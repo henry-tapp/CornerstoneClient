@@ -17,7 +17,7 @@ const NavBarContainer = styled("div")(
     padding-top: 0.5rem;
     bottom: 0;
     width: 100%;
-    background-color: ${(theme as ITheme).palette.primary.dark};
+    background-image: linear-gradient(${(theme as ITheme).palette.primary.main}, ${(theme as ITheme).palette.primary.dark});
     border-radius: 1rem 1rem 0 0 ;
     z-index:200;
 `);
@@ -38,11 +38,11 @@ const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     gap: '0.25rem',
-    backgroundColor: (theme as ITheme).palette.shades.g1,
-    color: (theme as ITheme).palette.tertiary.light,
+    backgroundColor: (theme as ITheme).palette.shades.g5,
+    color: (theme as ITheme).palette.secondary.dark,
     '&:hover, &.Mui-focusVisible': {
-        backgroundColor: (theme as ITheme).palette.tertiary.light,
-        color: (theme as ITheme).palette.primary.dark
+        backgroundColor: (theme as ITheme).palette.shades.g1,
+        color: (theme as ITheme).palette.tertiary.dark
 
     },
     '&.Mui-active': {
@@ -55,10 +55,10 @@ export function Bar() {
 
     return (
         <NavBarContainer data-testid="navbar" className="wrapper-nav-bar">
-            <NavBarLinkPersistQuery pathname="/dashboard" activeOnEmpty>
+            <NavBarLinkPersistQuery pathname="/" activeOnEmpty>
                 <IconButtonStyle><HomeIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
-            <NavBarLinkPersistQuery pathname={`schedule/today`}>
+            <NavBarLinkPersistQuery pathname={`weekview`}>
                 <IconButtonStyle><CalendarTodayIcon /></IconButtonStyle>
             </NavBarLinkPersistQuery>
             <NavBarLinkPersistQuery pathname="/progress">

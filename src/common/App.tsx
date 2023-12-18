@@ -21,12 +21,11 @@ import React, { Suspense, useEffect } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { IntlProvider } from "react-intl";
 import Modal from "react-modal";
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import "style/baseTheme.css";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import "util/i18n";
-import { CornerstoneDataProvider } from "./CornerstoneDataProvider";
 import { GlobalErrorBoundary } from "./GlobalErrorBoundary";
 import { QueryProvider } from "./QueryProvider";
 
@@ -110,11 +109,11 @@ const theme = extendTheme({
       letterSpacing: "0.05rem",
     },
     subtitle2: {
-      fontSize: "1.2rem",
+      fontSize: "1.15rem",
       fontStyle: "normal",
       fontWeight: "700",
       lineHeight: "1rem",
-      letterSpacing: "0.01rem",
+      letterSpacing: "0.05rem",
     },
     body1: {
       fontSize: "1rem",
@@ -161,9 +160,9 @@ const theme = extendTheme({
     light: {
       palette: {
         primary: {
-          main: "#262938",
-          dark: "#1c1f2b",
-          light: "#3f455e",
+          main: "#254352",
+          dark: "#242c4c",
+          light: "#274151",
           contrastText: "#D8D8D8"
         },
         secondary: {
@@ -177,9 +176,9 @@ const theme = extendTheme({
           light: "#05fffc"
         },
         fourth: {
-          main: "#FF1E86",
-          dark: "",
-          light: ""
+          main: "#F45866",
+          dark: "#9CDC7B",
+          light: "#F9F871"
         },
         success: {
           main: "#83BCA9",
@@ -258,7 +257,7 @@ function App({
       {...providerConfig}
     >
       <HelmetProvider>
-        <HashRouter>
+        <BrowserRouter>
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <GlobalErrorBoundary>
               <ResponsiveRootLayout
@@ -278,11 +277,9 @@ function App({
                         fallback={<FullpageLoadingIndicator />}
                       >
                         <IntlProvider locale="en-Gb">
-                          <CornerstoneDataProvider>
-                            <div className={className}>
-                              {children}
-                            </div>
-                          </CornerstoneDataProvider>
+                          <div className={className}>
+                            {children}
+                          </div>
                         </IntlProvider>
                       </Suspense>
                     </CssVarsProvider>
@@ -291,7 +288,7 @@ function App({
               </ResponsiveRootLayout>
             </GlobalErrorBoundary>
           </QueryParamProvider>
-        </HashRouter>
+        </BrowserRouter>
       </HelmetProvider>
     </Auth0Provider>
   );

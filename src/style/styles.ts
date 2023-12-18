@@ -1,5 +1,12 @@
-import { alpha, styled } from "@mui/material";
+import { styled } from "@mui/material";
 import { ITheme } from "common/App";
+
+export const Wrapper = styled("div")(({ theme }) => `
+    position: relative;
+    background-image: linear-gradient(${(theme as ITheme).palette.shades.g4}, ${(theme as ITheme).palette.primary.main});
+    min-height: 100vh; 
+    width: 100%;
+`);
 
 export const ColumnStackFlexBox = styled("div")(({ theme }) => `
     display: flex;
@@ -8,21 +15,20 @@ export const ColumnStackFlexBox = styled("div")(({ theme }) => `
 `);
 
 export const RoundedLayer = styled("div")(({ theme }) => `
-    background-color: ${(theme as ITheme).palette.shades.g6};
+    background-image: linear-gradient(${(theme as ITheme).palette.shades.g4}, ${(theme as ITheme).palette.primary.main});
     border-radius: 3rem 0 0 0;
-    min-height: calc(100% - 12rem);
+    min-height: calc(100% - 14rem);
     overflow: hidden;
     width: 100%;
-    position:absolute;
     top: 12rem; 
-    z-index: 1;
+    position:absolute;
 `);
 
 export const RoundedLayer2 = styled("div")(({ theme }) => `
-    background-color: ${alpha((theme as ITheme).palette.shades.g6, 1)};
+    background-color: ${(theme as ITheme).palette.shades.g4};
     z-index: 0;
     border-radius: 1rem 3rem 0 1rem;
-    height:50vh;
+    height:12rem;
     width:5rem;
     position:absolute;
     top: 3rem;
@@ -37,17 +43,17 @@ export const Pseudo = styled("div")(({ theme }) => `
     position:absolute;
     top: 7rem;
     right: 1rem;
-    box-shadow: 1rem 1rem 0 0 ${alpha((theme as ITheme).palette.shades.g6, 1)};;
+    box-shadow: 1rem 1rem 0 0 ${(theme as ITheme).palette.shades.g4};
 `);
 
 export const GradientBox = styled("div")(({ theme }) => `
     position:absolute;
-    opacity: 0.2;
-    height:8rem;
+    opacity: 1;
+    height:15rem;
     width:100%;
     top: 0;
     left: 0;
-    background-image: linear-gradient(${(theme as ITheme).palette.secondary.light}, ${(theme as ITheme).palette.primary.dark});
+    background-image: linear-gradient(${(theme as ITheme).palette.primary.dark}, ${(theme as ITheme).palette.primary.light});
 `);
 
 export const BubbleBox = styled("div")(({ theme }) => `

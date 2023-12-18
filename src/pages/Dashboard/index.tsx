@@ -1,23 +1,21 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { IconButton, IconButtonProps, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ITheme } from "common/App";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { Wrapper } from 'style/styles';
+import { AccountManagementButton } from './AccountManagementButton';
 import { DashboardItem, ItemViewType } from "./DashboardItem";
-
-const Wrapper = styled("div")`
-  width:100%;
-`;
 
 const Header = styled("div")(({ theme }) => `
     margin: auto;
     display:grid;
     grid-template-columns: 5fr 1fr;
     padding: 1.5rem;
-    background-color: ${(theme as ITheme).palette.shades.g5}; 
+    background-color: ${(theme as ITheme).palette.primary.main}; 
     border-radius: 0 0 2rem 2rem ;
-    color: ${(theme as ITheme).palette.primary.light}; 
+    color: ${(theme as ITheme).palette.shades.g4}; 
 `);
 
 
@@ -29,7 +27,7 @@ const LeftAlign = styled("div")`
 const RightAlign = styled("div")`
   grid-column: 2;
   text-align: right;
-  padding-top:1rem;
+  padding-top:0.5rem;
 `;
 
 const Grid = styled("div")(({ theme }) => `
@@ -38,41 +36,32 @@ const Grid = styled("div")(({ theme }) => `
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    padding-inline: 1rem 1rem;
+    padding: 1rem;
 `);
 
 
 const GridItem = styled("div")(({ theme }) => `
-  background: ${(theme as ITheme).palette.primary.main};
-  color: ${(theme as ITheme).palette.shades.g4};
-  margin: 1rem;
-  padding-top:1rem; 
   width:100%;
+`);
+
+const ColourWrapper = styled("div")(({ theme }) => `
+  background-image: linear-gradient(${(theme as ITheme).palette.primary.dark}, ${(theme as ITheme).palette.primary.light});
+  color: ${(theme as ITheme).palette.shades.g6};
   border: 0.15rem solid ${(theme as ITheme).palette.secondary.dark};
   border-radius:1rem;
 `);
 
-const IconButtonStyle = styled(IconButton)<IconButtonProps>(({ theme }) => ({
-  backgroundColor: (theme as ITheme).palette.shades.g1,
-  color: (theme as ITheme).palette.tertiary.light,
-
-  '&:hover, &.Mui-focusVisible': {
-    backgroundColor: (theme as ITheme).palette.tertiary.light,
-    color: (theme as ITheme).palette.primary.dark
-
-  },
-  '&.Mui-active': {
-    backgroundColor: (theme as ITheme).palette.tertiary.light,
-    color: (theme as ITheme).palette.primary.dark,
-  }
-}));
-
 function useDashboardItems() {
-  return [{
+  return [
+    {
 
-    item: 1,
-    type: "Graph" as ItemViewType
-  }];
+      item: 2,
+      type: "stats" as ItemViewType
+    }, {
+
+      item: 1,
+      type: "Graph" as ItemViewType
+    },];
 }
 
 export function Dashboard() {
@@ -87,17 +76,27 @@ export function Dashboard() {
   const dashboardItems = useDashboardItems();
 
   return (
-    <Wrapper>
+    <Wrapper className="wrapper">
       <Header>
         <LeftAlign>
           <Typography variant="caption" fontWeight={"bold"}>Hey Henry!</Typography>
           <Typography variant="h5" fontWeight={"bold"}>How's your training going?</Typography>
         </LeftAlign>
-        <RightAlign><IconButtonStyle onClick={handleAccountClick}><AccountCircleIcon style={{ transform: 'scale(1.8)' }} /></IconButtonStyle></RightAlign>
+        <RightAlign>
+          <AccountManagementButton onClick={handleAccountClick}>
+            <AccountCircleIcon style={{ transform: 'scale(1.8)' }} />
+          </AccountManagementButton>
+        </RightAlign>
       </Header>
-
       <Grid >
-        {dashboardItems && dashboardItems.map((item, idx) => (<GridItem key={idx}><DashboardItem  {...item}></DashboardItem></GridItem>))}
+        {dashboardItems && dashboardItems.map((item, idx) =>
+        (
+          <GridItem key={idx}>
+            <ColourWrapper>
+              <DashboardItem {...item} />
+            </ColourWrapper>
+          </GridItem>
+        ))}
       </Grid>
     </Wrapper>
   );

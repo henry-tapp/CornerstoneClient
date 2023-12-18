@@ -1,15 +1,14 @@
 import { UserMeasurements, UserPreferences } from "types/User";
+import { WorkoutLog } from "types/WorkoutLog";
 import {
     ApiResponse,
     GenericRequestOptions,
     RequestProcessor,
 } from "../../api";
 import {
-    MultipleWorkoutGroup,
-    PhaseType,
     Plan,
     PlanOptions,
-    ScheduleWeekView, WeekItem, WeekItemWorkout
+    ScheduleWeekView, ScheduledWorkout, UpdateWorkoutProps, WeekItem
 } from "../../types";
 
 export interface Api {
@@ -45,9 +44,9 @@ export interface Api {
 
     /* Workouts */
 
-    getWeekItemWorkouts: (weekItemId: string) => Promise<ApiResponse<WeekItemWorkout[]>>;
+    getWorkout: (weekItemId: string, weekItemWorkoutId: string) => Promise<ApiResponse<ScheduledWorkout>>;
 
-    getWorkoutGroupsForPhase: (phase: PhaseType) => Promise<ApiResponse<MultipleWorkoutGroup[]>>;
+    getWorkouts: (weekItemId: string) => Promise<ApiResponse<ScheduledWorkout[]>>;
 
     /* User */
 
@@ -58,4 +57,9 @@ export interface Api {
     updateUserMeasurements: (data: UserMeasurements) => Promise<ApiResponse<{}>>;
 
     addUserPreferences: (data: UserPreferences) => Promise<ApiResponse<{}>>;
+
+
+    updateWorkout({ weekItemId, weekItemWorkoutId, complete }: UpdateWorkoutProps): Promise<ApiResponse<{}>>;
+
+    addWorkoutLog(workoutLog: WorkoutLog): Promise<ApiResponse<{}>>;
 }

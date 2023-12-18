@@ -34,7 +34,7 @@ export function Account() {
     <PageWrapper>
       <Section>
         <Typography variant="h5">Email: {user?.name}</Typography>
-        <StyledButton type="button" onClick={() => logout()}>
+        <StyledButton type="button" onClick={async () => await logout()}>
           <Typography variant="subtitle1">Log Out</Typography>
         </StyledButton>
       </Section>

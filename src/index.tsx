@@ -6,9 +6,9 @@ import { disableReactDevTools } from '@fvilers/disable-react-devtools';
 // import reportWebVitals from "../../reportWebVitals";
 import { styled } from "@mui/material/styles";
 import { MainRouter } from "MainRouter";
-import { usePlan } from 'hooks/usePlan/usePlan';
+import { CornerstoneDataProvider, useCornerstoneStableData } from 'common/CornerstoneDataProvider';
+import SystemErrorPage from 'pages/Error/SystemErrorPage';
 import Home from "pages/Home";
-import { Bar as NavigationBar } from "pages/Navigation/Bar";
 import Wizard from 'pages/Wizard';
 import App, { ITheme } from "./common/App";
 
@@ -26,62 +26,38 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-if (import.meta.env.MODE === "mock") {
-
-  import("./mocks/browser")
-    .then(({ worker }) => {
-      // Start the worker.
-      worker.start({
-        onUnhandledRequest: ({ method, url }) => {
-          if (!url.toString().includes("/src/") && !url.toString().includes("/node_modules/")) {
-            throw new Error(`Unhandled ${method} request to ${url}`);
-          }
-        }
-      });
-
-    })
-    .then(() => {
-      root.render(
-        <Index />
-      );
-    });
-}
-else {
-  root.render(
-    <Index />
-  );
-}
-
-
-function Index() {
-
-  return (
-    <App disableResponsiveComp >
-      <AuthCheck />
-    </App>
-  );
-}
+root.render(
+  <App disableResponsiveComp >
+    <AuthCheck />
+  </App>
+);
 
 function AuthCheck() {
+
   const {
     isAuthenticated
   } = useAuth0();
   return (<>
-    {isAuthenticated ? <AuthenticatedView /> : <Home />}
+    {isAuthenticated ?
+
+      <CornerstoneDataProvider>
+        <AuthenticatedView />
+      </CornerstoneDataProvider> : <Home />}
   </>
   )
 }
 
 function AuthenticatedView() {
 
-  const plan = usePlan({});
+  const { plan } = useCornerstoneStableData();
 
+  if (!plan) return (<SystemErrorPage />);
   return (
     <Wrapper className="wrapper">
-      {!!plan.data
+      {!!plan
         ? (<><MainRouter /></>)
         : <Wizard />
       }
-    </Wrapper>
+    </Wrapper >
   )
 }

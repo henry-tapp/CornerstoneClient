@@ -9,7 +9,7 @@ export interface StableData {
     scheduleWeeks?: ScheduleWeekView[];
 }
 
-const stableDataContext = createContext<StableData>(undefined as any);
+const StableDataContext = createContext<StableData>(undefined as any);
 
 export function CornerstoneDataProvider({ children }: React.PropsWithChildren) {
 
@@ -17,15 +17,15 @@ export function CornerstoneDataProvider({ children }: React.PropsWithChildren) {
     const { data: scheduleWeeks } = useScheduleWeeks({ planId: plan?.id });
 
     return (
-        <stableDataContext.Provider value={{
+        <StableDataContext.Provider value={{
             plan,
             scheduleWeeks
         }}>
             {children}
-        </stableDataContext.Provider>
+        </StableDataContext.Provider>
     );
 }
 
 export function useCornerstoneStableData() {
-    return useContext(stableDataContext);
+    return useContext(StableDataContext);
 }

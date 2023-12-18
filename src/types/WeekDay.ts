@@ -11,37 +11,10 @@ export const months = ['January', 'February', 'March', 'April', 'May', 'June', '
 export const UNSCHEDULED: string = "Unscheduled";
 
 export const scheduleLists = [UNSCHEDULED].concat(days);
-export const scheduledDayOfWeekMapper = [
-    {
-        enum: ScheduledDay.None,
-        scheduleListIndex: 0
-    },
-    {
-        enum: ScheduledDay.Monday,
-        scheduleListIndex: 1
-    },
-    {
-        enum: ScheduledDay.Tuesday,
-        scheduleListIndex: 2
-    },
-    {
-        enum: ScheduledDay.Wednesday,
-        scheduleListIndex: 3
-    },
-    {
-        enum: ScheduledDay.Thursday,
-        scheduleListIndex: 4
-    },
-    {
-        enum: ScheduledDay.Friday,
-        scheduleListIndex: 5
-    },
-    {
-        enum: ScheduledDay.Saturday,
-        scheduleListIndex: 6
-    },
-    {
-        enum: ScheduledDay.Sunday,
-        scheduleListIndex: 7
+export const scheduledDayOfWeekMapper = scheduleLists.map((x, i) => {
+    return {
+        enum: x === UNSCHEDULED ? ScheduledDay.None : ScheduledDay[x] as ScheduledDay,
+        scheduleListIndex: i,
+        title: x
     }
-]
+});
