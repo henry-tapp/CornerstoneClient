@@ -47,7 +47,7 @@ export interface ScheduledWorkout {
     exercise: Exercise;
     workoutType: number;
     completed: boolean;
-    activities: RoutineActivity;
+    activities: RoutineActivity[];
 }
 
 
@@ -55,5 +55,5 @@ export interface UpdateWorkoutProps {
 
     weekItemId: string;
     weekItemWorkoutId: string;
-    complete: boolean;
+    completed: boolean;
 }

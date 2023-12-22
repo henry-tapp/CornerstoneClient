@@ -24,7 +24,7 @@ const AbsolutePositionWrapper = styled("div")(({ theme }) => `
     right: 0;
 `);
 
-export default function CSSelect<TFormData extends FieldValues>({ register, path, type, label, info, required, labelFont, inputFont, handleOpenInfo }: CSTextFieldProps<TFormData>) {
+export default function CSTextField<TFormData extends FieldValues>({ register, path, type, label, info, required, labelFont, inputFont, handleOpenInfo }: CSTextFieldProps<TFormData>) {
 
     const theme = useTheme() as ITheme;
 

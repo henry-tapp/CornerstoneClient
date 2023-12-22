@@ -1,9 +1,9 @@
 {
-  "name": "rockd",
+  "name": "Cornerstone Climbing",
   "version": "0",
   "author": {
     "name": "Henry Tapp",
-    "email": "henry.tapp@googlemail.com"
+    "email": "henry.tapp@cornerstoneclimbing.com"
   },
   "private": true,
   "dependencies": {

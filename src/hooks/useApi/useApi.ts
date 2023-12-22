@@ -33,9 +33,9 @@ export function useApi(): Api {
 
         getWorkouts: (weekItemId: string) => apiProvider.get<ScheduledWorkout[]>(`${prefix}/scheduleitem/${weekItemId}`),
 
-        updateWorkout: ({ weekItemId, weekItemWorkoutId, complete }: UpdateWorkoutProps) => apiProvider.patch(`${prefix}/scheduleitem/${weekItemId}/workout/${weekItemWorkoutId}`, { complete: complete }),
+        updateWorkout: (props: UpdateWorkoutProps) => apiProvider.patch(`${prefix}/scheduleitem`, props),
 
-        addWorkoutLog: (workoutLog: WorkoutLog) => apiProvider.post(`${prefix}/workout/log`, workoutLog),
+        addWorkoutLog: (workoutLog: WorkoutLog) => apiProvider.post(`${prefix}/workoutlog`, workoutLog),
 
         getUserMeasurements: () => apiProvider.get<UserMeasurements>(`${prefix}/user/profile/measurements`),
 

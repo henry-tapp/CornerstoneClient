@@ -1,13 +1,32 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide, styled, useTheme } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { ITheme } from "common/App";
-import CSTextField from "components/FormItems/CSTextField";
-import React, { useCallback } from "react";
-import { useForm } from "react-hook-form";
+import CSSlider from "components/FormItems/CSSilder";
+import React, { useCallback, useState } from "react";
 import { Wrapper } from "style/styles";
-import { WorkoutLog } from "types/WorkoutLog";
-import image from '../../../images/gen/real-bw-boulderer-2.jpeg';
+import { WorkoutLog, WorkoutLogMeasures } from "types/WorkoutLog";
 import { useWorkoutRunnerContext } from "../Context/WorkoutRunnerContext";
+
+const FlexBox = styled("div")`
+    border-radius: 0 0 1rem 1rem;
+    position:relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const FormContainer = styled("div")`
+    position: relative;
+    display:flex;
+    flex-direction: column;
+    width: calc(100%- 5rem);
+    gap: 2rem;
+    margin: auto;
+    width: calc(100% - 2rem);
+    max-width: 40rem;
+    padding-inline: 1rem 1rem;
+    padding-top:1rem;
+`
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -26,22 +45,18 @@ export interface LogWorkoutDialogProps {
 
 export function LogWorkoutDialog({ open, onClose: handleClose }: LogWorkoutDialogProps) {
 
-
     const theme = useTheme() as ITheme;
 
-    const { workout, logWorkout } = useWorkoutRunnerContext();
+    const { workout, completeWorkout } = useWorkoutRunnerContext();
 
-    const {
-        register,
-        handleSubmit
-    } = useForm<WorkoutLog>({
-        mode: "onChange"
-    });
+    const [workoutLog, setWorkoutLog] = useState<WorkoutLogMeasures | undefined>({ effort: workout.exercise?.rpe ?? 5, notes: "" });
 
     const handleSave = useCallback(async () => {
-        handleSubmit(async (log: WorkoutLog) => await logWorkout(log));
-        handleClose();
-    }, [logWorkout, handleClose, handleSubmit]);
+        if (workoutLog) {
+            await completeWorkout(workoutLog);
+            handleClose();
+        }
+    }, [workoutLog, completeWorkout, handleClose]);
 
     return (
         <Wrapper>
@@ -51,51 +66,32 @@ export function LogWorkoutDialog({ open, onClose: handleClose }: LogWorkoutDialo
                 keepMounted
                 onClose={() => handleClose()}
                 aria-describedby="dialog-information-description"
-                fullScreen
                 PaperProps={{
                     style: {
-                        background: 'none',
-                        backgroundImage: image,
-                        boxShadow: 'none',
+                        background: theme.palette.shades.g5,
                         color: theme.palette.shades.g1
                     },
                 }}
             >
-                <DialogTitle>Workout Complete! How did that feel?</DialogTitle>
-                <DialogContent>
+                <DialogTitle style={{ textAlign: 'center' }}>Workout Complete! How did that feel?</DialogTitle>
+                <DialogContent style={{ textAlign: 'center', margin: 'auto' }}>
                     <FlexBox>
                         <FormContainer>
-                            <CSTextField register={register} path="effort" required label="Relative Effort" type="number" />
+                            <CSSlider
+                                onChange={(v) => setWorkoutLog({ ...workoutLog, effort: v } as WorkoutLog)}
+                                min={0}
+                                max={10}
+                                marks
+                                step={1}
+                                defaultValue={workout.exercise?.rpe ?? 5} />
                         </FormContainer>
                     </FlexBox>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => handleSave()}>{"Save Workout"}</Button>
+                    <Button type="submit" onClick={handleSave}>{"Save Workout"}</Button>
                 </DialogActions>
             </Dialog >
         </Wrapper>
     )
 }
 
-
-const FlexBox = styled("div")`
-    border-radius: 0 0 1rem 1rem;
-    position:relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-
-const FormContainer = styled("div")`
-    position: relative;
-    display:flex;
-    flex-direction: column;
-    width: calc(100%- 5rem);
-    gap: 2rem;
-    margin: auto;
-    width: calc(100% - 2rem);
-    max-width: 40rem;
-    padding-inline: 1rem 1rem;
-    padding-top:1rem;
-`

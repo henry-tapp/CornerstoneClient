@@ -1,31 +1,19 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Queries } from "api";
+import { useMutation } from "@tanstack/react-query";
 import { useApi } from "hooks/useApi/useApi";
-import { useCallback } from "react";
-import { UseWorkoutUpdatesData, WorkoutCompleteProps } from "./useWorkoutUpdates.types";
+import { UpdateWorkoutProps } from "types";
+import { WorkoutLog } from "types/WorkoutLog";
+import { UseWorkoutUpdatesData } from "./useWorkoutUpdates.types";
 
 export function useWorkoutUpdates(): UseWorkoutUpdatesData {
 
     const api = useApi();
 
-    const queryClient = useQueryClient();
+    const { mutateAsync: updateWorkoutMutationAsync } = useMutation(async (workoutUpdate: UpdateWorkoutProps) => await api.updateWorkout(workoutUpdate));
 
-    const { mutateAsync } = useMutation(async ({ workoutUpdate, workoutLog }: WorkoutCompleteProps) => {
-
-        await api.updateWorkout(workoutUpdate);
-
-        await api.addWorkoutLog(workoutLog);
-    });
+    const { mutateAsync: logWorkoutMutationAsync } = useMutation(async (logWorkout: WorkoutLog) => await api.addWorkoutLog(logWorkout));
 
     return {
-        updateWorkout: useCallback(async (props: WorkoutCompleteProps) => {
-
-            await mutateAsync(props);
-            Promise.all([
-                queryClient.invalidateQueries(Queries.getWeekItems()),
-                queryClient.invalidateQueries(Queries.getWeekItemWorkouts())
-            ]);
-
-        }, [mutateAsync, queryClient])
+        updateWorkout: (props) => updateWorkoutMutationAsync(props),
+        logWorkout: logWorkoutMutationAsync
     };
 }

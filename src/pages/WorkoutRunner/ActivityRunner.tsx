@@ -1,38 +1,32 @@
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import { Typography, alpha, useTheme } from "@mui/material";
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { ITheme } from "common/App";
-import { CountdownCircleTimer } from "components/CountdownTimer/CountdownCircleTimer";
-import { ColorHex } from "components/CountdownTimer/useCountdown/types";
 import { FullpageLoadingIndicator } from "components/LoadingIndicator";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Countdown from 'react-countdown';
 import { ColumnStackFlexBox } from "style/styles";
 import { ScheduledActivity } from 'types';
-import { Time } from "./Components/Time";
-import { useWorkoutRunnerContext } from "./Context/WorkoutRunnerContext";
+import { CountdownRenderer } from './Components/CountdownTimer';
+import Runner, { ExerciseRepProps } from './Components/Runner';
 import { ButtonBar, CenterBox, Footer, MidBox, RunnerWrapper, TextArea, TopBox } from './WorkoutRunner.styles';
-export interface ExerciseRepProps {
-    rep: number;
-    set: number;
-    duration: number;
-    isRest: boolean;
-    isPlaying: boolean;
-}
 
 export interface ActivityRunnerProps {
 
     activity: ScheduledActivity;
+    step?: number;
+    onWorkoutComplete: () => void;
 }
 
-export function ActivityRunner({ activity }: ActivityRunnerProps) {
+export function ActivityRunner({ step, activity, onWorkoutComplete }: ActivityRunnerProps) {
 
+    const clockRef = useRef<Countdown>(null);
     const theme = useTheme() as ITheme;
 
-    const { onWorkoutComplete } = useWorkoutRunnerContext();
+    const [isStarted, setIsStarted] = useState<boolean>(false);
 
     const initial = useMemo(() => {
         return {
@@ -40,11 +34,17 @@ export function ActivityRunner({ activity }: ActivityRunnerProps) {
             set: 1,
             duration: activity.exercise.repTime,
             isRest: false,
+            restType: undefined,
             isPlaying: true
         } as ExerciseRepProps;
     }, [activity]);
 
     const [current, setCurrent] = useState<ExerciseRepProps>(initial);
+
+    useEffect(() => {
+        setCurrent(initial)
+        clockRef?.current?.start();
+    }, [initial]);
 
     const timerComplete = useCallback(() => {
 
@@ -54,6 +54,7 @@ export function ActivityRunner({ activity }: ActivityRunnerProps) {
             setCurrent({
                 ...current,
                 isRest: false,
+                restType: undefined,
                 duration: activity.exercise.repTime,
                 isPlaying: activity.exercise.repTime > 0
             });
@@ -67,6 +68,7 @@ export function ActivityRunner({ activity }: ActivityRunnerProps) {
             if (current.set === activity.exercise.sets) {
 
                 onWorkoutComplete();
+                setIsStarted(false);
                 return 0;
             }
             else {
@@ -76,6 +78,7 @@ export function ActivityRunner({ activity }: ActivityRunnerProps) {
                     rep: 1,
                     set: current.set + 1,
                     isRest: true,
+                    restType: "Set Rest",
                     duration: activity.exercise.setRest,
                     isPlaying: activity.exercise.setRest > 0
                 });
@@ -89,6 +92,7 @@ export function ActivityRunner({ activity }: ActivityRunnerProps) {
                 ...current,
                 rep: current.rep + 1,
                 isRest: true,
+                restType: "Rep Rest",
                 duration: activity.exercise.repRest,
                 isPlaying: activity.exercise.repRest > 0
             });
@@ -103,22 +107,27 @@ export function ActivityRunner({ activity }: ActivityRunnerProps) {
         }
         else {
 
-            setCurrent({
-                ...current,
-                isPlaying: true
-            });
+            setCurrent({ ...current, isPlaying: true });
+            clockRef?.current?.start();
         }
-    }, [current, setCurrent, timerComplete]);
+    }, [current, clockRef, timerComplete]);
 
     const handlePauseButtonClicked = useCallback(() => {
 
         if (!current.isPlaying) return;
-        setCurrent({
-            ...current,
-            isPlaying: false
-        });
+        clockRef?.current?.pause();
+        setCurrent({ ...current, isPlaying: false });
 
-    }, [current, setCurrent]);
+    }, [current, clockRef]);
+
+    const handleSkipButtonClicked = useCallback(() => {
+
+        if (!current.isPlaying) return;
+        clockRef?.current?.pause();
+        timerComplete();
+
+    }, [current, clockRef, timerComplete]);
+
 
     if (!activity) {
         return <FullpageLoadingIndicator></FullpageLoadingIndicator>;
@@ -126,80 +135,86 @@ export function ActivityRunner({ activity }: ActivityRunnerProps) {
     else {
         return (
             <RunnerWrapper>
-                <TopBox>
-                    <CenterBox>
-                        <ColumnStackFlexBox>
-                            <Typography variant="subtitle1" color={theme.palette.shades.g1}>{activity.name}</Typography>
-                            <Typography variant="subtitle1" color={theme.palette.shades.g1}>Total Sets: {activity.exercise.sets}</Typography>
-                            <Typography variant="subtitle1" color={theme.palette.shades.g1}>Total Reps: {activity.exercise.reps}</Typography>
-                        </ColumnStackFlexBox>
-                    </CenterBox>
-                </TopBox>
+                {isStarted && (<>
+                    <TopBox>
+                        <CenterBox>
+                            <ColumnStackFlexBox>
+                                <Typography variant="subtitle1" color={theme.palette.shades.g1}>{activity.name}</Typography>
+                                <Typography variant="subtitle1" color={theme.palette.shades.g1}>Total Sets: {activity.exercise.sets}</Typography>
+                                <Typography variant="subtitle1" color={theme.palette.shades.g1}>Total Reps: {activity.exercise.reps}</Typography>
+                            </ColumnStackFlexBox>
+                        </CenterBox>
+                    </TopBox>
+                </>)}
                 <MidBox>
                     <CenterBox>
-                        <CountdownCircleTimer
-                            isPlaying={current.isPlaying}
-                            duration={initial.duration}
-                            colors={(current.isRest ? theme.palette.fourth.main : theme.palette.fourth.dark) as ColorHex}
-                            onComplete={() => {
-                                const newDuration = timerComplete();
-                                return { shouldRepeat: false, newInitialRemainingTime: newDuration }
-                            }}
-                        >
-                            {Time}
-                        </CountdownCircleTimer>
+                        {!isStarted
+                            ? (
+                                <RunnerWrapper>
+                                    <TopBox>
+                                        <CenterBox>
+                                            <Typography variant="subtitle1" color={theme.palette.shades.g1}>Get Ready!</Typography>
+                                        </CenterBox>
+                                    </TopBox>
+                                    <MidBox>
+                                        <CenterBox>
+                                            <Countdown
+                                                date={Date.now() + 5000}
+                                                onComplete={() => setIsStarted(true)}
+                                                renderer={CountdownRenderer}
+                                            />
+                                        </CenterBox>
+                                    </MidBox>
+                                </RunnerWrapper>)
+                            : (
+                                <Runner exercise={current} ref={clockRef} onExerciseComplete={timerComplete} />)}
                     </CenterBox>
                 </MidBox>
-                <Footer>
-                    <TextArea>
-                        {!(current.isRest) && (<>
-                            <Typography variant="subtitle1" color={theme.palette.shades.g3}>Current Set: {current.set}</Typography>
-                            <Typography variant="subtitle1" color={theme.palette.shades.g3}>Current Rep: {current.rep}</Typography></>
-                        )}
-                        {(current.isRest) && (<>
-                            <Typography variant="subtitle1">Rest</Typography>
-                        </>)}
-                    </TextArea>
-                </Footer>
-                <ButtonBar>
-                    <Box sx={{ background: alpha(theme.palette.shades.g3, 0.5), width: "15rem", borderRadius: "1rem" }}>
-                        <IconButton aria-label="repeat">
-                            <SkipPreviousIcon sx={{
-                                height: 50,
-                                width: 50,
-                                color: theme.palette.shades.g5,
-                                borderRadius: "0.5rem"
-                            }} />
-                        </IconButton>
-                        {!current.isPlaying && (<IconButton aria-label="play/pause" onClick={handlePlayButtonClicked}>
-                            <PlayArrowIcon sx={{
-                                height: 50,
-                                width: 50,
-                                color: theme.palette.shades.g5,
-                                borderRadius: "0.5rem"
+                {isStarted && (<>
+                    <Footer>
+                        <TextArea>
+                            {!(current.isRest) && (<>
+                                <Typography variant="subtitle1" color={theme.palette.shades.g3}>Current Set: {current.set}</Typography>
+                                <Typography variant="subtitle1" color={theme.palette.shades.g3}>Current Rep: {current.rep}</Typography></>
+                            )}
+                            {(current.isRest) && (<>
+                                <Typography variant="subtitle1">{current.restType}</Typography>
+                            </>)}
+                        </TextArea>
+                    </Footer>
+                    <ButtonBar>
+                        <Box sx={{ background: alpha(theme.palette.shades.g3, 0.5), width: "15rem", borderRadius: "1rem" }}>
 
-                            }} />
-                        </IconButton>)}
-                        {current.isPlaying && (<IconButton aria-label="play/pause" onClick={handlePauseButtonClicked}>
-                            <PauseIcon sx={{
-                                height: 50,
-                                width: 50,
-                                color: theme.palette.shades.g5,
-                                borderRadius: "0.5rem"
+                            {!current.isPlaying && (<IconButton aria-label="play/pause" onClick={handlePlayButtonClicked}>
+                                <PlayArrowIcon sx={{
+                                    height: 50,
+                                    width: 50,
+                                    color: theme.palette.shades.g5,
+                                    borderRadius: "0.5rem"
 
-                            }} />
-                        </IconButton>)}
-                        <IconButton aria-label="skip-next">
-                            <SkipNextIcon sx={{
-                                height: 50,
-                                width: 50,
-                                color: theme.palette.shades.g5,
-                                borderRadius: "0.5rem"
+                                }} />
+                            </IconButton>)}
+                            {current.isPlaying && (<IconButton aria-label="play/pause" onClick={handlePauseButtonClicked}>
+                                <PauseIcon sx={{
+                                    height: 50,
+                                    width: 50,
+                                    color: theme.palette.shades.g5,
+                                    borderRadius: "0.5rem"
 
-                            }} />
-                        </IconButton>
-                    </Box>
-                </ButtonBar>
+                                }} />
+                            </IconButton>)}
+                            <IconButton aria-label="skip-next" onClick={handleSkipButtonClicked}>
+                                <SkipNextIcon sx={{
+                                    height: 50,
+                                    width: 50,
+                                    color: theme.palette.shades.g5,
+                                    borderRadius: "0.5rem"
+
+                                }} />
+                            </IconButton>
+                        </Box>
+                    </ButtonBar>
+                </>)}
             </RunnerWrapper>
         );
     }

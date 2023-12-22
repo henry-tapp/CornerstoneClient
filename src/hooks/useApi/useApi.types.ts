@@ -59,7 +59,7 @@ export interface Api {
     addUserPreferences: (data: UserPreferences) => Promise<ApiResponse<{}>>;
 
 
-    updateWorkout({ weekItemId, weekItemWorkoutId, complete }: UpdateWorkoutProps): Promise<ApiResponse<{}>>;
+    updateWorkout({ weekItemId, weekItemWorkoutId, completed }: UpdateWorkoutProps): Promise<ApiResponse<{}>>;
 
     addWorkoutLog(workoutLog: WorkoutLog): Promise<ApiResponse<{}>>;
 }

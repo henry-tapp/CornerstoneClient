@@ -58,7 +58,7 @@ export default function WeekItemCard({ item, imageSrc, children }: React.PropsWi
                     </IconButton>
                 }
                 title={item.name}
-                subheader={item.type}
+                subheader={item.estimatedCompletionSeconds && `${item.estimatedCompletionSeconds} M`}
             />
             <CardMedia
                 component="img"
@@ -72,7 +72,6 @@ export default function WeekItemCard({ item, imageSrc, children }: React.PropsWi
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>
-                <IconButton aria-label="quick-log"><Typography style={{ fontWeight: "bold" }} variant="caption">Log Workout</Typography></IconButton>
                 <ExpandMore
                     expand={expanded}
                     onClick={handleExpandClick}

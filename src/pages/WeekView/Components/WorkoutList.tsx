@@ -1,5 +1,6 @@
+import CheckIcon from '@mui/icons-material/Check';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { IconButton, List, alpha, styled } from '@mui/material';
+import { IconButton, List, alpha, styled, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -8,7 +9,6 @@ import { ITheme } from 'common/App';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WorkoutInformation } from 'types';
-
 const Flexbox = styled("span")(({ theme }) => `
     display:flex;
     justify-content:space-between;
@@ -33,6 +33,8 @@ export default function WorkoutList({ workouts }: WorkoutListProps) {
 
     const navigate = useNavigate();
 
+    const theme = useTheme() as ITheme;
+
     return (
         <StyledList>
             {workouts.map((workout, i) => (
@@ -52,7 +54,13 @@ export default function WorkoutList({ workouts }: WorkoutListProps) {
                                         >
                                             {workout.description}
                                         </Typography>
-                                        <IconButton color='inherit' onClick={() => navigate(`../workout/${workout.weekItemId}/${workout.id}`)}><KeyboardArrowRightIcon /></IconButton>
+                                        {!workout.completed
+                                            ? (<IconButton color='inherit' onClick={() => navigate(`../workout/${workout.weekItemId}/${workout.id}`)}>
+                                                <KeyboardArrowRightIcon />
+                                            </IconButton>)
+                                            : <CheckIcon htmlColor={theme.palette.tertiary.main} />
+                                        }
+
                                     </Flexbox>
                                 </React.Fragment>
                             }
